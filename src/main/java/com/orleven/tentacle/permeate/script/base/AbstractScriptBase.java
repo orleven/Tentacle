@@ -1,19 +1,10 @@
 package com.orleven.tentacle.permeate.script.base;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import com.orleven.tentacle.core.IOC;
-import com.orleven.tentacle.entity.Vulner;
+
 import com.orleven.tentacle.permeate.bean.AssetInfoBean;
-import com.orleven.tentacle.permeate.bean.ServiceBean;
 import com.orleven.tentacle.permeate.bean.VulnerBean;
-import com.orleven.tentacle.permeate.script.Struts2RCE045;
+
 
 /**
  * 针对某个漏洞的虚拟利用基础类

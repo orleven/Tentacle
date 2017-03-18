@@ -2,7 +2,6 @@ package com.orleven.tentacle.util;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +19,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -52,13 +52,13 @@ public class WebUtil {
 			post.setEntity(new UrlEncodedFormEntity(postParameters, "utf-8"));
 			return client.execute(post);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
-        return null;
+		return null;
 	}
 	
 	/**
@@ -77,13 +77,41 @@ public class WebUtil {
         	post.setEntity(new ByteArrayEntity(postParameters));
         	return client.execute(post);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
-        return null;
+		return null;
+
+	}
+	
+	
+	/**
+	 * post 方法
+	 * @param targetUrl
+	 * @param httpHeaders
+	 * @param postParameters
+	 */
+	public static HttpResponse httpPost(String targetUrl,Map<String, String> httpHeaders,String postParameters){
+		HttpClient client = HttpClients.createDefault();
+		HttpPost post = new HttpPost(targetUrl);
+		for (String key : httpHeaders.keySet()) {
+        	post.setHeader(key, httpHeaders.get(key));
+        }
+        try {
+        	post.setEntity(new StringEntity(postParameters));
+        	return client.execute(post);
+		} catch (UnsupportedEncodingException e) {
+//			e.printStackTrace();
+		} catch (ClientProtocolException e) {
+//			e.printStackTrace();
+		} catch (IOException e) {
+//			e.printStackTrace();
+		}
+		return null;
+
 	}
 	
 	/**
@@ -100,13 +128,13 @@ public class WebUtil {
         try {
         	return client.execute(get);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
-        return null;
+		return null;
 	}
 
 	/**
@@ -123,13 +151,13 @@ public class WebUtil {
         try {
         	return client.execute(delete);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
-        return null;
+		return null;
 	}
 	
 	/**
@@ -146,13 +174,13 @@ public class WebUtil {
         try {
         	return client.execute(head);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
-        return null;
+		return null;
 	}
 	
 	/**
@@ -169,13 +197,13 @@ public class WebUtil {
         try {
         	return client.execute(put);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
-        return null;
+		return null;
 	}
 	
 	/**
@@ -192,13 +220,13 @@ public class WebUtil {
         try {
         	return client.execute(options);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
-        return null;
+		return null;
 	}
 	
 	/**
@@ -242,22 +270,22 @@ public class WebUtil {
 		return EntityUtils.toString(httpEntity,"UTF-8");
 	}
     
-	public static void main(String[] args) {
-		WebUtil hTTPUtil = new WebUtil();
-		try {
-			Map<String, String> httpHeaders = new HashMap<String, String>();
-			httpHeaders.put("Charsert", "UTF-8");
-			httpHeaders.put("Cookies","Hm_lvt_bd81f02e5329554415de9ee15f916a98=1475897340,1476002999");
-			
-	        // 创建一个List容器，用于存放基本键值对（基本键值对即：参数名-参数值）
-			List<BasicNameValuePair> postParameters = new ArrayList<>();
-			postParameters.add(new BasicNameValuePair("name", "张三"));
-			postParameters.add(new BasicNameValuePair("age", "25"));
-	        
-			hTTPUtil.httpHead("http://127.0.0.1", httpHeaders);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//	public static void main(String[] args) {
+//		WebUtil hTTPUtil = new WebUtil();
+//		try {
+//			Map<String, String> httpHeaders = new HashMap<String, String>();
+//			httpHeaders.put("Charsert", "UTF-8");
+//			httpHeaders.put("Cookies","Hm_lvt_bd81f02e5329554415de9ee15f916a98=1475897340,1476002999");
+//			
+//	        // 创建一个List容器，用于存放基本键值对（基本键值对即：参数名-参数值）
+//			List<BasicNameValuePair> postParameters = new ArrayList<>();
+//			postParameters.add(new BasicNameValuePair("name", "张三"));
+//			postParameters.add(new BasicNameValuePair("age", "25"));
+//	        
+//			WebUtil.httpHead("http://127.0.0.1", httpHeaders);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 }

@@ -22,20 +22,21 @@ public class VulnerBean{
 	 */
 	private List<ProveBean> proveBeans;
 	
+	
 	/**
 	 * 是否存在漏洞
 	 */
-	private boolean isVulner;
+	private int isVulner;
 	
 	private Vulner vulner;
 
 	public VulnerBean() {
-		proveBeans = new ArrayList();
+		proveBeans = new ArrayList<ProveBean>();
 	}
 	
 	public VulnerBean(Vulner vulner) {
 		this.vulner = vulner;
-		proveBeans = new ArrayList();
+		proveBeans = new ArrayList<ProveBean>();
 	}
 	
 	public void setProveBean(List<ProveBean> proveBeans){
@@ -46,11 +47,11 @@ public class VulnerBean{
 		return proveBeans;
 	}
 	
-	public void setIsVulner(boolean isVulner){
+	public void setIsVulner(int isVulner){
 		this.isVulner = isVulner;
 	}
 	
-	public boolean getIsVulner(){
+	public int getIsVulner(){
 		return isVulner;
 	}
 	

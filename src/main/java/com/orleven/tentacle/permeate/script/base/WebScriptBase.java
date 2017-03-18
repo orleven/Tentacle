@@ -13,7 +13,7 @@ import com.orleven.tentacle.permeate.bean.WebServiceBean;
 
 
 /**
- * web漏洞利用虚拟基础线程类
+ * web漏洞利用虚拟基础类
  * @author orleven
  * @time  2016年12月20日
  */
@@ -46,6 +46,8 @@ public abstract class WebScriptBase  extends AbstractScriptBase{
 	 */
 	private List<BasicNameValuePair> postParameters;
 	
+
+	
 	/**
 	 * method 请求方法
 	 */
@@ -57,6 +59,7 @@ public abstract class WebScriptBase  extends AbstractScriptBase{
 		httpHeaders.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:48.0) Gecko/20100101 Firefox/48.0");
 		httpHeaders.put("Accept", "*/*");
 		httpHeaders.put("Accept-Encoding", "gzip, deflate");
+		httpHeaders.put("Content-Type","application/x-www-form-urlencoded");
 	}
 	
 	/**
@@ -131,5 +134,20 @@ public abstract class WebScriptBase  extends AbstractScriptBase{
 		return targetUrl;
 	}
 
+	/**
+	 * 命令执行
+	 * @data 2017年3月18日
+	 * @param command
+	 */
+	public void execCommand(String command) {
+		
+	}
 	
+	/**
+	 * 漏洞验证
+	 * @data 2017年3月18日
+	 */
+	public void prove() {
+		
+	}
 }
