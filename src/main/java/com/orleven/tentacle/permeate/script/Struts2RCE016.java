@@ -73,9 +73,6 @@ public class Struts2RCE016 extends WebScriptBase {
 		String result = "";
 		try {
 			result = WebUtil.getResponseBody(WebUtil.httpPost(getTargetUrl(), getHttpHeaders(),URLEncoder.encode(execPayload1+ command +execPayload2,"UTF-8").replace("+","%20")));
-			if(result!=null){
-				result = result.substring(result.indexOf(result));
-			}
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

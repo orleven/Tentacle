@@ -27,8 +27,9 @@ public class Test {
 	 * @data 2017年3月17日
 	 */
 	public void assetTest(){
-		struts2045Test();
+//		struts2045Test();
 		struts2016Test();
+//		JBossDeserializeRCETest();
 	}
 	
 	public void struts2045Test(){
@@ -45,7 +46,7 @@ public class Test {
 			assetBean.getServiceBeans().add(serviceBean);
 		}
 
-		Vulner vulner= new Vulner(0,"Struts2-045","","", "Remote Code Execute","Hign","Struts2RCE045");
+		Vulner vulner= new Vulner(0,"Struts2-045","","", "Remote Code Execute","Hign","struts2RCE045");
 	    for (ServiceBean serviceBean : assetBean.getServiceBeans()) {
 	    	WebServiceBean webServiceBean = IOC.instance().getClassobj(WebServiceBean.class);
 	    	webServiceBean.setValueByServiceBean(serviceBean);
@@ -82,7 +83,7 @@ public class Test {
 			assetBean.getServiceBeans().add(serviceBean);
 		}
 //		assetBean.setPorts(ports);
-		Vulner vulner= new Vulner(0,"Struts2-016","","", "Remote Code Execute","Hign","Struts2RCE016");
+		Vulner vulner= new Vulner(0,"Struts2-016","","", "Remote Code Execute","Hign","struts2RCE016");
 	    for (ServiceBean serviceBean : assetBean.getServiceBeans()) {
 	    	WebServiceBean webServiceBean = IOC.instance().getClassobj(WebServiceBean.class);
 	    	webServiceBean.setValueByServiceBean(serviceBean);
@@ -95,6 +96,44 @@ public class Test {
 	    	webScriptBase.setAssetInfoBean(assetInfoBean);
 	    	webScriptBase.getVulnerBean().setVulner(vulner);
 	    	webScriptBase.setUrlPath("/S2-016/default.action");
+	    	webScriptBase.setCookies("");
+	    	webScriptBase.prove();
+
+	    	if(webScriptBase.getVulnerBean().getIsVulner() == Permeate.isVulner){
+	    		webScriptBase.execCommand("ifconfig");
+		    	System.out.println(webScriptBase.getVulnerBean().getProveBean().get(1).getReceiveMessage());
+	    	}
+	    }
+	    
+	}
+	
+	public void JBossDeserializeRCETest(){
+		String host = "192.168.111.131";
+		String[] ports = {"7001","8080"};
+		
+		AssetInfoBean assetInfoBean = IOC.instance().getClassobj(AssetInfoBean.class);
+		assetInfoBean.setHost(host);
+		
+		AssetBean assetBean = IOC.instance().getClassobj(AssetBean.class);
+		assetBean.setAssetInfoBean(assetInfoBean);
+		for (String port : ports) {
+			ServiceBean serviceBean =new ServiceBean(assetInfoBean,port);
+			assetBean.getServiceBeans().add(serviceBean);
+		}
+//		assetBean.setPorts(ports);
+		Vulner vulner= new Vulner(0,"JBossDeserializeRCE","","", "Remote Code Execute","Hign","jBossDeserializeRCE");
+	    for (ServiceBean serviceBean : assetBean.getServiceBeans()) {
+	    	WebServiceBean webServiceBean = IOC.instance().getClassobj(WebServiceBean.class);
+	    	webServiceBean.setValueByServiceBean(serviceBean);
+	    	webServiceBean.setProtocolType("http");
+	    	
+	    	WebScriptBase webScriptBase = null;
+	    	webScriptBase = (WebScriptBase) IOC.instance().getClassobj("jBossDeserializeRCE");
+
+	    	webScriptBase.setWebServiceBean(webServiceBean);
+	    	webScriptBase.setAssetInfoBean(assetInfoBean);
+	    	webScriptBase.getVulnerBean().setVulner(vulner);
+	    	webScriptBase.setUrlPath("/invoker/JMXInvokerServlet");
 	    	webScriptBase.setCookies("");
 	    	webScriptBase.prove();
 
