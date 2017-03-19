@@ -10,11 +10,20 @@ import com.orleven.tentacle.entity.PasswordDic;
  * @date 2017年3月8日
  */
 public interface  IPasswordDicDao {
+	
+	/**
+	 * 创建表
+	 * @data 2017年3月19日
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean createTable() throws Exception ;
+	
 	/**
 	 * 插入新的密码
 	 * @param passwordDic
 	 */
-	public void insert(PasswordDic passwordDic);
+	public boolean insert(PasswordDic passwordDic);
 	
 	/**
 	 * 获取所有的密码

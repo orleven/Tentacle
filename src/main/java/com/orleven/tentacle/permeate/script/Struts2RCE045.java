@@ -27,8 +27,6 @@ public class Struts2RCE045 extends WebScriptBase {
 		super();
 	}
 	
-
-
 	@Override
 	public void prove() {
 		ProveBean proveBean= IOC.instance().getClassobj(ProveBean.class);

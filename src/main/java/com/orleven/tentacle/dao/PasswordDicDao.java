@@ -23,20 +23,17 @@ import com.orleven.tentacle.entity.PasswordDic;
 @Scope("prototype")
 public class PasswordDicDao implements IPasswordDicDao{
 
-	private DataSource dataSource;
-	
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+	/**
+	 * 配置数据库
+	 */
+    private Connection configConnection;
 	
 	@Override
 	public List<PasswordDic> getAll() {
-		Connection conn;
 		List<PasswordDic> list = new ArrayList<PasswordDic>();
 		try {
-			conn = dataSource.getConnection();
 			String sql = "Select id, password from PASSWORDDIC";
-		    Statement smt = conn.createStatement();
+		    Statement smt = configConnection.createStatement();
 
 		    ResultSet rs = smt.executeQuery(sql);
 		       
@@ -48,8 +45,8 @@ public class PasswordDicDao implements IPasswordDicDao{
 		    }
 		       
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		}
 
 		return list;
@@ -58,11 +55,8 @@ public class PasswordDicDao implements IPasswordDicDao{
 	@Override
 	public PasswordDic getPasswordById(int id) {
 		String sql = "SELECT * FROM PASSWORDDIC WHERE ID = ?";
-		Connection conn = null;
-		
 		try {
-			conn = dataSource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
+			PreparedStatement ps = configConnection.prepareStatement(sql);
 			ps.setInt(1, id);
 			PasswordDic passwordDic = null;
 			ResultSet rs = ps.executeQuery();
@@ -76,38 +70,38 @@ public class PasswordDicDao implements IPasswordDicDao{
 			ps.close();
 			return passwordDic;
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (conn != null) {
-				try {
-				conn.close();
-				} catch (SQLException e) {}
-			}
+			e.printStackTrace();
+			return null;
 		}
 	}
 
 	@Override
-	public void insert(PasswordDic passwordDic) {
+	public boolean insert(PasswordDic passwordDic) {
 		String sql = "INSERT INTO PASSWORDDIC " +
 				"(password) VALUES (?)";
-		Connection conn = null;
-		
 		try {
-			conn = dataSource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
+			PreparedStatement ps = configConnection.prepareStatement(sql);
 			ps.setString(1, passwordDic.getPassword());
 			ps.executeUpdate();
 			ps.close();
-			
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {}
-			}
+			e.printStackTrace();
+			return false;
 		}
+		return true;
+	}
+
+	@Override
+	public boolean createTable() throws Exception {
+		String sql = "CREATE TABLE 'PasswordDic' ("
+			+ "'Id'  INTEGER NOT NULL,"
+			+ "'Password'  TEXT NOT NULL,"
+			+ "PRIMARY KEY ('Id')"
+			+ ");"	;
+		PreparedStatement ps = configConnection.prepareStatement(sql);
+		ps.executeUpdate();
+		ps.close();
+		return true;
 	}
 
 }

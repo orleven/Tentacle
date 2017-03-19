@@ -12,6 +12,7 @@ import net.lingala.zip4j.util.Zip4jConstants;
 
 /**
  * Zip 处理工具包
+ * 需要注意的是如果压缩包里已经存在要添加的文件，会陷入死循环，所以添加之前要先判断一下。
  * @author orleven
  * @date 2017年3月8日
  */

@@ -12,26 +12,24 @@ import com.orleven.tentacle.dao.imp.IVulnerDao;
 import com.orleven.tentacle.entity.Vulner;
 
 public class VulnerDao implements IVulnerDao{
-
-	private DataSource dataSource;
 	
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-	
+	/**
+	 * 配置数据库
+	 */
+    private Connection configConnection;
+    
 	@Override
-	public void insert(Vulner vulner) {
+	public boolean insert(Vulner vulner) {
 		
+		return true;
 	}
 
 	@Override
 	public List<Vulner> getAll() {
-		Connection conn;
 		List<Vulner> list = new ArrayList<Vulner>();
 		try {
-			conn = dataSource.getConnection();
 			String sql = "Select * from Vulner";
-		    Statement smt = conn.createStatement();
+		    Statement smt = configConnection.createStatement();
 		    ResultSet rs = smt.executeQuery(sql);
 		    while (rs.next()) {
 		       int vulnerId = rs.getInt("VulnerId");;
@@ -47,6 +45,7 @@ public class VulnerDao implements IVulnerDao{
 		       
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return null;
 		}
 
 		return list;
@@ -55,11 +54,8 @@ public class VulnerDao implements IVulnerDao{
 	@Override
 	public Vulner getVulnerById(int vulnerId) {
 		String sql = "SELECT * FROM Vulner WHERE ID = ?";
-		Connection conn = null;
-		
 		try {
-			conn = dataSource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
+			PreparedStatement ps = configConnection.prepareStatement(sql);
 			ps.setInt(1, vulnerId);
 			Vulner vulner = null;
 			ResultSet rs = ps.executeQuery();
@@ -78,13 +74,8 @@ public class VulnerDao implements IVulnerDao{
 			ps.close();
 			return vulner;
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (conn != null) {
-				try {
-				conn.close();
-				} catch (SQLException e) {}
-			}
+			e.printStackTrace();
+			return null;
 		}
 	}
 
@@ -110,6 +101,25 @@ public class VulnerDao implements IVulnerDao{
 	public Vulner getVulnerByType(int vulnerType) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean createTable() throws Exception {
+		String sql = "CREATE TABLE 'Vulner' ("
+			+ "'VulnerId'  INTEGER NOT NULL,"
+			+ "'VulnerName'  TEXT NOT NULL,"
+			+ "'VulnerCVE'  TEXT,"
+			+ "'VulnerDescribe'  TEXT,"
+			+ "'Repaire'  TEXT,"
+			+ "'VulnerType'  TEXT NOT NULL,"
+			+ "'VulnerRank'  TEXT,"
+			+ "'ScriptName'  TEXT NOT NULL,"
+			+ "PRIMARY KEY ('VulnerId')"
+			+ ");";
+		PreparedStatement ps = configConnection.prepareStatement(sql);
+		ps.executeUpdate();
+		ps.close();
+		return true;
 	}
 
 }

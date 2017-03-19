@@ -111,6 +111,33 @@ public abstract class WebScriptBase  extends AbstractScriptBase{
 		this.httpHeaders = httpHeaders;
 	}
 	
+	/**
+	 * 获取Web url ,e.g. http://127.0.0.1:8080
+	 * @data 2017年3月19日
+	 * @return
+	 */
+	public String getWebUrl(){
+		if(webServiceBean.getProtocolType()==null)
+			webServiceBean.setProtocolType("http");
+		String targetUrl = webServiceBean.getProtocolType()+"://";
+		if(getAssetInfoBean().getDomain()!=null&&getAssetInfoBean().getDomain().length()>0){
+			targetUrl += getAssetInfoBean().getDomain();
+		}else{
+			targetUrl += getAssetInfoBean().getHost();
+		}
+		if(webServiceBean.getPort().length()<=0){
+			targetUrl+=":80";
+		}else{
+			targetUrl += ":" + webServiceBean.getPort();
+		}
+		return targetUrl;
+	}
+
+	/**
+	 * 获取目标 url ,e.g. http://127.0.0.1:8080/admin/index.action?id=1
+	 * @data 2017年3月19日
+	 * @return
+	 */
 	public String getTargetUrl(){
 		if(webServiceBean.getProtocolType()==null)
 			webServiceBean.setProtocolType("http");
@@ -133,7 +160,15 @@ public abstract class WebScriptBase  extends AbstractScriptBase{
 		}
 		return targetUrl;
 	}
-
+	
+	/**
+	 * 漏洞验证
+	 * @data 2017年3月18日
+	 */
+	public void prove() {
+		
+	}
+	
 	/**
 	 * 命令执行
 	 * @data 2017年3月18日
@@ -143,11 +178,13 @@ public abstract class WebScriptBase  extends AbstractScriptBase{
 		
 	}
 	
+
 	/**
-	 * 漏洞验证
-	 * @data 2017年3月18日
+	 * 文件上传
+	 * @data 2017年3月19日
 	 */
-	public void prove() {
+	public void uploadFile() {
 		
 	}
+	
 }

@@ -11,11 +11,21 @@ import com.orleven.tentacle.entity.Vulner;
  * @date 2017年3月8日
  */
 public interface IVulnerDao {
+	
+
+	/**
+	 * 创建表
+	 * @data 2017年3月19日
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean createTable() throws Exception ;
+	
 	/**
 	 * 插入新的漏洞
 	 * @param vulner
 	 */
-	public void insert(Vulner vulner);
+	public boolean insert(Vulner vulner);
 	
 	/**
 	 * 获取所有的漏洞

