@@ -1,6 +1,9 @@
 package com.orleven.tentacle.util;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
@@ -256,18 +259,52 @@ public class WebUtil {
 	    return httpHeaders;
 	}
 	
+//	/**
+//	 * 获取response 头部的某条信息
+//	 * @return
+//	 */
+//	public static String getResponseHeadersKey(HttpResponse response,String name){
+//		if(response==null){
+//			return null;
+//		}
+//		Header headers[] = response.getHeaders(name);
+//	    for (int i =0;i < headers.length;i++){    
+//	    	if(headers[i].getName().equals(name)){
+//	    		return headers[i].getValue();
+//	    	}
+//	    } 
+//	    return null;
+//	}
+	
 	/**
 	 * 获取响应实体
 	 * @return
 	 * @throws ParseException
 	 * @throws IOException
 	 */
-	public static String getResponseBody(HttpResponse response) throws ParseException, IOException{
+	public static String getResponseBody(HttpResponse response){
 		if(response==null){
 			return null;
 		}
 		HttpEntity httpEntity = response.getEntity();
-		return EntityUtils.toString(httpEntity,"UTF-8");
+		String result="";
+		String line="" ;
+		try {
+			InputStream inputStream=httpEntity.getContent();
+		    BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
+		    while((line=bufferedReader.readLine()) != null){
+			      result=result+line+"\n";
+			}
+		} catch (ParseException e) {
+			
+		} catch (IOException e) {
+			
+		} finally{
+			if (result.equals("")){
+				return null;
+			}
+		}
+		return result;
 	}
     
 //	public static void main(String[] args) {

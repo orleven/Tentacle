@@ -63,7 +63,7 @@ public class Vulner {
     @Column(name = "ScriptName") 
 	private String scriptName;   
     
-	public Vulner(int vulnerId,String vulnerName,String vulnerDescribe,String repaire,String vulnerType,String vulnerRank,String scriptName){
+	public Vulner(int vulnerId,String vulnerName,String vulnerCVE,String vulnerDescribe,String repaire,String vulnerType,String vulnerRank,String scriptName){
 		this.vulnerId = vulnerId;
 		this.vulnerName = vulnerName;
 		this.vulnerDescribe = vulnerDescribe;
@@ -71,6 +71,7 @@ public class Vulner {
 		this.vulnerType = vulnerType;
 		this.vulnerRank = vulnerRank;
 		this.scriptName = scriptName;
+		this.vulnerCVE = vulnerCVE;
 	}
 	
 	public int getVulnerId(){

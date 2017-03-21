@@ -28,6 +28,14 @@ public class PasswordDicDao implements IPasswordDicDao{
 	 */
     private Connection configConnection;
 	
+    public void setConfigConnection(Connection configConnection) {
+        this.configConnection = configConnection;
+    }
+    
+    public Connection getConfigConnection() {
+        return configConnection;
+    }
+    
 	@Override
 	public List<PasswordDic> getAll() {
 		List<PasswordDic> list = new ArrayList<PasswordDic>();

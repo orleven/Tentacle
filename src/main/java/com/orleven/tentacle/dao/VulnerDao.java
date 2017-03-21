@@ -24,6 +24,15 @@ public class VulnerDao implements IVulnerDao{
 		return true;
 	}
 
+    public void setConfigConnection(Connection configConnection) {
+        this.configConnection = configConnection;
+    }
+    
+    public Connection getConfigConnection() {
+        return configConnection;
+    }
+    
+	
 	@Override
 	public List<Vulner> getAll() {
 		List<Vulner> list = new ArrayList<Vulner>();
@@ -34,12 +43,13 @@ public class VulnerDao implements IVulnerDao{
 		    while (rs.next()) {
 		       int vulnerId = rs.getInt("VulnerId");;
 		       String vulnerName = rs.getString("VulnerName");
+		       String vulnerCVE = rs.getString("VulnerCVE");
 		       String vulnerDescribe = rs.getString("VulnerDescribe");
 		       String repaire = rs.getString("Repaire");
 		       String vulnerType = rs.getString("VulnerType");
 		       String vulnerRank = rs.getString("VulnerRank");
 		       String scriptName = rs.getString("ScriptName");
-		       Vulner vulner = new Vulner(vulnerId,vulnerName,vulnerDescribe,repaire,vulnerType,vulnerRank,scriptName);
+		       Vulner vulner = new Vulner(vulnerId,vulnerName,vulnerCVE,vulnerDescribe, repaire,vulnerType,vulnerRank,scriptName);
 		       list.add(vulner);
 		    }
 		       
@@ -63,6 +73,7 @@ public class VulnerDao implements IVulnerDao{
 				vulner = new Vulner(
 					rs.getInt("VulnerId"),
 					rs.getString("VulnerName"),
+					rs.getString("VulnerCVE"),
 					rs.getString("VulnerDescribe"),
 					rs.getString("Repaire"),
 					rs.getString("VulnerType"),

