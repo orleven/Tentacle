@@ -23,10 +23,10 @@ public class Test {
 	
 	public void test(){
 		// 资产测试
-//		assetTest();
+		assetTest();
 		
 		// 数据库测试
-		sqlTest();
+//		sqlTest();
 	}
 	
 	/**
@@ -37,6 +37,7 @@ public class Test {
 //		struts2045Test();
 //		struts2016Test();
 //		struts2046Test();
+		struts2032Test();
 //		JBossDeserializeRCETest();
 	}
 	
@@ -180,6 +181,44 @@ public class Test {
 	    		webScriptBase.execCommand("ifconfig");
 		    	System.out.println(webScriptBase.getVulnerBean().getProveBean().get(1).getReceiveMessage());
 	    	}
+	    }
+	    
+	}
+	
+	public void struts2032Test(){
+		String host = "192.168.111.131";
+		String[] ports = {"8080"};
+		
+		AssetInfoBean assetInfoBean = IOC.instance().getClassobj(AssetInfoBean.class);
+		assetInfoBean.setHost(host);
+		
+		AssetBean assetBean = IOC.instance().getClassobj(AssetBean.class);
+		assetBean.setAssetInfoBean(assetInfoBean);
+		for (String port : ports) {
+			ServiceBean serviceBean =new ServiceBean(assetInfoBean,port);
+			assetBean.getServiceBeans().add(serviceBean);
+		}
+//		assetBean.setPorts(ports);
+		Vulner vulner= new Vulner(0,"Struts2-032","","","", "Remote Code Execute","Hign","struts2RCE032");
+	    for (ServiceBean serviceBean : assetBean.getServiceBeans()) {
+	    	WebServiceBean webServiceBean = IOC.instance().getClassobj(WebServiceBean.class);
+	    	webServiceBean.setValueByServiceBean(serviceBean);
+	    	webServiceBean.setProtocolType("http");
+	    	
+	    	WebScriptBase webScriptBase = null;
+	    	webScriptBase = (WebScriptBase) IOC.instance().getClassobj("struts2RCE032");
+
+	    	webScriptBase.setWebServiceBean(webServiceBean);
+	    	webScriptBase.setAssetInfoBean(assetInfoBean);
+	    	webScriptBase.getVulnerBean().setVulner(vulner);
+	    	webScriptBase.setUrlPath("/S2-032/index.action");
+	    	webScriptBase.setCookies("");
+	    	webScriptBase.prove();
+
+//	    	if(webScriptBase.getVulnerBean().getIsVulner() == Permeate.isVulner){
+//	    		webScriptBase.execCommand("ifconfig");
+//		    	System.out.println(webScriptBase.getVulnerBean().getProveBean().get(1).getReceiveMessage());
+//	    	}
 	    }
 	    
 	}
