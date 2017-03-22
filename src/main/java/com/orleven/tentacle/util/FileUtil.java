@@ -2,7 +2,6 @@ package com.orleven.tentacle.util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -74,7 +73,7 @@ public class FileUtil {
     }
 
     /**
-     * 读取文件的byte
+     * 读取文件的byte,未测试
      * @data 2017年3月8日
      * @param filePath
      * @return
@@ -83,9 +82,6 @@ public class FileUtil {
         try {
             FileInputStream fis = new FileInputStream(filePath);
             FileChannel channel = fis.getChannel();
-            ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
-            long size = channel.size();
-            byte[] bytes = new byte[1024];
             ByteBuffer byteBuffer = ByteBuffer.allocate((int)channel.size());
             while((channel.read(byteBuffer)) > 0){
                 // do nothing

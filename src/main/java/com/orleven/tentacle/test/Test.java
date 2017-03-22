@@ -23,10 +23,10 @@ public class Test {
 	
 	public void test(){
 		// 资产测试
-		assetTest();
+//		assetTest();
 		
 		// 数据库测试
-//		sqlTest();
+		sqlTest();
 	}
 	
 	/**
@@ -37,7 +37,7 @@ public class Test {
 //		struts2045Test();
 //		struts2016Test();
 //		struts2046Test();
-		struts2032Test();
+//		struts2032Test();
 //		JBossDeserializeRCETest();
 	}
 	
@@ -90,8 +90,8 @@ public class Test {
 			    		System.out.println("[+] VulnerCVE: "+vulner.getVulnerCVE());
 			    		System.out.println("[+] VulnerUrl: "+webScriptBase.getTargetUrl());
 			    		
-			    		// webScriptBase.execCommand("ifconfig");
-				    	// System.out.println(webScriptBase.getVulnerBean().getProveBean().get(1).getReceiveMessage());
+			    		 webScriptBase.execCommand("ifconfig");
+				    	 System.out.println(webScriptBase.getVulnerBean().getProveBean().get(1).getReceiveMessage());
 //			    	}else if(webScriptBase.getVulnerBean().getIsVulner() == Permeate.isNotVerified){
 //			    		System.out.println("********************************");
 //			    		System.out.println("[=] VulnerName: "+vulner.getVulnerName());
@@ -215,10 +215,10 @@ public class Test {
 	    	webScriptBase.setCookies("");
 	    	webScriptBase.prove();
 
-//	    	if(webScriptBase.getVulnerBean().getIsVulner() == Permeate.isVulner){
-//	    		webScriptBase.execCommand("ifconfig");
-//		    	System.out.println(webScriptBase.getVulnerBean().getProveBean().get(1).getReceiveMessage());
-//	    	}
+	    	if(webScriptBase.getVulnerBean().getIsVulner() == Permeate.isVulner){
+	    		webScriptBase.execCommand("ifconfig");
+		    	System.out.println(webScriptBase.getVulnerBean().getProveBean().get(1).getReceiveMessage());
+	    	}
 	    }
 	    
 	}

@@ -15,8 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 public class Communication {
 
-    @RequestMapping(value="/hello",method = RequestMethod.GET)
-    public String home(){
+    @RequestMapping(value="/index",method = RequestMethod.GET)
+    public String index(){
         return "hello";
     }
 

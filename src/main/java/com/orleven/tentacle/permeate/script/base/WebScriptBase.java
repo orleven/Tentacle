@@ -170,7 +170,7 @@ public abstract class WebScriptBase  extends AbstractScriptBase{
 	}
 	
 	/**
-	 * 命令执行
+	 * 命令执行,命令中最好不要有'&','|'等这些特殊符号
 	 * @data 2017年3月18日
 	 * @param command
 	 */

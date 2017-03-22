@@ -6,12 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ChainedTransformer;
 import org.apache.commons.collections.functors.ConstantTransformer;
@@ -19,7 +15,6 @@ import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.commons.collections.map.TransformedMap;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 import com.orleven.tentacle.core.IOC;
 import com.orleven.tentacle.define.Message;
 import com.orleven.tentacle.define.Permeate;

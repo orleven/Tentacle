@@ -1,8 +1,6 @@
 package com.orleven.tentacle.dao.imp;
 
 import java.util.List;
-
-import com.orleven.tentacle.entity.PasswordDic;
 import com.orleven.tentacle.entity.Vulner;
 
 /**
