@@ -38,7 +38,7 @@ public class Struts2RCE046 extends WebScriptBase {
 		getHttpHeaders().put("Content-Type", provePayload0);
 		Map<String, String> resHeaders = WebUtil.getResponseAllHeaders(WebUtil.httpPost(getTargetUrl(), getHttpHeaders(),provePayload.getBytes()));
 		if (resHeaders==null) {
-			result = Message.notAvailable;
+			result = Message.TimeOut;
 			getVulnerBean().setIsVulner(Permeate.isNotVerified);
 		}else if(resHeaders.get("ProveFlag")!=null&&resHeaders.get("ProveFlag").equals(proveFlag)){
 			getVulnerBean().setIsVulner(Permeate.isVulner);
@@ -72,7 +72,6 @@ public class Struts2RCE046 extends WebScriptBase {
 		proveBean.setReceiveMessage(result);
 		proveBean.setSendMessage(command);
 		getVulnerBean().getProveBean().add(proveBean);
-
 	}
 	
 

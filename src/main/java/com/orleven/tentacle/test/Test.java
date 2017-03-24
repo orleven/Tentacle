@@ -90,14 +90,8 @@ public class Test {
 			    		System.out.println("[+] VulnerCVE: "+vulner.getVulnerCVE());
 			    		System.out.println("[+] VulnerUrl: "+webScriptBase.getTargetUrl());
 			    		
-			    		 webScriptBase.execCommand("ifconfig");
-				    	 System.out.println(webScriptBase.getVulnerBean().getProveBean().get(1).getReceiveMessage());
-//			    	}else if(webScriptBase.getVulnerBean().getIsVulner() == Permeate.isNotVerified){
-//			    		System.out.println("********************************");
-//			    		System.out.println("[=] VulnerName: "+vulner.getVulnerName());
-//			    		System.out.println("[=] VulnerCVE: "+vulner.getVulnerCVE());
-//			    		System.out.println("[=] VulnerUrl: "+webScriptBase.getTargetUrl());
-//			    		System.out.println("[=] VulnerRec: "+webScriptBase.getVulnerBean().getProveBean().get(0).getReceiveMessage());
+			    		webScriptBase.execCommand("ls");
+				    	System.out.println(webScriptBase.getVulnerBean().getProveBean().get(1).getReceiveMessage());
 			    	}
 			    }
 				

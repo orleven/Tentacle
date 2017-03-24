@@ -32,7 +32,7 @@ public class Struts2RCE045 extends WebScriptBase {
 		getHttpHeaders().put("Content-Type", provePayload);
 		Map<String, String> resHeaders = WebUtil.getResponseAllHeaders(WebUtil.httpGet(getTargetUrl(), getHttpHeaders()));
 		if (resHeaders==null) {
-			result = Message.notAvailable;
+			result = Message.TimeOut;
 			getVulnerBean().setIsVulner(Permeate.isNotVerified);
 		}else if(resHeaders.get("ProveFlag")!=null&&resHeaders.get("ProveFlag").equals(proveFlag)){
 			getVulnerBean().setIsVulner(Permeate.isVulner);

@@ -4,27 +4,16 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
- * Web 服务bean，用来存放web信息的
+ * SSH 服务bean，用来存放SSH信息的
  * @author orleven
  * @date 2017年3月17日
  */
 @Component
 @Scope("prototype")
-public class WebServiceBean extends ServiceBean{
+public class SshServiceBean extends ServiceBean{
 
-	/**
-	 * 协议类型
-	 */
-	private String protocolType;
-	
-	public WebServiceBean(){
+	public SshServiceBean(){
 		super();
-		protocolType = "http";
-	}
-	
-	public WebServiceBean(String protocolType){
-		super();
-		this.protocolType = protocolType;
 	}
 	
 	/**
@@ -32,13 +21,12 @@ public class WebServiceBean extends ServiceBean{
 	 * @data 2017年3月18日
 	 * @param serviceBean
 	 */
-	public WebServiceBean(ServiceBean serviceBean){
+	public SshServiceBean(ServiceBean serviceBean){
 		super();
 		setAssetInfoBean(serviceBean.getAssetInfoBean());
 		setPort(serviceBean.getPort());
 		setServiceType(serviceBean.getServiceType());
 	}
-	
 
 	public void setValueByServiceBean(ServiceBean serviceBean){
 		setAssetInfoBean(serviceBean.getAssetInfoBean());
@@ -48,13 +36,4 @@ public class WebServiceBean extends ServiceBean{
 	
 	
 
-	
-	public void setProtocolType(String protocolType){
-		this.protocolType = protocolType;
-	}
-
-	public String getProtocolType(){
-		return protocolType;
-	}
-	
 }

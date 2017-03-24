@@ -46,8 +46,6 @@ public abstract class WebScriptBase  extends AbstractScriptBase{
 	 */
 	private List<BasicNameValuePair> postParameters;
 	
-
-	
 	/**
 	 * method 请求方法
 	 */
@@ -75,7 +73,7 @@ public abstract class WebScriptBase  extends AbstractScriptBase{
 		this.webServiceBean = webServiceBean;
 	}
 	
-	public WebServiceBean WebServiceBean() {
+	public WebServiceBean getWebServiceBean() {
 		return webServiceBean;
 	}
 	
@@ -181,9 +179,11 @@ public abstract class WebScriptBase  extends AbstractScriptBase{
 
 	/**
 	 * 文件上传
-	 * @data 2017年3月19日
+	 * @data 2017年3月23日
+	 * @param inFile 本地文件
+	 * @param outFile 上传地址
 	 */
-	public void uploadFile() {
+	public void uploadFile(String inFile,String outFile) {
 		
 	}
 	

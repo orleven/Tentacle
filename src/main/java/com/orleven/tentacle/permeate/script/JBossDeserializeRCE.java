@@ -46,7 +46,7 @@ public class JbossDeserializeRCE  extends WebScriptBase{
 		try {
 			Map<String, String>  httpHeaders = WebUtil.getResponseAllHeaders(WebUtil.httpGet(getWebUrl()+"/invoker/JMXInvokerServlet", getHttpHeaders()));
 			if(httpHeaders==null){
-				result = Message.notAvailable;
+				result = Message.TimeOut;
 				getVulnerBean().setIsVulner(Permeate.isNotVerified);
 			}
 			else if (httpHeaders.get("Content-Type")!=null&&httpHeaders.get("Content-Type").indexOf("MarshalledValue") >= 0) {
@@ -62,7 +62,7 @@ public class JbossDeserializeRCE  extends WebScriptBase{
 				getVulnerBean().setIsVulner(Permeate.isNotVulner);
 			}
 		} catch (Exception e) {
-			result = Message.notAvailable;
+			result = Message.TimeOut;
 			getVulnerBean().setIsVulner(Permeate.isNotVerified);
 			e.printStackTrace();
 		} finally{

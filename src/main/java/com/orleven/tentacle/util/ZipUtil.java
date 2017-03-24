@@ -154,6 +154,7 @@ public class ZipUtil {
 			  
 			for (int i = 0; i < fileHeaderList.size(); i++) {  
 			    FileHeader fileHeader = (FileHeader)fileHeaderList.get(i); 
+				System.out.println("************************************************************");  
 			    System.out.println("Name: " + fileHeader.getFileName());  
 			    System.out.println("Compressed Size: " + fileHeader.getCompressedSize());  
 			    System.out.println("Uncompressed Size: " + fileHeader.getUncompressedSize());  

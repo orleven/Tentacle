@@ -32,7 +32,7 @@ public class Struts2RCE016 extends WebScriptBase {
 		String proveFlag2 = "com.opensymphony.xwork2.dispatcher.HttpServletResponse";
 		String result = WebUtil.getResponseBody(WebUtil.httpPost(getTargetUrl(), getHttpHeaders(),provePayload));
 		if (result==null) {
-			result = Message.notAvailable;
+			result = Message.TimeOut;
 			getVulnerBean().setIsVulner(Permeate.isNotVerified);
 		}else if(result.indexOf(proveFlag1)>=0&&result.indexOf(proveFlag2)<0){
 			getVulnerBean().setIsVulner(Permeate.isVulner);
@@ -57,5 +57,6 @@ public class Struts2RCE016 extends WebScriptBase {
 		proveBean.setSendMessage(command);
 		getVulnerBean().getProveBean().add(proveBean);
 	}
+	
 	
 }

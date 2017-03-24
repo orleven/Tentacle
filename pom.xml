@@ -78,6 +78,12 @@
 		</dependency>
 		
 		<dependency>
+    		<groupId>com.jcraft</groupId>
+    		<artifactId>jsch</artifactId>
+   			<version>0.1.54</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>com.ysoserial</groupId>
 			<artifactId>ysoserial</artifactId>
 			<version>0.0.5-SNAPSHOT-all</version>
