@@ -46,11 +46,11 @@ public abstract class SshScriptBase  extends AbstractScriptBase{
 		return username;
 	}
 	
-	public void setSshPassword(String password) {
+	public void setPassword(String password) {
 		this.password = password;
 	}
 	
-	public String getSshPassword() {
+	public String getPassword() {
 		return password;
 	}
 	

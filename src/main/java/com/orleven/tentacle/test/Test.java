@@ -70,30 +70,32 @@ public class Test {
 			vulnerDao.setConfigConnection(configDBconfig.getConfigConnection());
 			List<Vulner>  vulners  = vulnerDao.getAll();
 			for (Vulner vulner:vulners){
-			    for (ServiceBean serviceBean : assetBean.getServiceBeans()) {
-			    	WebServiceBean webServiceBean = IOC.instance().getClassobj(WebServiceBean.class);
-			    	webServiceBean.setValueByServiceBean(serviceBean);
-			    	webServiceBean.setProtocolType("http");
-			    	
-			    	WebScriptBase webScriptBase = null;
-			    	webScriptBase = (WebScriptBase) IOC.instance().getClassobj(vulner.getScriptName());
-
-			    	webScriptBase.setWebServiceBean(webServiceBean);
-			    	webScriptBase.setAssetInfoBean(assetInfoBean);
-			    	webScriptBase.getVulnerBean().setVulner(vulner);
-			    	webScriptBase.setUrlPath("/S2-016/default.action");
-			    	webScriptBase.setCookies("");
-			    	webScriptBase.prove();
-			    	if(webScriptBase.getVulnerBean().getIsVulner() == Permeate.isVulner){
-			    		System.out.println("********************************");
-			    		System.out.println("[+] VulnerName: "+vulner.getVulnerName());
-			    		System.out.println("[+] VulnerCVE: "+vulner.getVulnerCVE());
-			    		System.out.println("[+] VulnerUrl: "+webScriptBase.getTargetUrl());
-			    		
-			    		webScriptBase.execCommand("ls");
-				    	System.out.println(webScriptBase.getVulnerBean().getProveBean().get(1).getReceiveMessage());
-			    	}
-			    }
+				if (vulner.getVulnerType().equals("Web")){
+				    for (ServiceBean serviceBean : assetBean.getServiceBeans()) {
+				    	WebServiceBean webServiceBean = IOC.instance().getClassobj(WebServiceBean.class);
+				    	webServiceBean.setValueByServiceBean(serviceBean);
+				    	webServiceBean.setProtocolType("http");
+				    	
+				    	WebScriptBase webScriptBase = null;
+				    	webScriptBase = (WebScriptBase) IOC.instance().getClassobj(vulner.getScriptName());
+	
+				    	webScriptBase.setWebServiceBean(webServiceBean);
+				    	webScriptBase.setAssetInfoBean(assetInfoBean);
+				    	webScriptBase.getVulnerBean().setVulner(vulner);
+				    	webScriptBase.setUrlPath("/S2-016/default.action");
+				    	webScriptBase.setCookies("");
+				    	webScriptBase.prove();
+				    	if(webScriptBase.getVulnerBean().getIsVulner() == Permeate.isVulner){
+				    		System.out.println("********************************");
+				    		System.out.println("[+] VulnerName: "+vulner.getVulnerName());
+				    		System.out.println("[+] VulnerCVE: "+vulner.getVulnerCVE());
+				    		System.out.println("[+] VulnerUrl: "+webScriptBase.getTargetUrl());
+				    		
+				    		webScriptBase.execCommand("ls");
+					    	System.out.println(webScriptBase.getVulnerBean().getProveBean().get(1).getReceiveMessage());
+				    	}
+				    }
+				}
 				
 			}
 			
