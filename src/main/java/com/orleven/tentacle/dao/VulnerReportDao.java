@@ -1,16 +1,14 @@
 package com.orleven.tentacle.dao;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
-import com.orleven.tentacle.entity.VulnerScript;
 
-/**
- * 漏洞库数据库接口
- * @author orleven
- * @date 2017年3月8日
- */
-public interface VulnerScriptDao {
-	
+import com.orleven.tentacle.entity.VulnerReport;
 
+
+public interface VulnerReportDao {
 	/**
 	 * 创建表
 	 * @data 2017年3月19日
@@ -23,48 +21,48 @@ public interface VulnerScriptDao {
 	 * 插入新的漏洞
 	 * @param vulner
 	 */
-	public boolean insert(VulnerScript vulnerScript);
+	public boolean insert(VulnerReport vulnerReport);
 	
 	/**
 	 * 获取所有的漏洞
 	 * @return
 	 */
-	public List<VulnerScript> getAll();
+	public List<VulnerReport> getAll();
 	
 	/**
 	 * 取出特定的漏洞
 	 * @param vulnerId
 	 * @return
 	 */
-	public VulnerScript getVulnerById(int vulnerId);
+	public VulnerReport getReportById(int reportId);
 	
 	/**
 	 * 取出特定的漏洞
 	 * @param vulnerCVE
 	 * @return
 	 */
-	public VulnerScript getVulnerByCVE(String vulnerCVE);
+	public VulnerReport getReportByVulnerId(String VulnerId);
 	
 	/**
 	 * 取出特定的漏洞
 	 * @param vulnerName
 	 * @return
 	 */
-	public VulnerScript getVulnerByName(String vulnerName);
+	public VulnerReport getReportByHost(String host);
 	
 	/**
 	 * 取出特定的漏洞
 	 * @param vulnerRank
 	 * @return
 	 */
-	public VulnerScript getVulnerByRank(String vulnerRank);
+	public VulnerReport getReportByPort(String port);
 	
 	/**
 	 * 取出特定的漏洞
 	 * @param vulnerType
 	 * @return
 	 */
-	public VulnerScript getVulnerByType(String vulnerType);
+	public VulnerReport getReportByIndex(String index);
 	
 	/**
 	 * 表格存在
@@ -80,7 +78,7 @@ public interface VulnerScriptDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean deleteAll() ;
+	public boolean deleteAll();
 
 	/**
 	 * 删除表

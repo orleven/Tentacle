@@ -63,4 +63,10 @@ public class Message {
 	 * 开始检测
 	 */
 	public static final String StartChecking  = "[+] Start checking!";
+	
+	/**
+	 * 内容分割线，用来分割漏洞验证数据
+	 */
+	public static final String ContextPartingLine  = "<---------- This is content parting line ---------->";
+
 }

@@ -74,6 +74,54 @@ public class DataUtil {
     	return text;
     }
     
+    /**
+     * ip地址转化为数字
+     * @data 2017年5月17日
+     * @param ipAddress
+     * @return
+     */
+    public static long ipToLong(String ipAddress) {  
+    	  
+        String[] addrArray = ipAddress.split("\\.");  
+  
+        long num = 0;  
+        for (int i = 0; i < addrArray.length; i++) {  
+  
+            int power = 3 - i;  
+  
+            // 1. (192 % 256) * 256 pow 3  
+            // 2. (168 % 256) * 256 pow 2  
+            // 3. (108 % 256) * 256 pow 1  
+            // 4. (108 % 256) * 256 pow 0  
+            num += ((Integer.parseInt(addrArray[i]) % 256 * Math  
+                    .pow(256, power)));  
+  
+        }  
+        return num;  
+    }  
+  
+    /**
+     * 把数字转化为ip
+     * @data 2017年5月17日
+     * @param i
+     * @return
+     */
+    public static String longToIp(long i) {  
+        return ((i >> 24) & 0xFF) + "." + ((i >> 16) & 0xFF) + "."  
+                + ((i >> 8) & 0xFF) + "." + (i & 0xFF);  
+    }  
+  
+    /**
+     * 打印漂亮二进制代码，填充左零
+     * @data 2017年5月17日
+     * @param binary
+     */
+    private static void printPrettyBinary(String binary) {  
+        String s1 = String.format("%32s", binary).replace(' ', '0');  
+        System.out.format("%8s %8s %8s %8s %n", s1.substring(0, 8), s1  
+                .substring(8, 16), s1.substring(16, 24), s1.substring(24, 32));  
+    }  
+    
 //    /**
 //     * Map trans to Json
 //     * @param params

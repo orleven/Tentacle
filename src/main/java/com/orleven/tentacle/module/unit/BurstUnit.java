@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 
 import com.orleven.tentacle.core.IOC;
+import com.orleven.tentacle.dao.imp.VulnerReportDaoImp;
 import com.orleven.tentacle.dao.imp.VulnerScriptDaoImp;
 import com.orleven.tentacle.define.Permeate;
 import com.orleven.tentacle.entity.VulnerScript;
@@ -28,16 +29,17 @@ import com.orleven.tentacle.util.FileUtil;
 public class BurstUnit {
 	
 	@Autowired
-	private VulnerScriptDaoImp vulnerDaoImp;
+	private VulnerScriptDaoImp vulnerScriptDaoImp;
+	
+//	@Autowired
+//	private VulnerReportDaoImp vulnerReportDaoImp;
+	
 	/**
 	 * 字典
 	 */
 	@Autowired
 	private BurstDictionary burstDictionary;
 	
-//	public void init(String usernameDic,String passwordDic,String pathDic){
-//		burstDictionary.load(usernameDic, passwordDic, pathDic);
-//	}
  
 	/**
 	 * SSH 爆破单元
@@ -50,7 +52,7 @@ public class BurstUnit {
     	SshWeakBurst sshWeakBurst =  IOC.ctx.getBean(SshWeakBurst.class);
     	sshWeakBurst.setSshServiceBean(sshServiceBean);
     	sshWeakBurst.setUsername("orleven");
-    	sshWeakBurst.getVulnerBean().setVulner(vulnerDaoImp.getVulnerByName("SSHWeakBurst"));
+    	sshWeakBurst.getVulnerBean().setVulner(vulnerScriptDaoImp.getVulnerByName("SSHWeakBurst"));
     	List<String> passwords = burstDictionary.getPasswords();
     	for(int i = start;i < end && i < passwords.size() ;i ++ ){
     		sshWeakBurst.setPassword(passwords.get(i));

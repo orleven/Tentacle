@@ -21,7 +21,8 @@ public class VulnerBean{
 	/**
 	 * 漏洞验证数据
 	 */
-	private List<ProveBean> proveBeans;
+	private ProveBean proveBean;
+//	private ProveBean proveBeans;
 	
 	
 	/**
@@ -32,23 +33,32 @@ public class VulnerBean{
 	private VulnerScript vulner;
 
 	public VulnerBean() {
-		proveBeans = new ArrayList<ProveBean>();
+//		proveBeans = new ArrayList<ProveBean>();
 		isVulner = Permeate.isNotVerified;
 	}
 	
 	public VulnerBean(VulnerScript vulner) {
 		this.vulner = vulner;
-		proveBeans = new ArrayList<ProveBean>();
+//		proveBeans = new ArrayList<ProveBean>();
 		isVulner = Permeate.isNotVerified;
 	}
 	
-	public void setProveBeans(List<ProveBean> proveBeans){
-		this.proveBeans = proveBeans;
+//	public void setProveBeans(List<ProveBean> proveBeans){
+//		this.proveBeans = proveBeans;
+//	}
+//	
+//	public List<ProveBean> getProveBeans(){
+//		return proveBeans;
+//	}
+	
+	public void setProveBean(ProveBean proveBean){
+		this.proveBean = proveBean;
 	}
 	
-	public List<ProveBean> getProveBeans(){
-		return proveBeans;
+	public ProveBean getProveBeans(){
+		return proveBean;
 	}
+	
 	
 	public void setIsVulner(int isVulner){
 		this.isVulner = isVulner;

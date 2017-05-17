@@ -3,6 +3,8 @@ package com.orleven.tentacle.module.bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.orleven.tentacle.define.Message;
+
 /**
  * 漏洞验证数据bean
  * @author orleven
@@ -26,6 +28,10 @@ public class ProveBean {
 		this.sendMessage = sendMessage;
 	}
 	
+	public void addSendMessage(String sendMessage){
+		this.sendMessage += sendMessage + Message.ContextPartingLine;
+	}
+	
 	public String getSendMessage(){
 		return sendMessage;
 	}
@@ -33,7 +39,12 @@ public class ProveBean {
 	public void setReceiveMessage(String receiveMessage){
 		this.receiveMessage = receiveMessage;
 	}
+	
 	public String getReceiveMessage(){
 		return receiveMessage;
+	}
+	
+	public void addReceiveMessage(String receiveMessage){
+		this.receiveMessage += receiveMessage + Message.ContextPartingLine;
 	}
 }

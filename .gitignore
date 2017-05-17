@@ -48,3 +48,4 @@ Temporary Items
 /target/
 log/
 .setting/
+.apt_generated/

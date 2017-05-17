@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import com.orleven.tentacle.core.IOC;
 import com.orleven.tentacle.module.pentest.test.ModulePentestTest;
+import com.orleven.tentacle.util.UtilTest;
 import com.orleven.tentacle.core.ControllerCenter;
 
 
@@ -27,14 +28,17 @@ public class TentacleApplication extends SpringBootServletInitializer implements
 		IOC.log = LogFactory.getLog(TentacleApplication.class);
 		IOC.ctx = SpringApplication.run(TentacleApplication.class, args);
 		ControllerCenter controllerCenter = IOC.ctx.getBean(ControllerCenter.class);
+		controllerCenter.init();
 		controllerCenter.work();
 		
 		// 测试
 		ModulePentestTest modulePentestTest = IOC.ctx.getBean(ModulePentestTest.class);
 //		modulePentestTest.init();
 //		modulePentestTest.scriptTest();
+//		modulePentestTest.sshUnitTest();
 		
-		modulePentestTest.sshUnitTest();
+		UtilTest utilTest = new UtilTest();
+		utilTest.test();
 		
 	}
 

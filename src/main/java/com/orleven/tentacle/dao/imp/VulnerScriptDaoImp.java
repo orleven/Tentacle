@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.springframework.stereotype.Component;
@@ -22,11 +24,18 @@ public class VulnerScriptDaoImp implements VulnerScriptDao{
 	 */
     private Connection configConnection;
     
-	@Override
-	public boolean insert(VulnerScript vulner) {
-		
-		return true;
-	}
+    @Resource(name="configDataSource")
+	private DataSource dataSource;
+	
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+    
+    
+    public DataSource getDataSource() {
+        return this.dataSource ;
+    }
+    
 
     public void setConfigConnection(Connection configConnection) {
         this.configConnection = configConnection;
@@ -36,6 +45,28 @@ public class VulnerScriptDaoImp implements VulnerScriptDao{
         return configConnection;
     }
     
+	@Override
+	public boolean insert(VulnerScript vulnerScript) {
+		String sql = "INSERT INTO VulnerScript " +
+				"(VulnerName,VulnerCVE,VulnerDescribe,Repaire,VulnerType,VulnerRank,ScriptName,ScriptType) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		try {
+			PreparedStatement ps = configConnection.prepareStatement(sql);
+			ps.setString(1, vulnerScript.getScriptName());
+			ps.setString(2, vulnerScript.getVulnerCVE());
+			ps.setString(3, vulnerScript.getVulnerDescribe());
+			ps.setString(4, vulnerScript.getRepaire());
+			ps.setString(5, vulnerScript.getVulnerType());
+			ps.setString(6, vulnerScript.getVulnerRank());
+			ps.setString(7, vulnerScript.getScriptName());
+			ps.setString(8, vulnerScript.getScriptType());
+			ps.executeUpdate();
+			ps.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		return true;
+	}
 	
 	@Override
 	public List<VulnerScript> getAll() {
@@ -145,23 +176,104 @@ public class VulnerScriptDaoImp implements VulnerScriptDao{
 	}
 
 	@Override
-	public boolean createTable() throws Exception {
-		String sql = "CREATE TABLE 'VulnerScript' ("
-			+ "'VulnerId'  INTEGER NOT NULL,"
-			+ "'VulnerName'  TEXT NOT NULL,"
-			+ "'VulnerCVE'  TEXT,"
-			+ "'VulnerDescribe'  TEXT,"
-			+ "'Repaire'  TEXT,"
-			+ "'VulnerType'  TEXT NOT NULL,"
-			+ "'VulnerRank'  TEXT,"
-			+ "'ScriptName'  TEXT NOT NULL,"
-			+ "'ScriptType'  TEXT NOT NULL,"
-			+ "PRIMARY KEY ('VulnerId')"
-			+ ");";
-		PreparedStatement ps = configConnection.prepareStatement(sql);
-		ps.executeUpdate();
-		ps.close();
+	public boolean createTable() {
+		try{
+			String sql = "CREATE TABLE 'VulnerScript' ("
+				+ "'VulnerId'  INTEGER NOT NULL,"
+				+ "'VulnerName'  TEXT NOT NULL,"
+				+ "'VulnerCVE'  TEXT,"
+				+ "'VulnerDescribe'  TEXT,"
+				+ "'Repaire'  TEXT,"
+				+ "'VulnerType'  TEXT NOT NULL,"
+				+ "'VulnerRank'  TEXT,"
+				+ "'ScriptName'  TEXT NOT NULL,"
+				+ "'ScriptType'  TEXT NOT NULL,"
+				+ "PRIMARY KEY ('VulnerId')"
+				+ ");";
+			PreparedStatement ps = configConnection.prepareStatement(sql);
+			ps.executeUpdate();
+			ps.close();
+		}catch (SQLException e) {
+			return false;
+		}
 		return true;
+	}
+
+
+	@Override
+	public boolean isTableExist(){
+		boolean flag = false;
+		try {
+			String sql = "select * from sqlite_master where type = 'table' and name = 'VulnerScript'";
+
+			PreparedStatement ps = configConnection.prepareStatement(sql);
+			
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				flag = true;
+			}
+			rs.close();
+			ps.close();
+		}catch (SQLException e) {
+			return false;
+		}
+		return flag;
+	}
+
+
+	@Override
+	public boolean deleteAll() {
+		try {
+			String sql = "delete from VulnerScript";
+			PreparedStatement ps = configConnection.prepareStatement(sql);
+			ps.executeUpdate();
+			ps.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+
+	}
+
+
+	@Override
+	public boolean deleteTable(){
+		try {
+			String sql = "DROP TABLE VulnerScript;";
+			PreparedStatement ps = configConnection.prepareStatement(sql);
+			ps.executeUpdate();
+			ps.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean connectDB() {
+    	try {
+			this.configConnection = dataSource.getConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+    	return true;
+		
+	}
+	
+	@Override
+	public boolean closeConnection(){
+		if (configConnection != null) {
+			try {
+				configConnection.close();
+				return true;
+			} catch (SQLException e) {
+				
+			}
+		}
+		return false;
 	}
 
 }

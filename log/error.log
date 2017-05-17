@@ -1,0 +1,15 @@
+2017-05-17 11:30:02 [main] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field vulnerReportDaoImp in com.orleven.tentacle.module.pentest.test.ModulePentestTest required a bean of type 'com.orleven.tentacle.dao.imp.VulnerReportDaoImp' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.orleven.tentacle.dao.imp.VulnerReportDaoImp' in your configuration.
+

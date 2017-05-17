@@ -69,6 +69,9 @@ public class VulnerScript {
     @Column(name = "ScriptType") 
 	private String scriptType;   
     
+    public VulnerScript(){
+	}
+    
 	public VulnerScript(int vulnerId,String vulnerName,String vulnerCVE,String vulnerDescribe,String repaire,String vulnerType,String vulnerRank,String scriptName,String scriptType){
 		this.vulnerId = vulnerId;
 		this.vulnerName = vulnerName;
