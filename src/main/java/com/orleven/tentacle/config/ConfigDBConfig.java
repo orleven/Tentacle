@@ -3,8 +3,8 @@ package com.orleven.tentacle.config;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,6 +18,7 @@ public class ConfigDBConfig {
 	/**
 	 * 配置数据库
 	 */
+    @Resource(name="configDataSource")
     private DataSource configDataSource;
     
     
@@ -26,16 +27,17 @@ public class ConfigDBConfig {
 	 */
     private Connection configConnection;
     
-    public ConfigDBConfig(){
-    	configDataSource = new DBConfig().configDataSource();
-    }
+
+//    public ConfigDBConfig(){
+//    	configDataSource = new DBConfig().configDataSource();
+//    }
     
-    public void setConfigDataSource(DataSource configDataSource) {
-        this.configDataSource = configDataSource;
-    }
-    public DataSource getConfigDataSource() {
-        return configDataSource;
-    }
+//    public void setConfigDataSource(DataSource configDataSource) {
+//        this.configDataSource = configDataSource;
+//    }
+//    public DataSource getConfigDataSource() {
+//        return configDataSource;
+//    }
 	
     public void setConfigConnection(Connection configConnection) {
         this.configConnection = configConnection;

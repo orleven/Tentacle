@@ -8,39 +8,59 @@ package com.orleven.tentacle.define;
 public class Message {
 
 	/**
-	 * 网络连接超时
+	 * 验证成功
 	 */
-	public static final String Error = "[-] An error has occurred : ";
+	public static final String AuthSuccess  = "[+] Auth success!";
 	
 	/**
 	 * 网络连接超时
 	 */
-	public static final String TimeOut  = "Connection timed out !";
+	public static final String Error = "[-] An error has occurred!";
+	
+	/**
+	 * 网络连接超时
+	 */
+	public static final String ConnectionTimeOut  = "[-] Connection timed out!";
 	
 
 	/**
 	 * 网络连接重置
 	 */
-	public static final String Reset  = "Connection reset !";
+	public static final String ConnectionReset  = "[-] Connection reset!";
 	
 
 	/**
 	 * 网络连接终止
 	 */
-	public static final String Abort  = "Connection abort !";
+	public static final String ConnectionAbort  = "[-] Connection abort!";
 	
 	/**
 	 * 网络连接被关闭
 	 */
-	public static final String Closed  = "Connection is closed !";
+	public static final String ConnectionClosed  = "[-] Connection is closed!";
 	
 	/**
 	 * 验证失败
 	 */
-	public static final String AuthFail  = "Auth fail !";
+	public static final String AuthFail  = "[-] Auth fail!";
 	
 	/**
-	 * 验证成功
+	 * 漏洞不存在
 	 */
-	public static final String AuthSuccess  = "Auth success !";
+	public static final String VulnerIsNoExist  = "[-] The vulner is not exist!";
+	
+	/**
+	 * 漏洞不存在
+	 */
+	public static final String VulnerIsExist  = "[+] The vulner is exist!";
+	
+	/**
+	 * 检测中
+	 */
+	public static final String VulnerIsChecking  = "[+] The vulner is checking!";
+	
+	/**
+	 * 开始检测
+	 */
+	public static final String StartChecking  = "[+] Start checking!";
 }

@@ -3,8 +3,8 @@ package com.orleven.tentacle.config;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,6 +18,8 @@ public class TentacleDBConfig {
 	/**
 	* 数据数据库
 	*/
+
+    @Resource(name="tentacleDataSource")
 	private DataSource tentacleDataSource;
 	 
 	/**
@@ -25,18 +27,18 @@ public class TentacleDBConfig {
 	 */
 	private Connection tentacleConnection;
 	
-    public TentacleDBConfig(){
-    	tentacleDataSource = new DBConfig().tentacleDataSource();
-    }
+//    public TentacleDBConfig(){
+//    	tentacleDataSource = new DBConfig().tentacleDataSource();
+//    }
     
-	public void setTentacleDataSource(DataSource tentacleDataSource) {
-		this.tentacleDataSource = tentacleDataSource;
-	}
+//	public void setTentacleDataSource(DataSource tentacleDataSource) {
+//		this.tentacleDataSource = tentacleDataSource;
+//	}
 	    
 	    
-	public DataSource getTentacleDataSource() {
-	    return tentacleDataSource;
-	}
+//	public DataSource getTentacleDataSource() {
+//	    return tentacleDataSource;
+//	}
 	    
 	public void setTentacleConnection(Connection tentacleConnection) {
 	    this.tentacleConnection = tentacleConnection;

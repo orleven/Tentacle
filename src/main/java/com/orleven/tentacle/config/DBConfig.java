@@ -2,9 +2,11 @@ package com.orleven.tentacle.config;
 
 
 import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 
 /**
@@ -21,7 +23,8 @@ public class DBConfig {
 	 * @data 2017年3月19日
 	 * @return
 	 */
-    @Bean
+	@Bean("configDataSource")
+	@Qualifier("configDataSource") 
     public DataSource configDataSource() {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("org.sqlite.JDBC");
@@ -32,9 +35,11 @@ public class DBConfig {
     /**
      * Tentacle 重要数据存储
      * @data 2017年3月19日
-     * @param indexPath
      * @return
      */
+	@Bean("tentacleDataSource")
+	@Qualifier("tentacleDataSource") 
+	@Primary
     public DataSource tentacleDataSource() {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("org.sqlite.JDBC");

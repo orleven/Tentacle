@@ -20,10 +20,9 @@ import org.springframework.stereotype.Component;
  * @author orleven
  * @date 2017年3月23日
  */
-@Component
-@Scope("prototype")
+
 public class SshUtil {
-	
+
 	/**
 	 * 登陆验证，并退出
 	 * @data 2017年3月23日

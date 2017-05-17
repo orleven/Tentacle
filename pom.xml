@@ -83,6 +83,7 @@
    			<version>0.1.54</version>
 		</dependency>
 		
+  	 	<!-- 
 		<dependency>
 			<groupId>com.ysoserial</groupId>
 			<artifactId>ysoserial</artifactId>
@@ -90,10 +91,19 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/ysoserial.jar</systemPath>
 		</dependency>
-
+-->
+	
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 	
   	<build>
+  	
+  		<sourceDirectory>src/main/java</sourceDirectory>
+  		
     	<plugins>
       		<plugin>
         		<artifactId>maven-compiler-plugin</artifactId>
@@ -102,7 +112,41 @@
        		   		<target>1.8</target>
     	    	</configuration>
    	   		</plugin>
+   	   		
+   	   		   	 	<!--
+   	   		      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+              </descriptorRefs>
+              <finalName>xxx-jar-with-dependencies</finalName>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      -->
    	 	</plugins>
+   	 	
+ <!--
+     <resources>
+      <resource>
+        <targetPath>lib/</targetPath>
+        <directory>lib/</directory>
+        <includes>
+          <include>**/ysoserial.jar</include>
+        </includes>
+      </resource>
+    </resources>
+ -->
   	</build>
   	
   	

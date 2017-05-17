@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -19,13 +21,7 @@ import java.util.List;
  */
 public class FileUtil {
 	
-	/**
-	 * 读取文本文件所有内容
-	 * @data 2017年3月8日
-	 * @param filePath
-	 * @return
-	 */
-    public static String readAll(String filePath){
+	public static String read(String filePath){
 
         try {
             FileReader fr=new FileReader(filePath);
@@ -33,7 +29,7 @@ public class FileUtil {
             String res="";
             String buf;
             while((buf=br.readLine())!=null){
-                res+=buf;
+                res+=buf+"\r\n";
             }
             br.close();
             fr.close();
@@ -44,22 +40,17 @@ public class FileUtil {
         return null;
     }
 
+
     /**
      * 按照编码，读取文本文件所有内容
-     * @data 2017年3月8日
      * @param path
      * @param charset
      * @return
      */
-    public static String readAll(String path,String charset){
+    public static String read(String path,String charset){
 
         try {
             File file = new File(path);
-
-            if (!file.exists()) {
-                return null;
-            }
-
             FileInputStream inputStream = new FileInputStream(file);
             byte[] length = new byte[inputStream.available()];
             inputStream.read(length);
@@ -72,13 +63,7 @@ public class FileUtil {
         return null;
     }
 
-    /**
-     * 读取文件的byte,未测试
-     * @data 2017年3月8日
-     * @param filePath
-     * @return
-     */
-    public static byte[] readByte(String filePath){
+    public static byte[] readBytes(String filePath){
         try {
             FileInputStream fis = new FileInputStream(filePath);
             FileChannel channel = fis.getChannel();
@@ -92,16 +77,32 @@ public class FileUtil {
             return byteBuffer.array();
         } catch (IOException e) {
             e.printStackTrace();
+            
         }
         return null;
     }
+    
+    public static byte[] readBytes(InputStream stream)  {
+        int length;
+        byte[] bytes = null;
+		try {
+			length = stream.read();
+	        bytes = new byte[length];
+	        int in = 0;
+	        int justread;
+	        while (in < length) {
+	            justread = stream.read(bytes, in, length - in);
+	            if (justread == -1) {
+	                break;
+	            }
+	            in += justread;
+	        }
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        return bytes;
+    }
 
-    /**
-     * 按行读取文件
-     * @data 2017年3月8日
-     * @param filePath
-     * @return
-     */
     public static List<String> readLines(String filePath){
 
         try {
@@ -123,10 +124,9 @@ public class FileUtil {
 
     /**
      * 写入文件
-     * @data 2017年3月8日
-     * @param filePath
-     * @param content
-     * @param flag 是否追加
+     * @param filePath 文件地址
+     * @param content 写入内容
+     * @param flag 追加
      * @return
      */
     public static boolean write(String filePath,String content,boolean flag)
@@ -145,30 +145,48 @@ public class FileUtil {
         }
         return false;
     }
-	
-	
+    
     /**
-     * 删除一个文件下的所有文件或者删除某个文件
-     * @data 2017年3月8日
-     * @param file
+     * 写入文件
+     * @data 2017年4月29日
+     * @param filePath
+     * @param bytes
      * @return
      */
+    public static boolean write(String filePath,byte[] bytes,boolean flag){
+    	File file = new File(filePath);
+    	FileOutputStream fos = null;
+    	try {
+    		fos = new FileOutputStream(file,flag);
+			fos.write(bytes);
+			fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+    	return true;
+    }
+    
+    /**
+     * 删除一个文件下的所有文件或者删除某个文件
+     * @param file
+     */
 	public static boolean deleteAll(File file) {
+
 		while(file.exists()){
 			delSub(file);
+
 		}
 		return true;
 	}
 	
 	/**
 	 * 删除一个文件下的所有文件或者删除某个文件
-	 * @data 2017年3月8日
 	 * @param file
 	 * @return
 	 */
 	public static boolean delSub(File file){
 		try{
-
 			if (file.isFile()|| (file.list()!=null&&file.list().length == 0) ) {
 				file.delete();
 			} 
