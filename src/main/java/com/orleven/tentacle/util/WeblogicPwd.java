@@ -37,7 +37,7 @@ import com.orleven.tentacle.util.FileUtil;
 public class WeblogicPwd {
 	
 	public static String decrypt(String ciphertext,String serializedSystemIniPath){
-		Security.addProvider(new BouncyCastleProvider());
+		Security.addProvider(new BouncyCastleProvider());   // 只加载一次
 		String cleartext = "";
 		
 		if (ciphertext.startsWith("{AES}")) {
