@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 public class Communication {
 
-    @RequestMapping(value="/index",method = RequestMethod.GET)
+    @RequestMapping(value="/module/pentest",method = RequestMethod.GET)
     public String index(){
         return "hello";
     }

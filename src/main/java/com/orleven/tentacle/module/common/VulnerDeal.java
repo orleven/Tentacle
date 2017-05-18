@@ -61,7 +61,28 @@ public class VulnerDeal {
 		} 
 		return vulnerScripts;
 	}
+	
+	/**
+	 * 获取指定类型的脚本
+	 * @data 2017年5月17日
+	 * @param scriptType
+	 * @return
+	 */
+	public List<VulnerScript> getVulnerScriptsByScriptType(String scriptType){
+		List<VulnerScript> scripts = new ArrayList();
+		for(VulnerScript vulnerScript:vulnerScripts){
+			if(vulnerScript.getScriptType().equals(scriptType)){
+				scripts.add(vulnerScript);
+			}
+		}
+		return scripts;
+	}
 
+	/**
+	 * 获取所有脚本
+	 * @data 2017年5月17日
+	 * @return
+	 */
 	public List<VulnerScript> getVulnerScript(){
 		return vulnerScripts;
 	}

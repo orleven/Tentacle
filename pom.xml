@@ -33,7 +33,6 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.5.2</version>
 		</dependency>
 		
 		<dependency>
@@ -51,13 +50,11 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.8.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.xerial</groupId>
 			<artifactId>sqlite-jdbc</artifactId>
-			<version>3.16.1</version>
 		</dependency>
 
 		<dependency>
@@ -83,12 +80,23 @@
    			<version>0.1.54</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>org.nmap4j</groupId>
+			<artifactId>org.nmap4j</artifactId>
+			<version>1.0.4</version>
+		</dependency>
+		
 		<dependency>   
 		    <groupId>dom4j</groupId>    
 		    <artifactId>dom4j</artifactId>    
-		    <version>1.6</version>   
-		    
-   		</dependency>  
+		</dependency>  
+   		
+		<dependency>
+		    <groupId>org.bouncycastle</groupId>
+		    <artifactId>bcprov-jdk16</artifactId>
+		    <version>1.45</version>
+		</dependency>
+   		
   	 	<!-- 
 		<dependency>
 			<groupId>com.ysoserial</groupId>
@@ -119,6 +127,7 @@
     	    	</configuration>
    	   		</plugin>
    	   		
+
    	   		   	 	<!--
    	   		      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -165,6 +174,7 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		
 		<repository>
 			<id>spring-milestones</id>
 			<name>Spring Milestones</name>
@@ -173,6 +183,11 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+		
+ 		<repository>
+			<id>mybatis-pageable-mvn-repo</id>
+ 			<url>https://github.com/narkisr/mybatis-pageable/mvn-repo/</url>
+ 		</repository>
 	</repositories>
   
   

@@ -14,30 +14,44 @@ import com.orleven.tentacle.module.bean.BasicInfoBean;
 import com.orleven.tentacle.module.bean.ServiceBean;
 import com.orleven.tentacle.module.bean.SshServiceBean;
 import com.orleven.tentacle.module.bean.WebServiceBean;
+import com.orleven.tentacle.module.common.VulnerDeal;
 import com.orleven.tentacle.module.pentest.SshAbstractScript;
 import com.orleven.tentacle.module.pentest.WebAbstractScript;
 
+/**
+ * 模块入口，与unit相连接
+ * @author orleven
+ * @date 2017年5月17日
+ */
 @Component
 public class MainModule {
 	
-	@Autowired
-	private ConfigDBConfig  configDBconfig;
+//	@Autowired
+//	private ConfigDBConfig  configDBconfig;
 	
-	@Autowired
-	private VulnerScriptDaoImp vulnerDaoImp;
+//	@Autowired
+//	private VulnerScriptDaoImp vulnerDaoImp;
 	
+	/**
+	 * 漏洞脚本处理
+	 */
+	@Autowired
+	private VulnerDeal vulnerDeal;
+	/**
+	 * 模块初始化
+	 * @data 2017年5月17日
+	 */
 	public void init(){
 		// 数据库初始化
-//		configDBconfig = IOC.ctx.getBean(ConfigDBConfig.class);
-//		configDBconfig.setConfigDataSource(new DBConfig().configDataSource());
-
-		try {
-			configDBconfig.connectConfigDB();
-			vulnerDaoImp.setConfigConnection(configDBconfig.getConfigConnection());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
+//		try {
+//			configDBconfig.connectConfigDB();
+//			vulnerDaoImp.setConfigConnection(configDBconfig.getConfigConnection());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}	
 		
+		// 加载所有脚本
+		vulnerDeal.loadVulnerScripts();
 	}
 	
 	

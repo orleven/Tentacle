@@ -29,6 +29,8 @@ public class ControllerCenter {
 	 * @data 2017年5月17日
 	 */
 	public void init(){
+		
+		// 连接数据库
 		vulnerReportDaoImp.connectDB();
 		if(!vulnerReportDaoImp.isTableExist()){
 			vulnerReportDaoImp.createTable();

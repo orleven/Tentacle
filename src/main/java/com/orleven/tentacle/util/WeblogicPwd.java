@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -16,6 +17,9 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import com.orleven.tentacle.util.FileUtil;
 
 /**
@@ -33,6 +37,7 @@ import com.orleven.tentacle.util.FileUtil;
 public class WeblogicPwd {
 	
 	public static String decrypt(String ciphertext,String serializedSystemIniPath){
+		Security.addProvider(new BouncyCastleProvider());
 		String cleartext = "";
 		
 		if (ciphertext.startsWith("{AES}")) {

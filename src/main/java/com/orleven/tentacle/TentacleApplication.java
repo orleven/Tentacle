@@ -9,6 +9,7 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import com.orleven.tentacle.core.IOC;
+import com.orleven.tentacle.module.gather.AssetGather;
 import com.orleven.tentacle.module.pentest.test.ModulePentestTest;
 import com.orleven.tentacle.util.UtilTest;
 import com.orleven.tentacle.core.ControllerCenter;
@@ -31,8 +32,10 @@ public class TentacleApplication extends SpringBootServletInitializer implements
 		controllerCenter.init();
 		controllerCenter.work();
 		
+//		AssetGather assetGather = IOC.ctx.getBean(AssetGather.class);
+//		assetGather.test();
 		// 测试
-		ModulePentestTest modulePentestTest = IOC.ctx.getBean(ModulePentestTest.class);
+//		ModulePentestTest modulePentestTest = IOC.ctx.getBean(ModulePentestTest.class);
 //		modulePentestTest.init();
 //		modulePentestTest.scriptTest();
 //		modulePentestTest.sshUnitTest();

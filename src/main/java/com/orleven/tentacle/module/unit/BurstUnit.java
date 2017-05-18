@@ -21,7 +21,7 @@ import com.orleven.tentacle.module.pentest.script.SshWeakBurst;
 import com.orleven.tentacle.util.FileUtil;
 
 /**
- * 爆破单元（线程）
+ * 爆破单元（线程），即一个脚本多个线程
  * @author orleven
  * @date 2017年5月16日
  */
@@ -42,16 +42,20 @@ public class BurstUnit {
 	
  
 	/**
-	 * SSH 爆破单元
-	 * @data 2017年5月16日
+	 * 单个ip SSH 密码字典爆破单元
+	 * @data 2017年5月17日
+	 * @param sshServiceBean
+	 * @param start
+	 * @param end
+	 * @param username
 	 * @return
 	 * @throws InterruptedException
 	 */
     @Async("myAsync")   
-    public Future<Boolean> doSShPasswordBurstUnit(SshServiceBean sshServiceBean,int start, int end) throws InterruptedException{  
+    public Future<Boolean> doOneSShPasswordDicBurstUnit(SshServiceBean sshServiceBean,int start, int end,String username) throws InterruptedException{  
     	SshWeakBurst sshWeakBurst =  IOC.ctx.getBean(SshWeakBurst.class);
     	sshWeakBurst.setSshServiceBean(sshServiceBean);
-    	sshWeakBurst.setUsername("orleven");
+    	sshWeakBurst.setUsername(username);
     	sshWeakBurst.getVulnerBean().setVulner(vulnerScriptDaoImp.getVulnerByName("SSHWeakBurst"));
     	List<String> passwords = burstDictionary.getPasswords();
     	for(int i = start;i < end && i < passwords.size() ;i ++ ){
@@ -63,5 +67,30 @@ public class BurstUnit {
     		}
     	}
         return new AsyncResult<>(false);  
+    }  
+    
+    /**
+     * 多个ip SSH 单一用户密码爆破
+     * @data 2017年5月17日
+     * @param sshServiceBeans
+     * @param start
+     * @param end
+     * @param username
+     * @param password
+     * @return
+     * @throws InterruptedException
+     */
+    @Async("myAsync")   
+    public Future<Boolean> doMulSShSimpleBurstUnit(List<SshServiceBean> sshServiceBeans,int start, int end,String username,String password) throws InterruptedException{  
+    	SshWeakBurst sshWeakBurst =  IOC.ctx.getBean(SshWeakBurst.class);
+    	sshWeakBurst.setUsername(username);
+    	sshWeakBurst.setPassword(password);
+    	sshWeakBurst.getVulnerBean().setVulner(vulnerScriptDaoImp.getVulnerByName("SSHWeakBurst"));
+    	for(int i = start;i < end && i < sshServiceBeans.size() ;i ++ ){
+    		sshWeakBurst.setSshServiceBean(sshServiceBeans.get(i));
+    		sshWeakBurst.prove();
+    		sshWeakBurst.setCurrentCount(sshWeakBurst.getCurrentCount()+1);;
+    	}
+        return new AsyncResult<>(true);  
     }  
 }
