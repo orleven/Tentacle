@@ -1,16 +1,14 @@
 package com.orleven.tentacle.module.gather;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.nmap4j.Nmap4j;
-import org.nmap4j.core.nmap.ExecutionResults;
 import org.nmap4j.core.nmap.NMapExecutionException;
 import org.nmap4j.core.nmap.NMapInitializationException;
-import org.nmap4j.data.NMapRun;
-import org.nmap4j.data.nmaprun.Host;
 import org.springframework.stereotype.Component;
+
+import com.orleven.tentacle.module.bean.AssetBean;
 
 /**
  * 资产扫描模块
@@ -26,47 +24,16 @@ public class AssetGather {
 	 * 则需要填写tools/windows/nmap，并复制nmap.exe 重命名为nmap
 	 */
 	private String nmapPath ;
-	/**
-	 * 扫描间隔 30毫秒发包 --scan-delay 30ms
-	 */
-	private String scanDelayFlag ;
 	
 	/**
-	 * 扫描方式
+	 * 扫描运行标志
 	 */
-	private Map<String,String> flags ;
+	private boolean runFlag ;
 	
 	public AssetGather(){
 		this.nmapPath = "tools/windows/nmap";
-		this.scanDelayFlag = "";
-		this.flags = new HashMap();
-		this.flags.put("SpeedSystemScan", " -T4 -O -oX ");
-//		this.flags.put("PortScan", " -T4 -O -oX ");
-//		this.flags.put("SpeedPortScan", " -T4  -oX ");
-		this.flags.put("Speed1000PortScan", " -T4  -oX ");
-		this.flags.put("SpeedAllPortScan", " -T4 -p- -oX ");
 	}
-
-	public void test(){
-		 Nmap4j nmap4j = null ;		 
-		 try {
-			 nmap4j = new Nmap4j( "tools/windows/nmap" ) ;	
-			 nmap4j.includeHosts( "192.168.199.130" ) ;
-//			 nmap4j.excludeHosts( "192.168.199.129" ) ;
-			 nmap4j.addFlags( "-oX -O -T4" ) ;
-			 nmap4j.execute();
-			 if(!nmap4j.hasError() ) {
-				 System.out.println(nmap4j.getOutput()) ;
-			 } else {
-				 System.out.println( nmap4j.getExecutionResults().getErrors() ) ;
-			 }
-		 } catch (NMapInitializationException e) {
-				e.printStackTrace();
-		 } catch (NMapExecutionException e) {
-				e.printStackTrace();
-		 }
-	}
-
+	
 	/**
 	 * 设置nmap路径
 	 * nmap地址 后面自动填充 /bin/nmap
@@ -79,7 +46,50 @@ public class AssetGather {
 		this.nmapPath = nmapPath ;
 	}
 	
-	public void setScanDelayFlag(String scanDelayFlag){
-		this.scanDelayFlag = " --scan-delay " + scanDelayFlag+" " ;
+	/**
+	 * nmap自定义扫描,使用时请设置好nmap路径
+	 * @data 2017年5月18日
+	 * @param includeHosts
+	 * @param excludeHosts
+	 * @param flags
+	 * @return
+	 */
+	public String nmapScan(String includeHosts,String excludeHosts,String flags){
+		Nmap4j nmap4j = null ;	
+		String result = null;
+		try {
+			nmap4j = new Nmap4j(this.nmapPath) ;
+			nmap4j.includeHosts(includeHosts) ;
+			nmap4j.excludeHosts(excludeHosts) ;
+			nmap4j.addFlags(flags) ;
+			nmap4j.execute();
+			if(!nmap4j.hasError() ) {
+				result = nmap4j.getOutput();
+			}else{
+				 System.out.println( nmap4j.getExecutionResults().getErrors() ) ;
+			}
+		} catch (NMapInitializationException e) {
+			e.printStackTrace();
+		} catch (NMapExecutionException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
+	
+	/**
+	 * 全方面全端口扫描
+	 * @data 2017年5月18日
+	 * @return
+	 */
+	public List<AssetBean> FullScan(){
+		List<AssetBean> assetBeans = null;
+		
+//		assetBeans = new ArrayList<AssetBean>();
+		
+		return assetBeans;
+	}
+	
+
+
+	
 }
