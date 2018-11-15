@@ -1,0 +1,8 @@
+sa
+admin
+guest
+root
+administrator
+test
+SYS
+SYSTEM

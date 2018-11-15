@@ -1,0 +1,7 @@
+admin
+administrator
+manager
+test
+web
+root
+user

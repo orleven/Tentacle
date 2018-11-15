@@ -1,0 +1,6 @@
+itsm
+root
+mysql
+oracle
+user
+test

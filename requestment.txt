@@ -1,0 +1,11 @@
+pycrypto      
+sslscan
+pycryptodome
+html5lib
+requests
+BeautifulSoup4
+redis
+paramiko
+pycurl
+openpyxl
+selenium

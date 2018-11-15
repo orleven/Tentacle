@@ -18,7 +18,10 @@ Temporary Items
 .apdisk
 target/
 log/
+output/
+data/
 .setting/
+.idea/
 .apt_generated/
 .classpath
 .factorypath
