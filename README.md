@@ -61,15 +61,15 @@ py -3 tentacle.py -n -tS 8d4b37597aaec25e  -o test
 1. scan timeout bug
 2. struts2 mixtake bug
 3. crawler module
-6. log color
-7. module(script) clean up
-8. server model
-9  client model
-10. someone gbk code and log bug
-11. update
-12. config(proxy...)
-13. port scan
-14. and...
+4. log color
+5. module(script) clean up
+6. server model
+7. client model
+8. someone gbk code and log bug
+9. update
+10. config(proxy...)
+11. port scan
+12. and...
 
 
 ### Thanks
