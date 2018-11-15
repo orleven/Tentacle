@@ -1,13 +1,15 @@
 # Tentacle
 
+```
 .___________. _______ .__   __. .___________.    ___       ______  __       _______
 |           ||   ____||  \ |  | |           |   /   \     /      ||  |     |   ____|{0.1.0#test}
 `---|  |----`|  |__   |   \|  | `---|  |----`  /  ^  \   |  ,----'|  |     |  |__
     |  |     |   __|  |  . `  |     |  |      /  /_\  \  |  |     |  |     |   __|
     |  |     |  |____ |  |\   |     |  |     /  _____  \ |  `----.|  `----.|  |____
-    |__|     |_______||__| \__|     |__|    /__/     \__\ \______||_______||_______| http://tentacle.orleven.com
+    |__|     |_______||__| \__|     |__|    /__/     \__\ \______||_______||_______| http://www.orleven.com
 
 
+```
 
 Just for pentest.
 
@@ -52,7 +54,7 @@ py -3 tentacle.py -n -tS 8d4b37597aaec25e  -o test
 
 ### Update
 
-[2018-11-13] code refactoring and fix nomal model's bug.
+[2018-11-15] code refactoring and fix nomal model's bug.
 
 ### Coming
 
@@ -67,7 +69,7 @@ py -3 tentacle.py -n -tS 8d4b37597aaec25e  -o test
 11. update
 12. config(proxy...)
 13. port scan
-14. and`...`
+14. and...
 
 
 ### Thanks
