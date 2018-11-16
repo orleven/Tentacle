@@ -211,6 +211,9 @@ def target_register(args):
     elif args.target_task:
         conf['target_task'] = args.target_task
 
+    elif args.target_search_engine:
+        conf['target_search_engine'] = args.target_search_engine
+
     else:
         exit(logger.error("Can't find any targets. Please load target by iS/iN/iF."))
 

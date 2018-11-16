@@ -41,7 +41,7 @@ def update_program():
         stderr = get_safe_ex_string(ex)
 
     if success:
-        logger.sysinfo("The latest revision '%s'" % (get_revision_number()))
+        logger.success("The latest revision '%s'" % (get_revision_number()))
     else:
         if "Not a git repository" in stderr:
             msg = "Not a valid git repository. Please checkout the 'orleven/tentacle' repository "

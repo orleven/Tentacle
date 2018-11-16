@@ -61,7 +61,11 @@ def exec(data):
 
 
 def rebound(data):
-    time.sleep(1)
+    data = init(data, 'web')
+    if data['url'] != None:  # for web
+        time.sleep(0.5)
+    else:
+        time.sleep(1)
     # print(data["dic_one"])
     if random.randint(1, 10) > 7:
         data['flag'] = True
@@ -84,6 +88,7 @@ def _test(data):
 
 
 if __name__ == '__main__':
+
     data = {
         "target_host": "",
         "target_port": "",

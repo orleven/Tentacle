@@ -27,16 +27,17 @@ py -3 tentacle.py --help
 py -3 tentacle.py -n --show
 
 # Load modual by -m (e.g. web_status,@web)
-py -3 tentacle.py -n -m web_status                       # Load web_status module
-py -3 tentacle.py -n -m @web                             # Load all module of web path
-py -3 tentacle.py -n -m web_status,@web                  # Load all module of web path and web_status module
-py -3 tentacle.py -n -m *                                # Load all module
+py -3 tentacle.py -n -m web_status                           # Load web_status module
+py -3 tentacle.py -n -m @web                                 # Load all module of web path
+py -3 tentacle.py -n -m web_status,@web                      # Load all module of web path and web_status module
+py -3 tentacle.py -n -m *                                    # Load all module
 
 # Load target by iS/iN/iF/iT.
 py -3 tentacle.py -n -m web_status -iS www.examples.com
 py -3 tentacle.py -n -m web_status -iN 192.168.111.0/24
 py -3 tentacle.py -n -m web_status -iF target.txt
-py -3 tentacle.py -n -m web_status -iT dcc54c3e1cc2c2e1 # Load task by recode's target
+py -3 tentacle.py -n -m web_status -iT dcc54c3e1cc2c2e1      # Load task by recode's target
+py -3 tentacle.py -n -m web_status -sE "powered by discuz"   # Load task by baidu/bing/google/360so
 
 # Show all function of module by -f show or -f help
 py -3 tentacle.py -n -m web_status -f show
@@ -66,10 +67,9 @@ py -3 tentacle.py -n -tS 8d4b37597aaec25e  -o test
 5. server model
 6. client model
 7. someone gbk code and log bug
-8. update
-9. config(proxy...)
-10. port scan
-11. baidu/bing/googole search api
+8. config(proxy...)
+9. port scan
+10. shadan/zoomeye earch api
 
 
 ### Thanks

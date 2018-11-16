@@ -96,8 +96,6 @@ class logger:
     def info(self, msg, *args, **kwargs):
         self.logger.info(msg, *args, **kwargs)
 
-
-
     def log(self, level, msg, *args, **kwargs):
         self.logger.log(level, msg, *args, **kwargs)
 

@@ -23,6 +23,7 @@ from lib.utils.iputil import build
 from lib.utils.iputil import check_host
 from lib.utils.iputil import check_ip
 from lib.utils.iputil import check_ippool
+from lib.api.search import search_engine
 from script import init
 
 
@@ -136,6 +137,10 @@ class Engine():
                 else:
                     self._load_target(_row[2] + ":" + _row[3])
             logger.sysinfo("Loading target: %s" % (conf['target_task']))
+        elif 'target_search_engine' in conf.keys():
+            logger.sysinfo("Loading target by baidu/bing/google/360so: %s" % (conf['target_search_engine']))
+            for _url in search_engine(conf['target_search_engine']):
+                self._load_target(_url)
         else:
             sys.exit(logger.error("Can't load any targets! Please check input." ))
 

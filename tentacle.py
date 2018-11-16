@@ -43,8 +43,8 @@ def arg_set(parser):
     base_target_group.add_argument('-iN', "--target_network",metavar='IP/Mask', type=str, default=None,help='Generate IP from IP/MASK. (e.g. 192.168.111.0/24)')
     base_target_group.add_argument('-iT', "--target_task", metavar='Task', type=str, default=None,
                                    help='Taskid (e.g. c81fc4f8f91ab191)')
-    # base_target_group.add_argument('-sE', "--target_search_engine", metavar='key', type=str, default=None,
-    #                                help='Load targets from search engine(e.g. baidu/bing/google/360so)')
+    base_target_group.add_argument('-sE', "--target_search_engine", metavar='key', type=str, default=None,
+                                   help='Load targets from search engine,such as baidu/bing/google/360so. (e.g. powered by discuz)')
     # base_target_group.add_argument('-sS', "--target_shodan", metavar='key', type=str, default=None,
     #                                help='Load targets from shodan')
     # base_target_group.add_argument('-sZ', "--target_zoomeye", metavar='key', type=str, default=None,

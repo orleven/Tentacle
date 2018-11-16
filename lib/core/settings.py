@@ -7,6 +7,20 @@ import re
 import types
 import sys
 
+AGENTS_LIST = [
+    'Opera/9.80 (Windows NT 6.0) Presto/2.12.388 Version/12.14',
+    'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10240',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
+]
+
+HEADERS = {
+    'Accept-Charset':'GB2312,utf-8;q=0.7,*;q=0.7',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Encoding': 'gzip, deflate, sdch, br',
+    'User-Agent': random.choice(AGENTS_LIST),
+}
+
 GIT_REPOSITORY = "https://github.com/orleven/tentacle.git"
 
 # String representation for NULL value
