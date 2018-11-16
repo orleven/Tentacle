@@ -2,7 +2,7 @@
 
 ```
 .___________. _______ .__   __. .___________.    ___       ______  __       _______
-|           ||   ____||  \ |  | |           |   /   \     /      ||  |     |   ____|{0.1.0#test}
+|           ||   ____||  \ |  | |           |   /   \     /      ||  |     |   ____|{0.1.1#test}
 `---|  |----`|  |__   |   \|  | `---|  |----`  /  ^  \   |  ,----'|  |     |  |__
     |  |     |   __|  |  . `  |     |  |      /  /_\  \  |  |     |  |     |   __|
     |  |     |  |____ |  |\   |     |  |     /  _____  \ |  `----.|  `----.|  |____
@@ -54,22 +54,23 @@ py -3 tentacle.py -n -tS 8d4b37597aaec25e  -o test
 
 ### Update
 
-[2018-11-15] code refactoring and fix nomal model's bug.
+[2018-11-15] Code refactoring and fix  bug.
+[2018-11-16] fix bug.
 
 ### Coming
 
-1. scan timeout bug
-2. struts2 mixtake bug
-3. crawler module
-4. log color
-5. module(script) clean up
-6. server model
-7. client model
-8. someone gbk code and log bug
-9. update
-10. config(proxy...)
-11. port scan
-12. and...
+1. struts2 mixtake bug
+2. crawler module
+3. log color
+4. module(script) clean up
+5. server model
+6. client model
+7. someone gbk code and log bug
+8. update
+9. config(proxy...)
+10. port scan
+11. baidu/bing/googole search api
+12. and so on...
 
 
 ### Thanks

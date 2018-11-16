@@ -14,15 +14,12 @@ from lib.core.database import Database
 from lib.core.data import logger
 from lib.core.data import conf
 from lib.core.data import paths
-# from lib.core.data import engine
+from lib.core.enums import CUSTOM_LOGGING
 from lib.core.enums import  ENGINE_MODE_STATUS
 from lib.utils.output import to_excal
+from lib.core.update import update_program
 
 def init_options(args):
-    # setLoggingLevel(args)  # 20181114 备用
-    # check_update(args)  # 20181114 检测更新
-    # searchPlguin(args)   # 20181114 检测更新
-
     # if args.module == ''
     # conf.MODULE_NAME =
     # -------------------------------
@@ -30,8 +27,10 @@ def init_options(args):
 
     conf.VERBOSE = args.verbose
     conf.OUT = args.out
+    if args.debug:
+        logger.set_level(CUSTOM_LOGGING.DEBUG)
 
-
+    check_update(args)
     show_task(args)
     module_register(args)
     function_register(args)
@@ -47,10 +46,10 @@ def init_options(args):
 
 
 
-# def check_update(args):
-#     if args.update:
-#         updateProgram()
-#         sys.exit(0)
+def check_update(args):
+    if args.update:
+        update_program()
+        sys.exit(0)
 
 
 def function_register(args):
@@ -171,11 +170,11 @@ def module_register(args):
                 # handle input: "-m test"  "-m test.py"
                 else:
                     _path = os.path.abspath(os.path.join(paths.SCRIPT_PATH, _module))
-
                 if os.path.isfile(_path):
                     modules.append('.'.join(re.split('[\\\\/]', _path[_len:-3])))
                 else:
                     msg = 'Module is\'t exist: %s' % _module
+                    logger.error(_path)
                     logger.error(msg)
 
         if len(modules) < 0:

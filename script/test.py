@@ -9,6 +9,7 @@ __author__ = 'orleven'
 import time
 import random
 
+
 def info(data):
     """
     Get script module's info.
@@ -31,22 +32,22 @@ def prove(data):
     :param data:
     :return:
     """
+    init(data, 'http')
     time.sleep(1)
     if random.randint(1, 10) > 7:
-        data['flag'] = True
+        data['flag'] = 1
     elif random.randint(1, 10) > 5:
-        return data
+        data['flag'] = -1
     else:
-        data['flag'] = False
+        data['flag'] = 0
     data['res'].append({})
     data['data'].append({})
     data['other'] = {}
     return data
 
 
-def exec(data=None):
+def exec(data):
     time.sleep(1)
-    # print(data["dic_one"])
     if random.randint(1, 10) > 7:
         data['flag'] = True
     elif random.randint(1, 10) > 5:
@@ -81,7 +82,8 @@ def _test(data):
     """
     return data
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     data = {
         "target_host": "",
         "target_port": "",
@@ -100,5 +102,7 @@ if __name__=='__main__':
         "local_host": "",
         "local_port": "",
     }
-
-    print(prove(data))
+    import sys
+    sys.path.append("..")
+    from script import init
+    print(prove(init(data, 'http')))

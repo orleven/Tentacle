@@ -9,7 +9,7 @@ import time
 from lib.core.enums import CUSTOM_LOGGING
 
 class logger:
-    def __init__(self, set_level="info",
+    def __init__(self, set_level=CUSTOM_LOGGING.SYSINFO,
                  name=os.path.split(os.path.splitext(sys.argv[0])[0])[-1],
                  log_name=time.strftime("%Y-%m-%d.log", time.localtime()),
                  log_path=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "log"),
@@ -26,20 +26,9 @@ class logger:
         logging.addLevelName(CUSTOM_LOGGING.ERROR, "-")
         logging.addLevelName(CUSTOM_LOGGING.WARNING, "!")
         logging.addLevelName(CUSTOM_LOGGING.DEBUG, "DEBUG")
-        self.logger = logging.getLogger(name)
 
-        if set_level.lower() == "critical":
-            self.logger.setLevel(logging.CRITICAL)
-        elif set_level.lower() == "error":
-            self.logger.setLevel(logging.ERROR)
-        elif set_level.lower() == "warning":
-            self.logger.setLevel(logging.WARNING)
-        elif set_level.lower() == "info":
-            self.logger.setLevel(logging.INFO)
-        elif set_level.lower() == "debug":
-            self.logger.setLevel(logging.DEBUG)
-        else:
-            self.logger.setLevel(logging.NOTSET)
+        self.logger = logging.getLogger(name)
+        self.set_level(set_level)
 
         if not os.path.exists(log_path):
             os.makedirs(log_path)
@@ -68,6 +57,23 @@ class logger:
             console_handler = logging.StreamHandler()
             console_handler.setFormatter(logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S"))
             self.logger.addHandler(console_handler)
+
+    def set_level(self,set_level):
+        self.logger.setLevel(set_level)
+
+
+        # if set_level.lower() == "critical":
+        #     self.logger.setLevel(logging.CRITICAL)
+        # elif set_level.lower() == "error":
+        #     self.logger.setLevel(logging.ERROR)
+        # elif set_level.lower() == "warning":
+        #     self.logger.setLevel(logging.WARNING)
+        # elif set_level.lower() == "info":
+        #     self.logger.setLevel(logging.INFO)
+        # elif set_level.lower() == "debug":
+        #     self.logger.setLevel(logging.DEBUG)
+        # else:
+        #     self.logger.setLevel(logging.NOTSET)
 
     def addHandler(self, hdlr):
         self.logger.addHandler(hdlr)

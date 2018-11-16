@@ -7,6 +7,8 @@ import re
 import types
 import sys
 
+GIT_REPOSITORY = "https://github.com/orleven/tentacle.git"
+
 # String representation for NULL value
 NULL = "NULL"
 
@@ -24,7 +26,7 @@ RESTAPI_DEFAULT_ADAPTER = "wsgiref"
 # System variables
 IS_WIN = True if sys.platform == 'win32' else False
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 SITE = "http://www.orleven.com"
 TYPE_COLORS = {"dev": 33, "test": 90, "pip": 34}
 TYPE = "dev" if VERSION.count('.') > 2 and VERSION.split('.')[-1] != '0' else "test"

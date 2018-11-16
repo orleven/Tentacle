@@ -23,6 +23,7 @@ from lib.utils.iputil import build
 from lib.utils.iputil import check_host
 from lib.utils.iputil import check_ip
 from lib.utils.iputil import check_ippool
+from script import init
 
 
 class Engine():
@@ -36,6 +37,7 @@ class Engine():
         self.queue = queue.Queue()
         self.targets = []
         self.modules = []
+        self.put_queue_flag = True
         # selff_flag = conf.FILE_OUTPUT
         # self.s_flag = conf.SCREEN_OUTPUT
         self.thread_count = self.thread_num  = conf['thread_num']
@@ -175,17 +177,19 @@ class Engine():
 
         # It can quit with Ctrl-C
         while True:
+            # self.print_progress()
             if self.thread_count > 0 and self.is_continue:
                 now_time = time.time()
                 if now_time - self.current_time >= 60:
                     self.current_time = now_time
                     self.print_progress()
 
-                if self.queue.qsize() < self.queue_pool_total:
+                if  self.put_queue_flag and self.queue.qsize() < self.queue_pool_total :
                     try:
                         next(pool)
                     except StopIteration:
-                        time.sleep(1)
+                        self.put_queue_flag = False
+
                 time.sleep(0.01)
 
             else:
@@ -226,14 +230,19 @@ class Engine():
     def scan(self):
         while True:
             data = {
-                "flag": 0,
-                "module" : None,
+                "flag": -1,
                 'target_host': None,
                 'target_port': None,
                 'url': None,
                 "data": [],
                 "res": [],
-                "other": {}
+                "other": {},
+
+                'headers': {},
+                'timeout': 5,
+                # 'local_host': None,
+                # 'local_port': None,
+                # 'password': None,
             }
 
             self.load_lock.acquire()
@@ -245,7 +254,8 @@ class Engine():
                 self.load_lock.release()
 
                 # Wait for pool
-                time.sleep(3)
+                if self.total > self.target_pool_total :
+                    time.sleep(3)
                 if self.queue.qsize() <= 0 :
                     break
 
@@ -277,9 +287,10 @@ class Engine():
                 # POC在执行时报错如果不被处理，线程框架会停止并退出
 
                 func = getattr(module, conf['func_name'])
+                module.init = init
+                module.logger = logger
                 data = func(data)
-
-                if conf.VERBOSE or data['flag']:
+                if conf.VERBOSE or data['flag'] == 1:
                     if data['flag'] == 1 :
                         self.found_count += 1
                     self.hashdb.insert(data)

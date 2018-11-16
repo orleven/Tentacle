@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
 
+import time
 from lib.utils.cipher import base64pickle
 from lib.utils.cipher import base64unpickle
+from lib.utils.output import data_to_stdout
 
 def serialize_object(object_):
     return base64pickle(object_)
@@ -29,3 +31,25 @@ def get_safe_ex_string(ex, encoding=None):
         retVal = ex.msg
     return retVal.strip()
     # return getUnicode(retVal or "", encoding=encoding).strip()
+
+def poll_process(process, suppress_errors=False):
+    """
+    Checks for process status (prints . if still running)
+    """
+
+    while True:
+        data_to_stdout(".")
+        time.sleep(1)
+
+        returncode = process.poll()
+
+        if returncode is not None:
+            if not suppress_errors:
+                if returncode == 0:
+                    data_to_stdout(" done\n")
+                elif returncode < 0:
+                    data_to_stdout(" process terminated by signal %d\n" % returncode)
+                elif returncode > 0:
+                    data_to_stdout(" quit unexpectedly with return code %d\n" % returncode)
+
+            break

@@ -2,52 +2,29 @@
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
 
-
+import re
+import random
+import requests
+from bs4 import BeautifulSoup
 
 def get_script_info(data=None):
     script_info = {
         "name": "iptodomain_icp",
-        "info": "批量ip反查域名，域名查询备案信息。ip 反查调用接口：aizhan、chinaz、114best，域名ICP调用接口：aizhan、beianbeian、sobeian",
+        "info": "search domain: aizhan、chinaz、114best, search icp: aizhan、beianbeian、sobeian.",
         "level": "low",
         "type": "info",
-        "author": "orleven",
-        "url": "",
-        "keyword": "tag:iis",
-        "source": 1
     }
     return script_info
 
 
 
 def prove(data):
-    '''
-    data = {
-        "target_host":"",
-        "target_port":"",
-        "proxy":"",
-        "dic_one":"",
-        "dic_two":"",
-        "cookie":"",
-        "url":"",
-        "flag":"",
-        "data":"",
-        "":"",
-
-    }
-
-    '''
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    }
-    timeout = 3
+    data = init(data, 'api')
     dic = _initdic(data['target_host'],data['id'])
     if dic['flag'] :
-
-        dic = _byaizhan(data['target_host'],dic,headers,timeout)
-        dic = _bychinaz(data['target_host'],dic,headers,timeout)
-        dic = _by114best(data['target_host'],dic,headers,timeout)
-
+        dic = _byaizhan(data['target_host'],dic,data['headers'],data['timeout'])
+        dic = _bychinaz(data['target_host'],dic,data['headers'],data['timeout'])
+        dic = _by114best(data['target_host'],dic,data['headers'],data['timeout'])
         if not dic['flag']:
             dic['domain'] = "Curl Failed"
     else:
@@ -56,21 +33,21 @@ def prove(data):
         for domain in dic['domain']:
             flag = False
 
-            dic,myflag = _ICPsobeian(domain,dic,headers,timeout)
+            dic,myflag = _ICPsobeian(domain,dic,data['headers'],data['timeout'])
             flag |= myflag
 
             if not myflag :
-                dic,myflag = _ICPbyaizhan(domain,dic,headers,timeout)
+                dic,myflag = _ICPbyaizhan(domain,dic,data['headers'],data['timeout'])
                 flag |= myflag
 
             if not myflag :
-                dic,myflag = _ICPbybeianbeian(domain,dic,headers,timeout)
+                dic,myflag = _ICPbybeianbeian(domain,dic,data['headers'],data['timeout'])
                 flag |= myflag
 
             # if not flag:
             #     dic['ICP'].append(domain)
     if len(dic['ICP'])>0:
-        data['flag'] = True
+        data['flag'] = 1
         for _icp in dic['ICP']:
             data['res'].append({"info": _icp})
     return data
@@ -90,7 +67,7 @@ def _initdic(target,i):
     dic['flag'] = False
     dic['domain'] = []
     dic['ICP']= []
-    import re
+
     temptext =  re.search(r'(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|[0-9])(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|[0-9])){3}',target)
     if temptext != None:
         dic['domain'].append(target)
@@ -101,8 +78,6 @@ def _byaizhan(target, dic,headers, timeout=3):
     for j in range(3):
         try:
             url = "https://dns.aizhan.com/" + target.strip(' ') + "/"
-            import requests
-            from bs4 import BeautifulSoup
             result = requests.get(url, headers=headers, timeout=int(timeout))
             soup = BeautifulSoup(result.text, "html5lib")
             alist = soup.find_all("td", class_="domain")
@@ -115,15 +90,13 @@ def _byaizhan(target, dic,headers, timeout=3):
             return dic
         except:
             pass
-    print("[-] Error for (%s)%s by aizhan" % (dic['id'], target))
+    logger.debug("Error for (%s)%s by aizhan" % (dic['id'], target))
     return dic
 
 
 def _bychinaz(target, dic,headers, timeout=3):
     for j in range(3):
         try:
-            import requests
-            from bs4 import BeautifulSoup
             url = "http://s.tool.chinaz.com/same?s=" + target.strip(' ')
             result = requests.get(url, headers=headers, timeout=int(timeout))
             soup = BeautifulSoup(result.text, "html5lib")
@@ -137,15 +110,13 @@ def _bychinaz(target, dic,headers, timeout=3):
             return dic
         except:
             pass
-    print("[-] Error for (%s)%s by chinaz" % (dic['id'], target))
+    logger.debug("Error for (%s)%s by chinaz" % (dic['id'], target))
     return dic
 
 
 def _by114best(target, dic,headers, timeout=3):
     for j in range(3):
         try:
-            import requests,random
-            from bs4 import BeautifulSoup
             url = "http://www.114best.com/ip/114.aspx?w=" + target.strip(' ')
             headers['X-Forwarded-For'] = '.'.join(
                 [str(random.randint(0, 255)), str(random.randint(0, 255)), str(random.randint(0, 255)),
@@ -163,7 +134,7 @@ def _by114best(target, dic,headers, timeout=3):
             return dic
         except:
             pass
-    print("[-] Error for (%s)%s by 114best" % (dic['id'], target))
+    logger.debug("Error for (%s)%s by 114best" % (dic['id'], target))
     return dic
 
 
@@ -174,8 +145,6 @@ def _ICPsobeian(domain, dic, headers,timeout=3):
         try:
             ICPinfo = domain
             ICPTime = "None"
-            import requests,re
-            from bs4 import BeautifulSoup
             url = "http://www.sobeian.com/search?key=" + domain.strip(' ') + "/"
             result = requests.get(url, headers=headers, timeout=int(timeout))
             soup = BeautifulSoup(result.text, "html5lib")
@@ -195,7 +164,7 @@ def _ICPsobeian(domain, dic, headers,timeout=3):
             return dic, flag
         except:
             pass
-    print("[-] Error for ICP(%s)%s by sobeian" % (dic['id'], domain))
+    logger.debug("Error for ICP(%s)%s by sobeian" % (dic['id'], domain))
     return dic, flag
 
 
@@ -204,8 +173,6 @@ def _ICPbyaizhan(domain, dic, headers,timeout=3):
     for j in range(3):
         flag = False
         try:
-            import requests
-            from bs4 import BeautifulSoup
             url = "https://icp.aizhan.com/" + domain.strip(' ') + "/"
             result = requests.get(url, headers=headers, timeout=int(timeout))
             soup = BeautifulSoup(result.text, "html5lib")
@@ -224,7 +191,7 @@ def _ICPbyaizhan(domain, dic, headers,timeout=3):
             return dic, flag
         except:
             pass
-    print("[-] Error for ICP(%s)%s by aizhan" % (dic['id'], domain))
+    logger.debug("Error for ICP(%s)%s by aizhan" % (dic['id'], domain))
     return dic, flag
 
 def _ICPbybeianbeian(domain, dic, headers,timeout=3):
@@ -232,8 +199,6 @@ def _ICPbybeianbeian(domain, dic, headers,timeout=3):
     for j in range(3):
         flag = False
         try:
-            import requests,re
-            from bs4 import BeautifulSoup
             url = "http://www.beianbeian.com/search/" + domain.strip(' ')
             result = requests.get(url, headers=headers, timeout=int(timeout))
             soup = BeautifulSoup(result.text, "html5lib")
@@ -255,5 +220,5 @@ def _ICPbybeianbeian(domain, dic, headers,timeout=3):
             return dic, flag
         except:
             pass
-    print("[-] Error for ICP(%s)%s by beianbeian" % (dic['id'], domain))
+    logger.debug("Error for ICP(%s)%s by beianbeian" % (dic['id'], domain))
     return dic, flag

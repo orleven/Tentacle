@@ -2,29 +2,23 @@
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
 
-
+import socket
+import binascii
 
 def get_script_info(data=None):
     script_info = {
         "name": "ms17_010",
-        "info": "This is a test.",
-        "level": "low",
+        "info": "ms17_010.",
+        "level": "high",
         "type": "info",
-        "author": "orleven",
-        "url": "",
-        "keyword": "tag:iis",
-        "source": 1
     }
     return script_info
 
 
 
 def prove(data):
-    port = int(data['target_port']) if int(data['target_port']) != 0 else 445
-    data['target_port'] = port
-    import socket
-    import binascii
-    socket.setdefaulttimeout(5)
+    data = init(data,'smb')
+    # socket.setdefaulttimeout(data['timeout'])
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     negotiate_protocol_request = binascii.unhexlify(
         "00000054ff534d42720000000018012800000000000000000000000000002f4b0000c55e003100024c414e4d414e312e3000024c4d312e325830303200024e54204c414e4d414e20312e3000024e54204c4d20302e313200")
@@ -33,7 +27,7 @@ def prove(data):
 
     try:
         s.settimeout(10)
-        s.connect((data['target_host'], port))
+        s.connect((data['target_host'], data['target_port']))
         s.send(negotiate_protocol_request)
         s.recv(1024)
         s.send(session_setup_request)
@@ -48,9 +42,8 @@ def prove(data):
         s.send(binascii.unhexlify(payload))
         res = s.recv(1024)
         s.close()
-
         if "\x05\x02\x00\xc0" in str(res):
-            data['flag'] = True
+            data['flag'] = 1
             data['data'].append({"info": "MS17_010"})
             data['res'].append({"info": "The vul is exist!", "MS17_010":res})
     except:

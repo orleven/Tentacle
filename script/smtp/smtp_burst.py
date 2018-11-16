@@ -2,62 +2,20 @@
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
 
-
+import time,socket,re,base64
 
 def get_script_info(data=None):
     script_info = {
-        "name": "smtp Burst",
-        "info": "This is a test.",
-        "level": "low",
+        "name": "smtp burst",
+        "info": "smtp burst.",
+        "level": "high",
         "type": "info",
-        "author": "orleven",
-        "url": "",
-        "keyword": "tag:iis",
-        "source": 1
     }
     return script_info
 
 def prove(data):
-    '''
-    data = {
-        "target_host":"",
-        "target_port":"",
-        "proxy":"",
-        "dic_one":"",
-        "dic_two":"",
-        "cookie":"",
-        "url":"",
-        "flag":"",
-        "data":"",
-        "":"",
-
-    }
-
-    '''
-
-    import time,socket,re,base64
-    socket.setdefaulttimeout(10)
-    port = int(data['target_port']) if int(data['target_port']) !=0 else 25
-    data['target_port'] = port
-
-
-
-    # try:
-
-    # s.connect((data['target_host'], port))
-    # banner = s.recv(1024)
-    # print(banner)
-    #
-    # answerUsername = str(s.recv(1024))
-    # print(answerUsername)
-    # if  "502 " in answerUsername:
-    #     print("VRFY failed")
-    # elif "250 " in answerUsername:
-    #     print("VRFY command succeeded.\nProceeding to test usernames")
-    # time.sleep(5)
-
-    # except Exception as e:
-
+    data = init(data, 'smtb')
+    socket.setdefaulttimeout(data['timeout'])
     usernamedic = _read_dic(data['dic_one']) if 'dic_one' in data.keys() else  _read_dic('dict/smtp_usernames.txt')
     passworddic = _read_dic(data['dic_two']) if 'dic_two' in data.keys() else  _read_dic('dict/smtp_passwords.txt')
     for linef1 in usernamedic:
@@ -67,9 +25,8 @@ def prove(data):
                 linef2 if '%user%' not in linef2 else str(linef2).replace("%user%", str(username))).strip(
                 '\r').strip('\n')
             try:
-
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.connect((data['target_host'], port))
+                s.connect((data['target_host'], data['target_port']))
                 banner = str(s.recv(1024))
                 emailaddress = '.'.join(data['target_host'].split('.')[1:])
                 # print(banner)
@@ -91,14 +48,12 @@ def prove(data):
                                 passanswer = str(s.recv(1024))
                                 # print(passanswer)
                                 if "235" in passanswer:
-                                    data['flag'] = True
+                                    data['flag'] = 1
                                     data['data'].append({"username": username, "password": password})
                                     data['res'].append({"info": username + "/" + password, "key": 'smtp'})
                                     return data
             except:
-
                 pass
-
     return data
 
 

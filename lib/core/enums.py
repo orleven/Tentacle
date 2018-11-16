@@ -5,10 +5,10 @@ __author__ = 'orleven'
 
 
 class CUSTOM_LOGGING:
-    SYSINFO = 90
-    SUCCESS = 80
-    ERROR = 70
-    WARNING = 60
+    SUCCESS = 90
+    ERROR = 80
+    WARNING = 70
+    SYSINFO = 60
     DEBUG = 50
 
 class EXIT_STATUS:
