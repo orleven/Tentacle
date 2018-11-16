@@ -54,8 +54,8 @@ py -3 tentacle.py -n -tS 8d4b37597aaec25e  -o test
 
 ### Update
 
-[2018-11-15] Code refactoring and fix  bug.
-[2018-11-16] fix bug.
+* [2018-11-15] Code refactoring and fix  bug.
+* [2018-11-16] fix bug.
 
 ### Coming
 
