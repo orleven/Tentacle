@@ -26,25 +26,25 @@ py -3 tentacle.py --help
 # Show all modual, and you can see it in `script` path.
 py -3 tentacle.py -n --show
 
-# Load modual by -m (e.g. web_status,@web)
-py -3 tentacle.py -n -m web_status                           # Load web_status module
+# Load modual by -m (e.g. script/info/web_status,@web)
+py -3 tentacle.py -n -m script/info/web_status               # Load web_status module
 py -3 tentacle.py -n -m @web                                 # Load all module of web path
-py -3 tentacle.py -n -m web_status,@web                      # Load all module of web path and web_status module
+py -3 tentacle.py -n -m script/info/web_status,@web          # Load all module of web path and web_status module
 py -3 tentacle.py -n -m *                                    # Load all module
 
 # Load target by iS/iN/iF/iT.
-py -3 tentacle.py -n -m web_status -iS www.examples.com
-py -3 tentacle.py -n -m web_status -iN 192.168.111.0/24
-py -3 tentacle.py -n -m web_status -iF target.txt
-py -3 tentacle.py -n -m web_status -iT dcc54c3e1cc2c2e1      # Load task by recode's target
-py -3 tentacle.py -n -m web_status -sE "powered by discuz"   # Load task by baidu/bing/google/360so
+py -3 tentacle.py -n -m script/info/web_status -iS www.examples.com
+py -3 tentacle.py -n -m script/info/web_status -iN 192.168.111.0/24
+py -3 tentacle.py -n -m script/info/web_status -iF target.txt
+py -3 tentacle.py -n -m script/info/web_status -iT dcc54c3e1cc2c2e1      # Load task by recode's target
+py -3 tentacle.py -n -m script/info/web_status -sE "powered by discuz"   # Load task by baidu/bing/google/360so
 
 # Show all function of module by -f show or -f help
-py -3 tentacle.py -n -m web_status -f show
-py -3 tentacle.py -n -m web_status -f help
+py -3 tentacle.py -n -m script/info/web_status -f show
+py -3 tentacle.py -n -m script/info/web_status -f help
 
 # Use function of modual by -m and -f  (e.g. -m web_status -f prove), and you should make sure the function of module is exist.
-py -3 tentacle.py -n -m web_status -f prove
+py -3 tentacle.py -n -m script/info/web_status -f prove
 
 # Show task' result by -tS 
 py -3 tentacle.py -n -tS 8d4b37597aaec25e
