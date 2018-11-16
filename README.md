@@ -70,7 +70,6 @@ py -3 tentacle.py -n -tS 8d4b37597aaec25e  -o test
 9. config(proxy...)
 10. port scan
 11. baidu/bing/googole search api
-12. and so on...
 
 
 ### Thanks

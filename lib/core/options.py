@@ -112,14 +112,23 @@ def engine_register(args):
     conf['thread_num'] = args.thread
 
 def module_register(args):
+    _len = len(paths.ROOT_PATH) + 1
     if args.show:
-        module_name_list = glob.glob(os.path.join(paths.SCRIPT_PATH, '*.py'))
-        msg = 'Script modual(total:%s)\n' % str(len(module_name_list) - 1)
-        for each in module_name_list:
-            _str = os.path.splitext(os.path.split(each)[1])[0]
-            if _str not in ['__init__']:
-                msg += 'Script modual: %s\n'% _str
+        msg = 'There are available modules as follows: \r\n'
+        for parent, dirnames, filenames in os.walk(paths.SCRIPT_PATH, followlinks=True):
+            for each in filenames:
+                if '__init__' in each:
+                    continue
+                file_path = os.path.join(parent, each)
+                msg += 'Script modual: %s\r\n'% file_path[_len:-3]
         sys.exit(logger.sysinfo(msg))
+        # module_name_list = glob.glob(os.path.join(paths.SCRIPT_PATH, '*.py'))
+        # msg = 'Script modual(total:%s)\n' % str(len(module_name_list) - 1)
+        # for each in module_name_list:
+        #     _str = os.path.splitext(os.path.split(each)[1])[0]
+        #     if _str not in ['__init__']:
+        #         msg += 'Script modual: %s\n'% _str
+        # sys.exit(logger.sysinfo(msg))
 
 
     input_module = args.module
@@ -128,7 +137,6 @@ def module_register(args):
         sys.exit(logger.error(msg))
 
     modules = []
-    _len = len(paths.ROOT_PATH) + 1
 
     # -m *
     if input_module == '*':
