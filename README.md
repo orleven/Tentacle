@@ -36,8 +36,8 @@ py -3 tentacle.py -n -m *                                    # Load all module
 py -3 tentacle.py -n -m script/info/web_status -iS www.examples.com
 py -3 tentacle.py -n -m script/info/web_status -iN 192.168.111.0/24
 py -3 tentacle.py -n -m script/info/web_status -iF target.txt
-py -3 tentacle.py -n -m script/info/web_status -iT dcc54c3e1cc2c2e1      # Load task by recode's target
-py -3 tentacle.py -n -m script/info/web_status -sE "powered by discuz"   # Load task by baidu/bing/google/360so
+py -3 tentacle.py -n -m script/info/web_status -iT dcc54c3e1cc2c2e1      # Load target by recode's target
+py -3 tentacle.py -n -m script/info/web_status -sE "powered by discuz"   # Load target by baidu/bing/google/360so
 
 # Show all function of module by -f show or -f help
 py -3 tentacle.py -n -m script/info/web_status -f show
@@ -51,6 +51,9 @@ py -3 tentacle.py -n -tS 8d4b37597aaec25e
 
 # Export task' result by -tS to test.xlsx
 py -3 tentacle.py -n -tS 8d4b37597aaec25e  -o test
+
+# Update by git
+py -3 tentacle.py -n --update
 ```
 
 ### Update
@@ -69,7 +72,7 @@ py -3 tentacle.py -n -tS 8d4b37597aaec25e  -o test
 7. someone gbk code and log bug
 8. config(proxy...)
 9. port scan
-10. shadan/zoomeye earch api
+10. shadan/zoomeye search api
 
 
 ### Thanks
