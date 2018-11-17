@@ -214,6 +214,9 @@ def target_register(args):
     elif args.target_search_engine:
         conf['target_search_engine'] = args.target_search_engine
 
+    elif args.target_zoomeye:
+        conf['target_zoomeye'] = args.target_zoomeye
+
     else:
         exit(logger.error("Can't find any targets. Please load target by iS/iN/iF."))
 

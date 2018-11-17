@@ -68,9 +68,17 @@ def print_dic(data):
             info = res['info'] if 'info' in res.keys() else ""
             logger.success('[%s] %s: %s'%(data['module_name'], message,info))
     elif data['flag'] == -1:
-        logger.error('[%s] %s' % (data['module_name'], message))
+        if len(data['res']) == 0:
+            logger.error('[%s] %s'%(data['module_name'], message))
+        for res in data['res']:
+            info = res['info'] if 'info' in res.keys() else ""
+            logger.error('[%s] %s: %s'%(data['module_name'], message,info))
     else:
-        logger.warning('[%s] %s' % (data['module_name'], message))
+        if len(data['res']) == 0:
+            logger.warning('[%s] %s'%(data['module_name'], message))
+        for res in data['res']:
+            info = res['info'] if 'info' in res.keys() else ""
+            logger.warning('[%s] %s: %s'%(data['module_name'], message,info))
 
 
 
