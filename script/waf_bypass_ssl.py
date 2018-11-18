@@ -10,10 +10,6 @@ def get_script_info(data=None):
         "info": "This is a test.",
         "level": "low",
         "type": "info",
-        "author": "orleven",
-        "url": "",
-        "keyword": "tag:iis",
-        "source": 1
     }
     return script_info
 

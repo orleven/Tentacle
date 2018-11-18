@@ -29,7 +29,7 @@ def prove(data):
                 info = r.info()
                 data['flag'] = 1
                 data['data'].append({"password": password})
-                data['res'].append({"info": password,"redis_info":info})
+                data['res'].append({"info": password,"key":password,"redis_info":info})
                 return data
             except:
                 pass

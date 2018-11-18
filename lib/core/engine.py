@@ -272,8 +272,8 @@ class Engine():
                     time.sleep(3)
                 if self.queue.qsize() <= 0 :
                     break
-
-            if "http://" in target or "https://" in target:
+            if target.startswith('http://') or target.startswith('https://'):
+            # if "http://" in target or "https://" in target:
                 data['url'] = target
                 protocol, s1 = urllib.parse.splittype(target)
                 host, s2 = urllib.parse.splithost(s1)

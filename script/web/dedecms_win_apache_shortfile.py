@@ -34,7 +34,7 @@ def prove(data):
                     else:
                         data['flag'] = 0
                     data['data'].append({"url": url})
-                    data['res'].append({"info": url, "key": url})
+                    data['res'].append({"info": url, "key": 'dede_admin'})
             except Exception as e:
                 continue
     return data

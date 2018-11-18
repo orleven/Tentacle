@@ -5,7 +5,9 @@ __author__ = 'orleven'
 import requests
 import chardet
 from bs4 import BeautifulSoup
+import sys
 requests.packages.urllib3.disable_warnings()
+type=sys.getfilesystemencoding()
 
 def get_script_info(data=None):
     script_info = {
@@ -20,41 +22,57 @@ def prove(data):
     data = init(data,'web')
     if data['url']:
         webkeydic = _read_dic(data['dic_one']) if 'dic_one' in data.keys() else  _read_dic('dict/web_content_key.txt')
+        codes = ['utf-8', 'gbk']
         try:
             result = requests.get(data['url'], headers=data['headers'], verify=False, timeout=data['timeout'])
-            status = str(result.status_code)
-            content = result.text
-            key = ''
-            if result.encoding != None:
-                encoding = result.encoding
-                try:
-                    content = str(content).encode(encoding).decode('utf-8')
-                except:
-                    # content = content.encode(encoding).decode('gbk') #  58.216.167.66 IBM855
-                    # content = content # 163 GBK
-                    # content = str(content).encode(encoding).decode('utf-8') # 百度  ISO-8859-1
-                    pass
-            else:
-                encoding = 'None Encoding'
-                # code = chardet.detect(title)['encoding'] if chardet.detect(title)['encoding'] not in ['ISO-8859-5','KOI8-R'] else 'gbk'
-                # print(title.decode(code)+":"+code)
-            for searchkey in webkeydic:
-                _key = searchkey.strip('\n').strip('\r').strip()
-                if _key.lower() in str(content).lower():
-                    key += _key + ','
-                    data['flag'] = 1
+        except:
+            return data
 
-            soup = BeautifulSoup(content, "html5lib")
-            title = soup.title.string if soup.title != None else "None Title"
-            title = title.strip().replace("\r", "").replace("\n", "")
-            if data['flag']:
-                data['res'].append({"info": title, "key": key[:-1], "status": status, "encoding": encoding})
+        content = result.text
+        soup = BeautifulSoup(content, "html5lib")
+        status = result.status_code
+        try:
+            title = soup.title.string
+            title = title.encode(result.encoding)
+        except:
+            title = "[None Title]".encode('utf-8')
+
+        try:
+            codes.append(type)
+            codes.append(result.encoding)
+            content = content.encode(result.encoding) if content != None else ''.encode('utf-8')
         except:
             pass
+
+        for j in range(0, len(codes)):
+            try:
+                title = title.decode(codes[j]).strip().replace("\r", "").replace("\n", "")
+                break
+            except:
+                pass
+            finally:
+                if j + 1 == len(codes):
+                    content = ''
+                    title = '[Error Code]'
+
+        key = ''
+        for searchkey in webkeydic:
+            searchkey = str(searchkey,'utf-8').replace("\r", "").replace("\n", "")
+            try:
+
+                if searchkey  in title or searchkey in content.encode(result.encoding):
+                    key += searchkey + ','
+                    data['flag'] = 1
+            except:
+                pass
+
+        if data['flag'] == 1:
+            data['res'].append({"info": title, "key": key[:-1], "status": status})
+
     return data
 
 
 
 def _read_dic(dicname):
-    with open(dicname, 'r') as f:
+    with open(dicname, 'rb') as f:
         return f.readlines()

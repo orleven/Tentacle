@@ -24,7 +24,7 @@ def prove(data):
         info = r.info()
         data['flag'] = 1
         data['data'].append({"info": "info"})
-        data['res'].append({"info":"The vul is exist!","redis_info": info})
+        data['res'].append({"info":"redis unauth","key":"info","redis_info": info})
     except :
         pass
     return data
@@ -88,7 +88,7 @@ def sshkey(data):
                 data['flag'] = 1
                 data['data'].append({"key": key, "public_key": public_key, "path": path, "name": name})
                 data['res'].append(
-                    {"info": "Success", "local_host": data["local_host"], "local_post": str(data["local_post"])})
+                    {"info": "redis unauth", "local_host": data["local_host"], "local_post": str(data["local_post"])})
     except Exception:
         pass
     return data

@@ -27,7 +27,7 @@ def prove(data):
         if 'zookeeper.version' in message:
             data['flag'] = 1
             data['data'].append({"info": "envi"})
-            data['res'].append({"info": "The vul is exist!", "zookeeper_envi": message})
+            data['res'].append({"info": "zookeeper unauth", 'key':'envi',"envi": message})
     except socket.timeout:
         pass
     except Exception as err:

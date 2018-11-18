@@ -73,7 +73,7 @@ def rebound(data):
         return data
     else:
         data['flag'] = False
-    data['res'].append({})
+    data['res'].append({"info":"","key":""})
     data['data'].append({})
     data['other'] = {}
     return data

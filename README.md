@@ -59,7 +59,7 @@ py -3 tentacle.py -n --update
 ### Update
 
 * [2018-11-15] Code refactoring and fix  bug.
-* [2018-11-16] fix bug.
+* [2018-11-18] fix log error bug.
 
 ### Coming
 
@@ -69,10 +69,9 @@ py -3 tentacle.py -n --update
 4. module(script) clean up
 5. server model
 6. client model
-7. someone gbk code and log bug
-8. config(proxy...)
-9. port scan
-10. shadan/zoomeye search api
+7. config(proxy...)
+8. port scan
+9. shadan/zoomeye search api
 
 
 ### Thanks

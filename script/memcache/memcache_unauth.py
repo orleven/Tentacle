@@ -25,7 +25,7 @@ def prove(data):
         if 'STAT' in message:
             data['flag'] = 1
             data['data'].append({"info": "stats"})
-            data['res'].append({"info": "The vul is exist!", "memcache_stats": message})
+            data['res'].append({"info": "memcache unauth", "key":"stats","memcache_stats": message})
     except socket.timeout:
         pass
     except Exception as err:

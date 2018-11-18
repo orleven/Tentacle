@@ -28,7 +28,6 @@ HEADERS = {
     "password": "password"
     }'
 '''
-ZOOMEYS_API = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGl0eSI6IjEzNzAyNjM1NjZAcXEuY29tIiwiaWF0IjoxNTQyNDQyODk3LCJuYmYiOjE1NDI0NDI4OTcsImV4cCI6MTU0MjQ4NjA5N30.uN6QIwn3082_8i7xX3ftahBQYHmqQRSaPtJULq9-KG4"
 
 
 GIT_REPOSITORY = "https://github.com/orleven/tentacle.git"

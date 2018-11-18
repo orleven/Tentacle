@@ -26,7 +26,7 @@ def prove(data):
         if 'com.alibaba.dubbo' in message:
             data['flag'] = 1
             data['data'].append({"info": "ls"})
-            data['res'].append({"info": "The vul is exist!", "dubbo_ls": message})
+            data['res'].append({"info": "Dubbo unauth", "key":"ls","dubbo_ls": message})
     except socket.timeout:
         pass
     except Exception as err:

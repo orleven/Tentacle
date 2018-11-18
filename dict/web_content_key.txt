@@ -1,6 +1,7 @@
 admin
 login
-��½
-��̨
 manage
 root
+登陆
+管理
+后台

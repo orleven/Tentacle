@@ -45,7 +45,7 @@ def prove(data):
         if "\x05\x02\x00\xc0" in str(res):
             data['flag'] = 1
             data['data'].append({"info": "MS17_010"})
-            data['res'].append({"info": "The vul is exist!", "MS17_010":res})
+            data['res'].append({"info": "MS17_010", "key":res})
     except:
         pass
     return data

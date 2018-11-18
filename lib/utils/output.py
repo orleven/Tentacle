@@ -61,26 +61,20 @@ def print_dic(data):
         address = data['target_host'] + ":" + str(data['target_port']) if data['target_port'] != 0 else data[
             'target_host']
         message = address
+
+    if len(data['res']) == 0:
+        msg = '[{0}] {1}'.format(data['module_name'], message)
+    for res in data['res']:
+        info = res['info'] if 'info' in res.keys() else ""
+        key = res['key'] if 'key' in res.keys() else ""
+        msg = '[{0}] {1}: {2}\t[{3}]'.format(data['module_name'], message, info, key)
+
     if data['flag'] == 1:
-        if len(data['res']) == 0:
-            logger.success('[%s] %s'%(data['module_name'], message))
-        for res in data['res']:
-            info = res['info'] if 'info' in res.keys() else ""
-            logger.success('[%s] %s: %s'%(data['module_name'], message,info))
+        logger.success(msg)
     elif data['flag'] == -1:
-        if len(data['res']) == 0:
-            logger.error('[%s] %s'%(data['module_name'], message))
-        for res in data['res']:
-            info = res['info'] if 'info' in res.keys() else ""
-            logger.error('[%s] %s: %s'%(data['module_name'], message,info))
+        logger.error(msg)
     else:
-        if len(data['res']) == 0:
-            logger.warning('[%s] %s'%(data['module_name'], message))
-        for res in data['res']:
-            info = res['info'] if 'info' in res.keys() else ""
-            logger.warning('[%s] %s: %s'%(data['module_name'], message,info))
-
-
+        logger.warning(msg)
 
     # for res in data['res']:
     #     info = res['info'] if 'info' in res.keys() else ""
