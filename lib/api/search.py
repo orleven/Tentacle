@@ -11,8 +11,9 @@ from random import choice
 from bs4 import BeautifulSoup
 from lib.core.settings import HEADERS
 from lib.core.settings import AGENTS_LIST
-from lib.core.settings import ZOOMEYS_API
+# from lib.core.settings import ZOOMEYS_API
 from lib.core.data import logger
+from lib.core.data import conf
 
 _Proxy = {
     'http':'http://127.0.0.1:7999',
@@ -110,11 +111,28 @@ def _google(search, page):
 def _zoomeye_api(search, page, z_type):
     """
         app:"Drupal" country:"JP"
-    """
 
-    # 认证信息
+
+    curl -X POST https://api.zoomeye.org/user/login -d '
+    {
+    "username": "username@qq.com",
+    "password": "password"
+    }'
+
+    """
     header = HEADERS
-    header["Authorization"] = "JWT " + ZOOMEYS_API
+    url_login = 'https://api.zoomeye.org/user/login'
+    try:
+        data = {
+            'username': conf['config']['zoomeye_api']['username'],
+            'password': conf['config']['zoomeye_api']['passwo1rd']
+        }
+        res = requests.post(url_login, json=data, headers=header)
+    except KeyError:
+        sys.exit(logger.error("Load tentacle config error: zoomeye_api, please check the config in tentacle.conf."))
+
+    header["Authorization"] = "JWT " + json.loads(res.text)['access_token']
+
     if z_type.lower() == 'web':
         url_api = "https://api.zoomeye.org/web/search"
     elif z_type.lower() == 'host':

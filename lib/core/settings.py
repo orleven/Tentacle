@@ -21,13 +21,14 @@ HEADERS = {
     'User-Agent': random.choice(AGENTS_LIST),
 }
 
-'''
-    curl -X POST https://api.zoomeye.org/user/login -d '
-    {
-    "username": "username@qq.com",
-    "password": "password"
-    }'
-'''
+# '''
+#     curl -X POST https://api.zoomeye.org/user/login -d '
+#     {
+#     "username": "username@qq.com",
+#     "password": "password"
+#     }'
+# '''
+# ZOOMEYS_API = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGl0eSI6IjEzNzAyNjM1NjZAcXEuY29tIiwiaWF0IjoxNTQyNTIyODg0LCJuYmYiOjE1NDI1MjI4ODQsImV4cCI6MTU0MjU2NjA4NH0.fsuyYr5Za2Zr7NCdA_92VFkS2-yKcMyiBUEVkFZAGxs"
 
 
 GIT_REPOSITORY = "https://github.com/orleven/tentacle.git"

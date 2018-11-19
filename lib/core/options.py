@@ -27,8 +27,7 @@ def init_options(args):
 
     conf.VERBOSE = args.verbose
     conf.OUT = args.out
-    if args.debug:
-        logger.set_level(CUSTOM_LOGGING.DEBUG)
+
 
     check_update(args)
     show_task(args)

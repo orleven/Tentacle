@@ -6,14 +6,17 @@ import os
 import sys
 import logging
 import argparse
-from lib.utils.output import banner
+from lib.core.data import paths
+
 from lib.core.core import normal
 # from lib.core.core import server
 # from lib.core.core import client
 # from lib.core.settings import RESTAPI_DEFAULT_PORT
 # from lib.core.settings import RESTAPI_DEFAULT_HOST
 # from lib.core.settings import RESTAPI_DEFAULT_ADAPTER
-from lib.core.init import set_paths
+from lib.core.init import init
+from lib.core.log import logger
+
 
 
 
@@ -80,21 +83,15 @@ def arg_set(parser):
     # other.add_argument("--config", type=str, help="Load config file", default=None)
 
     # Mark
-    # parser.add_argument("-k", "--key", type=str, help="The order key e.g. title、status、host", default="id")
     # parser.add_argument("-t", "--timeout", type=str, help="Timeout", default="3")
-    # parser.add_argument("-f", "--file",type=str, help="Load ip dictionary e.g. 192.168.1.2:8080", default=None)
-    # parser.add_argument("-s", "--search",type=str, help="search key in title or content,e.g. 管理,后台", default=None)
-
     return parser
 
 def handle(parser):
-    # Initialize paths
-    set_paths(os.path.dirname(os.path.realpath(__file__)))
-
-    # Print banner
-    banner()
-
     args = parser.parse_args()
+
+    # Initialize
+    paths.ROOT_PATH  = os.path.dirname(os.path.realpath(__file__))
+    init(args)
 
     if args.help:
         parser.print_help()

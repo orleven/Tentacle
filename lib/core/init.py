@@ -4,15 +4,22 @@ __author__ = 'orleven'
 
 import os
 import sys
+from lib.core.data import logger
 from lib.core.data import paths
+from lib.core.config import init_conf
+from lib.core.config import load_conf
+from lib.utils.output import banner
+from lib.core.enums import CUSTOM_LOGGING
+
+def init(args):
+    banner()
+    if args.debug:
+        logger.set_level(CUSTOM_LOGGING.DEBUG)
+    set_paths()
+    config_parser()
 
 
-def set_paths(rootPath):
-    """
-    Sets absolute paths for project directories and files
-    """
-    paths.ROOT_PATH = rootPath
-
+def set_paths():
     try:
         os.path.isdir(paths.ROOT_PATH)
     except UnicodeEncodeError:
@@ -21,8 +28,9 @@ def set_paths(rootPath):
         exit(errMsg)
         raise SystemExit
 
-
     # tentacle paths
+    logger.debug("Init tentacle path...")
+
     paths.LOG_PATH = os.path.join(paths.ROOT_PATH, "log")
     paths.OUTPUT_PATH = os.path.join(paths.ROOT_PATH, "output")
     paths.SCRIPT_PATH = os.path.join(paths.ROOT_PATH, "script")
@@ -42,3 +50,10 @@ def set_paths(rootPath):
                 os.mkdir(path)
         # else:
             # checkFile(path)
+
+def config_parser():
+    path = os.path.join(paths.CONFIG_PATH, "tentacle.conf")
+    if os.path.exists(path):
+        load_conf(path)
+    else:
+        init_conf(path)
