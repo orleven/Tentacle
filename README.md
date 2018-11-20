@@ -71,7 +71,7 @@ py -3 tentacle.py -n --update
 6. client model
 7. config(proxy...)
 8. port scan
-9. shadan/zoomeye search api
+9. shadan/fofa search api
 
 
 ### Thanks

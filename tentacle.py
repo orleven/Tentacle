@@ -52,6 +52,8 @@ def arg_set(parser):
     #                                help='Load targets from shodan')
     base_target_group.add_argument('-sZ', "--target_zoomeye", metavar='key', type=str, default=None,
                                    help='Load targets from zoomeye')
+    base_target_group.add_argument('-sG', "--target_github", metavar='key', type=str, default=None,
+                                   help='Load targets from github')
     base.add_argument('-iP', "--target_port",metavar='Port', type=int, default=None,help='Generate port  (e.g. 80)')
 
     # mode = parser.add_argument_group('Mode')

@@ -150,6 +150,12 @@ class Engine():
             for _url in urls:
                 if _url:
                     self._load_target(_url)
+
+        elif 'target_github' in conf.keys():
+            logger.sysinfo("Loading target by github: %s" %(conf['target_github']))
+            urls = search_api(conf['target_github'])
+
+
         else:
             sys.exit(logger.error("Can't load any targets! Please check input." ))
 

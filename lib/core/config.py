@@ -15,6 +15,10 @@ import configparser
 def init_conf(path):
     logger.debug("Init tentacle config...")
     configs = {
+        "basic": {
+            # "timeout": "5",
+
+        },
         "proxy": {
             "http_proxy": "http://127.0.0.1:1080",
             "https_proxy": "https://127.0.0.1:1080"
@@ -32,8 +36,7 @@ def init_conf(path):
             "password": "123456"
         },
         "github_api": {
-            "username": "admin",
-            "password": "123456"
+            "token": "test",
         },
     }
     cf = configparser.ConfigParser()

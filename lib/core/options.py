@@ -216,6 +216,9 @@ def target_register(args):
     elif args.target_zoomeye:
         conf['target_zoomeye'] = args.target_zoomeye
 
+    elif args.target_github:
+        conf['target_github'] = args.target_github
+
     else:
         exit(logger.error("Can't find any targets. Please load target by iS/iN/iF."))
 

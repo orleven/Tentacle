@@ -22,6 +22,8 @@ def prove(data):
     data = init(data, 'web')
     if data['url']:
         codes = ['utf-8','gbk']
+        status = str(0)
+        title= ''
         try:
             result = requests.get(data['url'], headers=data['headers'], verify=False, timeout=data['timeout'])
             soup = BeautifulSoup(result.text, "html5lib")
@@ -50,10 +52,10 @@ def prove(data):
                 finally:
                     if j + 1 == len(codes):
                         title = '[Error Code]'
-
+        except:
+            pass
+        if  status !='0':
             data['flag'] = 1
-            data['res'].append({"info": title + ' ', "key": status, "status": status})
-        except :
-            data['flag'] = 0
+            data['res'].append({"info": title , "key": status, "status": status})
     return data
 
