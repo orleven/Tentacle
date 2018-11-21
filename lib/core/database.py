@@ -32,10 +32,11 @@ class Database(object):
         self.connection.commit()
 
     def insert_task(self, taskid,task_value,status):
-
+        logger.debug("Insert task: %s" % (taskid))
         self.execute("INSERT INTO task (taskid,task_value,status) VALUES (?, ?, ?)",(taskid,serialize_object(task_value),status,))
 
     def update_task_status(self, taskid, status ):
+        logger.debug("Update task status to %s: %s" % (status,taskid))
         self.execute("UPDATE task set status = ? WHERE taskid = ?",(status,taskid))
 
     def detele_task(self, taskid):

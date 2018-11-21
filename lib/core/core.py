@@ -45,13 +45,13 @@ def normal(args):
     database.connect()
     database.init()
     database.insert_task(name, args, TASK_INIT_STATUS)
-
     engine = Engine(name)
     engine.load_modules()
     engine.load_targets()
     database.update_task_status(name, TASK_RUN_STATUS)
     engine.run()
     database.update_task_status(name, TASK_COMPLETE_STATUS)
+
 
 
 

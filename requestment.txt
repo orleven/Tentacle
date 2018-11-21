@@ -9,3 +9,4 @@ paramiko
 pycurl
 openpyxl
 selenium
+shodan

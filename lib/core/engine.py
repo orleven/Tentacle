@@ -32,6 +32,7 @@ class Engine():
 
     def __del__(self):
         self.hashdb.disconnect()
+        logger.debug("Task over: %s" %self.name )
 
     def __init__(self,name):
         logger.sysinfo("Task created: %s",name)
@@ -53,6 +54,7 @@ class Engine():
         self.hashdb = HashDB(os.path.join(paths.DATA_PATH,name))
         self.hashdb.connect(name)
         self.hashdb.init()
+        logger.debug("Engine inited.")
         # self.console_width = getTerminalSize()[0] - 2
 
     def _load_module(self,module_name):
@@ -155,9 +157,27 @@ class Engine():
             logger.sysinfo("Loading target by github: %s" %(conf['target_github']))
             urls = search_api(conf['target_github'])
 
+        elif 'target_shodan' in conf.keys():
+            logger.sysinfo("Loading target by shadon: %s" % (conf['target_shodan']))
+            urls = search_api(conf['target_shodan'])
+            for _url in urls:
+                if _url:
+                    self._load_target(_url)
+
+        elif 'target_fofa' in conf.keys():
+            logger.sysinfo("Loading target by fofa: %s" % (conf['target_fofa']))
+            urls = search_api(conf['target_fofa'])
+            for _url in urls:
+                if _url:
+                    self._load_target(_url)
+
 
         else:
             sys.exit(logger.error("Can't load any targets! Please check input." ))
+
+        if len(self.targets) == 0:
+            sys.exit(logger.error("Can't load any targets! Please check input."))
+
 
 
     def set_thread_daemon(self,thread):
@@ -195,6 +215,7 @@ class Engine():
             self.set_thread_daemon(t)
             t.start()
 
+        logger.debug("Wait for thread...")
         # It can quit with Ctrl-C
         while True:
             # self.print_progress()

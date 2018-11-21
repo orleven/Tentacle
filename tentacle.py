@@ -48,12 +48,14 @@ def arg_set(parser):
                                    help='Taskid (e.g. c81fc4f8f91ab191)')
     base_target_group.add_argument('-sE', "--target_search_engine", metavar='key', type=str, default=None,
                                    help='Load targets from search engine,such as baidu/bing/google/360so. (e.g. powered by discuz)')
-    # base_target_group.add_argument('-sS', "--target_shodan", metavar='key', type=str, default=None,
-    #                                help='Load targets from shodan')
+    base_target_group.add_argument('-sS', "--target_shodan", metavar='key', type=str, default=None,
+                                   help='Load targets from shodan  (e.g. powered by discuz)')
     base_target_group.add_argument('-sZ', "--target_zoomeye", metavar='key', type=str, default=None,
-                                   help='Load targets from zoomeye')
+                                   help='Load targets from zoomeye  (e.g. powered by discuz)')
+    base_target_group.add_argument('-sF', "--target_fofa", metavar='key', type=str, default=None,
+                                   help='Load targets from fofa  (e.g. powered by discuz)')
     base_target_group.add_argument('-sG', "--target_github", metavar='key', type=str, default=None,
-                                   help='Load targets from github')
+                                   help='Load targets from github  (e.g. powered by discuz)')
     base.add_argument('-iP', "--target_port",metavar='Port', type=int, default=None,help='Generate port  (e.g. 80)')
 
     # mode = parser.add_argument_group('Mode')
@@ -105,6 +107,7 @@ def handle(parser):
         normal(args)
     else:
         parser.print_help()
+
 
 
 if __name__=='__main__':

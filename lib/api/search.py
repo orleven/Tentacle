@@ -5,9 +5,12 @@ __author__ = 'orleven'
 import requests
 import re
 import json
+import time
 import sys
+import shodan
 from urllib.parse import quote
 from random import choice
+from lib.utils.cipher import base64encode
 from bs4 import BeautifulSoup
 from lib.core.settings import HEADERS
 from lib.core.settings import AGENTS_LIST
@@ -28,9 +31,20 @@ def search_api(search,page = 5):
                 for url in z:
                     target_list.append(url)
 
+    elif 'target_shodan' in conf.keys():
+        for z in _shodan_api(search, page):
+            # for url in z:
+                target_list.append(z)
+
+    elif 'target_fofa' in conf.keys():
+        for z in _fofa_api(search, page):
+            # for url in z:
+                target_list.append(z)
+
     elif 'target_github' in conf.keys():
         for z in _github_api(search, page):
-            print(z)
+            target_list.append(z)
+
     return list(set(target_list))
 
 def search_engine(search,page = 5):
@@ -139,15 +153,16 @@ def _zoomeye_api(search, page, z_type):
     elif z_type.lower() == 'host':
         url_api = "https://api.zoomeye.org/host/search"
     else:
-        logger.error("Error Zoomeye api with type {0}.".format(z_type))
+        logger.error("Error zoomeye api with type {0}.".format(z_type))
         return None
-    logger.sysinfo("Using Zoomeye api with type {0}.".format(z_type))
-    for n in range(1, page + 1):
+    logger.sysinfo("Using zoomeye api with type {0}.".format(z_type))
+    for n in range(1, page+1):
+        logger.debug("Find zoomeye url of %d page..." % int(n))
         try:
             data = {'query': search, 'page': str(n)}
             res = requests.get(url_api, params=data, headers=headers)
             if int(res.status_code) == 422:
-                sys.exit(logger.error("Error Zoomeye api token."))
+                sys.exit(logger.error("Error zoomeye api token."))
             if z_type.lower() == 'web':
                 result = re.compile('"url": "(.*?)"').findall(res.text)
             elif z_type.lower() == 'host':
@@ -157,6 +172,69 @@ def _zoomeye_api(search, page, z_type):
         except Exception:
             yield None
 
+
+def _shodan_api(search, page):
+    '''
+        Please input your Shodan API Key (https://account.shodan.io/).
+    '''
+    try:
+        token = conf['config']['shodan_api']['token']
+    except KeyError:
+        sys.exit(logger.error("Load tentacle config error: shodan_api, please check the config in tentacle.conf."))
+
+    logger.sysinfo("Using shodan api...")
+    anslist = []
+    for p in range(1,page+1):
+        logger.debug("Find shodan url of %d page..." % int(p))
+        try:
+            api = shodan.Shodan(token)
+            result = api.search(query=search, page=p)
+        except shodan.APIError as e:
+            logger.error("Error shodan api access, maybe you should pay $49 and enjoy service.")
+            return anslist
+
+        total = result.get('total')
+        if total == 0:
+            logger.error("Found 0 target.")
+            return anslist
+        else :
+            for match in result.get('matches'):
+                anslist.append(match.get('ip_str') + ':' + str(match.get('port')))
+
+    return anslist
+
+
+def _fofa_api(search, page):
+    '''
+           https://fofa.so/api#auth
+    '''
+    headers = HEADERS
+    url_login = 'https://fofa.so/api/v1/search/all'
+    result = []
+    try:
+        email = conf['config']['fofa_api']['email']
+        key = conf['config']['fofa_api']['token']
+    except KeyError:
+        sys.exit(logger.error("Load tentacle config error: zfofa_api, please check the config in tentacle.conf."))
+
+    logger.sysinfo("Using fofa api...")
+    search = str(base64encode(bytes(search, 'utf-8')),'utf-8')
+    for p in range(1,page+1):
+        logger.debug("Find fofa url of %d page..." % int(p))
+        try:
+            res = requests.post(url_login + '?email={0}&key={1}&page={2}&qbase64={3}'.format(email, key,p, search), headers=headers)
+        except :
+            res = None
+        if res !=None :
+            if int(res.status_code) == 401:
+                sys.exit(logger.error("Error fofa api access, maybe you should pay fofa coin and enjoy service."))
+            else:
+                res_json = json.loads( res.text)
+                if res_json["error"] is None:
+                    for item in res_json.get('results'):
+                        logger.info("(No test!)Found: %s" % item[0])
+                        result.append(item[0])
+    return result
 
 
 def _github_api(search, page):
@@ -193,25 +271,30 @@ def _github_api(search, page):
         total = res_json["total_count"]
         logger.sysinfo("Found github url: %d"%int(total))
         page_num = (total // per_page_limit) + 1
-
-        for p in range(page_num):
+        page_num = page_num if page < page_num else page
+        git_urls = []
+        for p in range(1,page_num + 1):
             # Search url
-            git_urls = []
+
             _url_api = "https://api.github.com/search/code?sort=updated&order=desc&page=%d&per_page=%s&q=" % (p,per_page_limit)
             try:
                 _resp = requests.get(_url_api + search, headers=headers, timeout=github_timeout)
             except:
                 _resp = None
             if _resp and _resp.status_code == 200:
-                logger.sysinfo("Found github url of %d page..." % int(p))
+                logger.debug("Find github url of %d page..." % int(p))
                 try:
                     _res_json = json.loads(_resp.content)
                     for i in range(len(_res_json['items'])):
                         git_urls.append(_res_json['items'][i]["html_url"])
                 except:
                     pass
+            elif int(_resp.status_code) == 422:
+                logger.error("Warning: github api access rate limit 20/minute, 5000/hour, 1000 search results.")
+                logger.error("Error github api token. Wait for a minute.")
 
-                # Access url and match
+                # Access url and match, 既然限制了，那就干点其他事情。
+                logger.sysinfo("So, this program will access target url and wait for rate limit. ")
                 git_urls = list(set(git_urls))
                 for url in git_urls:
                     try:
@@ -221,7 +304,6 @@ def _github_api(search, page):
                     if _resp and _resp.status_code == 200:
 
                         for i in InformationRegex:
-                            # try:
                             _text = _resp.text.lower()
                             _text = _text.replace('&quot;', '"')
                             _text = _text.replace('&amp;', '&')
@@ -239,10 +321,22 @@ def _github_api(search, page):
                                             logger.sysinfo("Found info: %s [%s]" % (url, _re))
                                         elif 'pass' in InformationRegex[i]:
                                             logger.sysinfo("Found info: %s [%s]" % (url, _re))
-
-
-            elif int(_resp.status_code) == 422:
-                sys.exit(logger.error("Error github api token."))
+                    elif _resp and _resp.status_code == 404:
+                        pass
+                    else :
+                        logger.error(_resp.text)
+                        logger.error(_resp.status_code)
+                        time.sleep(60)
+                git_urls = []
+            elif int(_resp.status_code) == 403:
+                p = p - 1
+                logger.error("Too many times for access. So we should wait for a minute.")
+                time.sleep(60)
+            else:
+                p = p - 1
+                logger.error(_resp.text)
+                logger.error(_resp.status_code)
+                time.sleep(60)
     elif int(resp.status_code) == 422:
         sys.exit(logger.error("Error github api token."))
     return []

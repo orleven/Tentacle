@@ -3,6 +3,7 @@
 __author__ = 'orleven'
 
 import io
+import re
 import string
 import hashlib
 from base64 import b64encode, b64decode
@@ -25,8 +26,12 @@ def md5(message):
     obj.update(message.encode(encoding='utf-8'))
     return obj.hexdigest()
 
-def base64decode(message):
-    return b64decode(message)
+def base64decode(message, altchars=b'+/'):
+    # data = re.sub(rb'[^a-zA-Z0-9%s]+' % altchars, b'', message)  # normalize
+    # missing_padding = len(data) % 4
+    # if missing_padding:
+    #     data += b'=' * (4 - missing_padding)
+    return b64decode(data, altchars)
 
 def base64encode(message):
     return b64encode(message)

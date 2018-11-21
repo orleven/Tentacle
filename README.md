@@ -71,8 +71,8 @@ py -3 tentacle.py -n --update
 6. client model
 7. config(proxy...)
 8. port scan
-9. shadan/fofa search api
-
+9. api adjust
+10. program over and wait for a min.
 
 ### Thanks
 

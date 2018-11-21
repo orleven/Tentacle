@@ -24,19 +24,18 @@ def init_conf(path):
             "https_proxy": "https://127.0.0.1:1080"
         },
         "zoomeye_api": {
-            "username": "admin",
-            "password": "123456"
+            "username": "token@orlven.com",
+            "password": "tentacle_123456"
         },
         "fofa_api": {
-            "username": "admin",
-            "password": "123456"
+            "email": "test@orlven.com",
+            "token": "tentacle_123456"
         },
-        "sodan_api": {
-            "username": "admin",
-            "password": "123456"
+        "shodan_api": {
+            "token": "token@tentacle"
         },
         "github_api": {
-            "token": "test",
+            "token": "token@tentacle",
         },
     }
     cf = configparser.ConfigParser()

@@ -219,6 +219,12 @@ def target_register(args):
     elif args.target_github:
         conf['target_github'] = args.target_github
 
+    elif args.target_shodan:
+        conf['target_shodan'] = args.target_shodan
+
+    elif args.target_fofa:
+        conf['target_fofa'] = args.target_fofa
+
     else:
         exit(logger.error("Can't find any targets. Please load target by iS/iN/iF."))
 
