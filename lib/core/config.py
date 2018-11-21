@@ -23,6 +23,10 @@ def init_conf(path):
             "http_proxy": "http://127.0.0.1:1080",
             "https_proxy": "https://127.0.0.1:1080"
         },
+        "google_api": {
+            "developer_key": "developer_key",
+            "search_enging": "developer_key"
+        },
         "zoomeye_api": {
             "username": "token@orlven.com",
             "password": "tentacle_123456"

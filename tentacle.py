@@ -46,16 +46,18 @@ def arg_set(parser):
     base_target_group.add_argument('-iN', "--target_network",metavar='IP/Mask', type=str, default=None,help='Generate IP from IP/MASK. (e.g. 192.168.111.0/24)')
     base_target_group.add_argument('-iT', "--target_task", metavar='Task', type=str, default=None,
                                    help='Taskid (e.g. c81fc4f8f91ab191)')
-    base_target_group.add_argument('-sE', "--target_search_engine", metavar='key', type=str, default=None,
-                                   help='Load targets from search engine,such as baidu/bing/google/360so. (e.g. powered by discuz)')
-    base_target_group.add_argument('-sS', "--target_shodan", metavar='key', type=str, default=None,
-                                   help='Load targets from shodan  (e.g. powered by discuz)')
-    base_target_group.add_argument('-sZ', "--target_zoomeye", metavar='key', type=str, default=None,
+    base_target_group.add_argument('-iE', "--target_search_engine", metavar='key', type=str, default=None,
+                                   help='Load targets from google. (e.g. intext:powered by discuz)')
+    base_target_group.add_argument('-gg', "--target_google", metavar='key', type=str, default=None,
+                                   help='Load targets from google. (e.g. intext:powered by discuz)')
+    base_target_group.add_argument('-sd', "--target_shodan", metavar='key', type=str, default=None,
+                                   help='Load targets from shodan  (e.g. apache)')
+    base_target_group.add_argument('-ze', "--target_zoomeye", metavar='key', type=str, default=None,
                                    help='Load targets from zoomeye  (e.g. powered by discuz)')
-    base_target_group.add_argument('-sF', "--target_fofa", metavar='key', type=str, default=None,
-                                   help='Load targets from fofa  (e.g. powered by discuz)')
-    base_target_group.add_argument('-sG', "--target_github", metavar='key', type=str, default=None,
-                                   help='Load targets from github  (e.g. powered by discuz)')
+    base_target_group.add_argument('-ff', "--target_fofa", metavar='key', type=str, default=None,
+                                   help='Load targets from fofa  (e.g. app:weblogic)')
+    base_target_group.add_argument('-gh', "--target_github", metavar='key', type=str, default=None,
+                                   help='Load targets from github  (e.g. 163)')
     base.add_argument('-iP', "--target_port",metavar='Port', type=int, default=None,help='Generate port  (e.g. 80)')
 
     # mode = parser.add_argument_group('Mode')

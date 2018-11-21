@@ -225,6 +225,9 @@ def target_register(args):
     elif args.target_fofa:
         conf['target_fofa'] = args.target_fofa
 
+    elif args.target_google:
+        conf['target_google'] = args.target_google
+
     else:
         exit(logger.error("Can't find any targets. Please load target by iS/iN/iF."))
 

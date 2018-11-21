@@ -32,12 +32,21 @@ py -3 tentacle.py -n -m @web                                 # Load all module o
 py -3 tentacle.py -n -m script/info/web_status,@web          # Load all module of web path and web_status module
 py -3 tentacle.py -n -m *                                    # Load all module
 
-# Load target by iS/iN/iF/iT.
-py -3 tentacle.py -n -m script/info/web_status -iS www.examples.com
-py -3 tentacle.py -n -m script/info/web_status -iN 192.168.111.0/24
-py -3 tentacle.py -n -m script/info/web_status -iF target.txt
-py -3 tentacle.py -n -m script/info/web_status -iT dcc54c3e1cc2c2e1      # Load target by recode's target
-py -3 tentacle.py -n -m script/info/web_status -sE "powered by discuz"   # Load target by baidu/bing/google/360so
+# Load target by iS/iN/iF/iT/iE/gg/sd/ze/ff.
+py -3 tentacle.py -n -m script/info/web_status -iS www.examples.com             # Load target by url or host
+py -3 tentacle.py -n -m script/info/web_status -iN 192.168.111.0/24             # Load target by network
+py -3 tentacle.py -n -m script/info/web_status -iF target.txt                   # Load target by file
+py -3 tentacle.py -n -m script/info/web_status -iT dcc54c3e1cc2c2e1             # Load target by recode's target
+py -3 tentacle.py -n -m script/info/web_status -iE "powered by discuz"          # Load target by baidu/bing/360so
+
+py -3 tentacle.py -n -m script/info/web_status -gg 'intext:powered by discuz'   # Load target by google api
+py -3 tentacle.py -n -m script/info/web_status -sd 'apache'                     # Load target by shodan api
+py -3 tentacle.py -n -m script/info/web_status -ze 'app:weblogic'               # Load target by zoomeye api
+py -3 tentacle.py -n -m script/info/web_status -ff 'domain="nosec.org"'         # Load target by fofa api
+
+py -3 tentacle.py -n -m test -gh "163"     # Search github's infomation about pass,email by api(need adjust)
+
+
 
 # Show all function of module by -f show or -f help
 py -3 tentacle.py -n -m script/info/web_status -f show

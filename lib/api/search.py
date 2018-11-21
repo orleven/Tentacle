@@ -6,6 +6,7 @@ import requests
 import re
 import json
 import time
+import random
 import sys
 import shodan
 from urllib.parse import quote
@@ -23,27 +24,35 @@ _Proxy = {
     'https':'http://127.0.0.1:7999'
     }
 
-def search_api(search,page = 5):
+def search_api(search,page = 20):
     target_list = []
-    if 'target_zoomeye' in conf.keys():
-        for type in ['host','web']:
-            for z in _zoomeye_api(search, page, type):
-                for url in z:
-                    target_list.append(url)
+    try:
+        if 'target_zoomeye' in conf.keys():
+            for type in ['host','web']:
+                for z in _zoomeye_api(search, page, type):
+                    for url in z:
+                        target_list.append(url)
 
-    elif 'target_shodan' in conf.keys():
-        for z in _shodan_api(search, page):
-            # for url in z:
+        elif 'target_shodan' in conf.keys():
+            for z in _shodan_api(search, page):
+                # for url in z:
+                    target_list.append(z)
+
+        elif 'target_fofa' in conf.keys():
+            for z in _fofa_api(search, page):
+                # for url in z:
+                    target_list.append(z)
+
+        elif 'target_github' in conf.keys():
+            for z in _github_api(search, page):
                 target_list.append(z)
 
-    elif 'target_fofa' in conf.keys():
-        for z in _fofa_api(search, page):
-            # for url in z:
+        elif 'target_google' in conf.keys():
+            for z in _google_api(search, page):
                 target_list.append(z)
 
-    elif 'target_github' in conf.keys():
-        for z in _github_api(search, page):
-            target_list.append(z)
+    except KeyboardInterrupt:
+        sys.exit(logger.error("Exit by user."))
 
     return list(set(target_list))
 
@@ -57,9 +66,6 @@ def search_engine(search,page = 5):
             target_list.append(url)
 
         for url in _bing(search, page):
-            target_list.append(url)
-
-        for url in _google(search, page):
             target_list.append(url)
     except KeyboardInterrupt:
         sys.exit(logger.error("Exit by user."))
@@ -112,19 +118,38 @@ def _bing(search, page):
 
 
 # Google搜索
-def _google(search, page):
-    for n in range(0, 10 * page, 10):
-        base_url = 'https://www.google.com.hk/search?safe=strict&q=' + str(quote(search)) + '&oq=' + str(
-            quote(search)) + 'start=' + str(n)
+def _google_api(search, page):
+    '''
+        https://console.developers.google.com
+        https://developers.google.com/custom-search/v1/cse/list
+        poc-t search_enging 011385053819762433240:ljmmw2mhhau
+    '''
+    try:
+        developer_key =  conf['config']['google_api']['developer_key']
+        search_enging= conf['config']['google_api']['search_enging']
+    except KeyError:
+        sys.exit(logger.error("Load tentacle config error: google_api, please check the config in tentacle.conf."))
+    anslist = []
+    for p in range(0,page):
+        base_url = 'https://www.googleapis.com/customsearch/v1?cx={0}&key={1}&num=10&start={2}&q={3}'.format(search_enging,developer_key,str(p * 10 +1),search)
         try:
-            r = requests.get(base_url, headers={'User-Agent': choice(AGENTS_LIST)}, proxies=_Proxy, timeout=16)
-            soup = BeautifulSoup(r.text, "html.parser")
-            for a in soup.select('div.rc > div.r > a'):
-                url = a['href']
-                if 'translate.google.com' not in url:
-                    yield url
-        except Exception as e:
-            yield None
+            res = requests.get(base_url, headers=HEADERS,timeout=15, proxies=_Proxy )
+        except:
+            res = None
+        if res != None:
+            if int(res.status_code) == 200:
+                res_json = json.loads(res.text)
+                try:
+                    for item in res_json.get('items'):
+                        anslist.append(item.get('link'))
+                except:
+                    break
+            else:
+                logger.error("Error google api access, and api rate limit 100/day, maybe you should pay money and enjoy service.")
+                break
+    return anslist
+
+
 
 
 def _zoomeye_api(search, page, z_type):

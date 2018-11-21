@@ -141,11 +141,12 @@ class Engine():
                     self._load_target(_row[2] + ":" + _row[3])
             logger.sysinfo("Loading target: %s" % (conf['target_task']))
         elif 'target_search_engine' in conf.keys():
-            logger.sysinfo("Loading target by baidu/bing/google/360so: %s" % (conf['target_search_engine']))
+            logger.sysinfo("Loading target by baidu/bing/360so: %s" % (conf['target_search_engine']))
             urls = search_engine(conf['target_search_engine'])
             for _url in urls:
                 if _url:
                     self._load_target(_url)
+
         elif 'target_zoomeye' in conf.keys():
             logger.sysinfo("Loading target by zoomeye: %s" % (conf['target_zoomeye']))
             urls = search_api(conf['target_zoomeye'])
@@ -171,6 +172,12 @@ class Engine():
                 if _url:
                     self._load_target(_url)
 
+        elif 'target_google' in conf.keys():
+            logger.sysinfo("Loading target by google: %s" % (conf['target_google']))
+            urls = search_api(conf['target_google'])
+            for _url in urls:
+                if _url:
+                    self._load_target(_url)
 
         else:
             sys.exit(logger.error("Can't load any targets! Please check input." ))
