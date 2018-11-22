@@ -4,21 +4,15 @@ __author__ = 'orleven'
 
 import os
 import sys
-import logging
 import argparse
 from lib.core.data import paths
-
 from lib.core.core import normal
 # from lib.core.core import server
 # from lib.core.core import client
+from lib.core.init import init
 # from lib.core.settings import RESTAPI_DEFAULT_PORT
 # from lib.core.settings import RESTAPI_DEFAULT_HOST
 # from lib.core.settings import RESTAPI_DEFAULT_ADAPTER
-from lib.core.init import init
-from lib.core.log import logger
-
-
-
 
 # Don't write pyc
 sys.dont_write_bytecode = True
@@ -32,8 +26,8 @@ except ImportError:
 
 def arg_set(parser):
     base = parser.add_argument_group('Base')
-    base_mode_group = base.add_mutually_exclusive_group()
-    base_mode_group.add_argument("-n", "--normal", help="Act as a normal model", default=False, action='store_true')
+    # base_mode_group = base.add_mutually_exclusive_group()
+    # base_mode_group.add_argument("-n", "--normal", help="Act as a normal model", default=False, action='store_true')
     # base_mode_group.add_argument("-s", "--server", help="Act as a REST-JSON API server model", default=False, action='store_true')
     # base_mode_group.add_argument("-c", "--client", help="Act as a REST-JSON API client model", default=False, action='store_true')
     # base.add_argument("-u", "--url", type=str, help="The target e.g http://www.baidu.com", default=None, action="store")
@@ -86,7 +80,6 @@ def arg_set(parser):
     other.add_argument('-tS',"--task_show",  metavar='TaskID', type=str, default=None,help='Show task (e.g. all,c81fc4f8f9ab1902)')
     other.add_argument("-o", "--out", type=str, help="Output file e.g res.txt", default=None)
     other.add_argument("--update", action='store_true', help="Update", default=False)
-    # other.add_argument("--config", type=str, help="Load config file", default=None)
 
     # Mark
     # parser.add_argument("-t", "--timeout", type=str, help="Timeout", default="3")
@@ -101,14 +94,12 @@ def handle(parser):
 
     if args.help:
         parser.print_help()
-    # elif args.server :
+    # elif args.server:
     #     server(args.host, args.port, adapter=args.adapter, username=args.username, password=args.password)
     # elif args.client:
     #     client(args.host, args.port, username=args.username, password=args.password)
-    elif args.normal:
-        normal(args)
     else:
-        parser.print_help()
+        normal(args)
 
 
 

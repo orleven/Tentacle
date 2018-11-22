@@ -17,7 +17,7 @@ from lib.core.data import paths
 from lib.core.enums import CUSTOM_LOGGING
 from lib.core.enums import  ENGINE_MODE_STATUS
 from lib.utils.output import to_excal
-from lib.core.update import update_program
+
 
 def init_options(args):
     # if args.module == ''
@@ -29,7 +29,7 @@ def init_options(args):
     conf.OUT = args.out
 
 
-    check_update(args)
+
     show_task(args)
     module_register(args)
     function_register(args)
@@ -45,10 +45,6 @@ def init_options(args):
 
 
 
-def check_update(args):
-    if args.update:
-        update_program()
-        sys.exit(0)
 
 
 def function_register(args):

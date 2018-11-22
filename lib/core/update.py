@@ -4,6 +4,7 @@ __author__ = 'orleven'
 
 import os
 import re
+import sys
 import time
 import locale
 import subprocess
@@ -51,7 +52,7 @@ def update_program():
             logger.error("Update could not be completed ('%s')" % re.sub(r"\W+", " ", stderr).strip())
 
     if not success:
-        if subprocess.mswindows:
+        if sys.platform == 'win32':
             msg = "for Windows platform it's recommended "
             msg += "to use a GitHub for Windows client for updating "
             msg += "purposes (http://windows.github.com/) or just "

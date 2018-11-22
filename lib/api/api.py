@@ -42,7 +42,7 @@ def myserver(host=RESTAPI_DEFAULT_HOST, port=RESTAPI_DEFAULT_PORT, adapter=RESTA
     REST-JSON API server
     """
 
-    DataStore.admin_id = byte2hex(os.urandom(16))
+    DataStore.admin_id = 'admin_'+ byte2hex(os.urandom(16))
     DataStore.username = username
     DataStore.password = password
 
@@ -54,9 +54,9 @@ def myserver(host=RESTAPI_DEFAULT_HOST, port=RESTAPI_DEFAULT_PORT, adapter=RESTA
             s.bind((host, 0))
             port = s.getsockname()[1]
 
-    logger.info("Running REST-JSON API server at '%s:%d'.." % (host, port))
-    logger.info("Admin ID: %s" % DataStore.admin_id)
-    logger.info("IPC database: '%s'" % Database.filepath)
+    logger.sysinfo("Running REST-JSON API server at '%s:%d'.." % (host, port))
+    logger.sysinfo("Admin ID: %s" % DataStore.admin_id)
+    logger.sysinfo("IPC database: '%s'" % Database.filepath)
     # Initialize IPC database
     DataStore.current_db = Database()
     DataStore.current_db.connect()

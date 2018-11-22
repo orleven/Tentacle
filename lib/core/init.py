@@ -10,13 +10,20 @@ from lib.core.config import init_conf
 from lib.core.config import load_conf
 from lib.utils.output import banner
 from lib.core.enums import CUSTOM_LOGGING
+from lib.core.update import update_program
 
 def init(args):
     banner()
     if args.debug:
         logger.set_level(CUSTOM_LOGGING.DEBUG)
     set_paths()
+    check_update(args)
     config_parser()
+
+def check_update(args):
+    if args.update:
+        update_program()
+        sys.exit(0)
 
 
 def set_paths():
