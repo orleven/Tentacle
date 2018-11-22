@@ -7,9 +7,10 @@ import re
 import subprocess
 import sys
 
-from lib.core.convert import stdoutencode
+from lib.utils.convert import stdoutencode
+from lib.core.settings import IS_WIN
 
-if subprocess.mswindows:
+if IS_WIN:
     import ctypes
     import ctypes.wintypes
 
@@ -22,6 +23,7 @@ if subprocess.mswindows:
 
 class ColorizingStreamHandler(logging.StreamHandler):
     # color names to indices
+
     color_map = {
         'black': 0,
         'red': 1,
@@ -33,7 +35,7 @@ class ColorizingStreamHandler(logging.StreamHandler):
         'white': 7,
     }
 
-    # levels to (background, foreground, bold/intense)
+    # # levels to (background, foreground, bold/intense)
     level_map = {
         logging.DEBUG: (None, 'blue', False),
         logging.INFO: (None, 'green', False),
@@ -71,7 +73,7 @@ class ColorizingStreamHandler(logging.StreamHandler):
         except:
             self.handleError(record)
 
-    if not subprocess.mswindows:
+    if not IS_WIN:
         def output_colorized(self, message):
             self.stream.write(message)
     else:

@@ -53,7 +53,8 @@ def set_paths():
 
 def config_parser():
     path = os.path.join(paths.CONFIG_PATH, "tentacle.conf")
-    if os.path.exists(path):
-        load_conf(path)
-    else:
+    if not os.path.exists(path):
         init_conf(path)
+    load_conf(path)
+
+

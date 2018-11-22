@@ -5,6 +5,11 @@ root
 登陆
 管理
 后台
+☆銥繎夶蟲___Ёnd
+r00ts小组
+[FC※HK]
+※Jspspy web
+Hacked by
 Georg says, 'All seems fine'
 execute command: <input type="text" name="c">
 jsp File browser
@@ -33,6 +38,7 @@ xIXRbE
 MyShell
 fuckjp
 yoco
+FSO文件浏览器
 backdoor\.jsp
 <input type=text name=".CMD" size=45 value=
 <title>ZoRBaCK Connect</title>

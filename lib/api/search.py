@@ -306,7 +306,7 @@ def _github_api(search, page):
                 _resp = requests.get(_url_api + search, headers=headers, timeout=github_timeout)
             except:
                 _resp = None
-            if _resp and _resp.status_code == 200:
+            if _resp!=None and _resp.status_code == 200:
                 logger.debug("Find github url of %d page..." % int(p))
                 try:
                     _res_json = json.loads(_resp.content)
@@ -314,7 +314,7 @@ def _github_api(search, page):
                         git_urls.append(_res_json['items'][i]["html_url"])
                 except:
                     pass
-            elif int(_resp.status_code) == 422:
+            elif _resp!=None and int(_resp.status_code) == 422:
                 logger.error("Warning: github api access rate limit 20/minute, 5000/hour, 1000 search results.")
                 logger.error("Error github api token. Wait for a minute.")
 
@@ -353,10 +353,10 @@ def _github_api(search, page):
                         logger.error(_resp.status_code)
                         time.sleep(60)
                 git_urls = []
-            elif int(_resp.status_code) == 403:
+            elif _resp!=None and int(_resp.status_code) == 403:
                 p = p - 1
-                logger.error("Too many times for access. So we should wait for a minute.")
-                time.sleep(60)
+                logger.error("Too many times for access. So we should wait for ten minute.")
+                time.sleep(60*10)
             else:
                 p = p - 1
                 logger.error(_resp.text)

@@ -47,7 +47,7 @@ def arg_set(parser):
     base_target_group.add_argument('-iT', "--target_task", metavar='Task', type=str, default=None,
                                    help='Taskid (e.g. c81fc4f8f91ab191)')
     base_target_group.add_argument('-iE', "--target_search_engine", metavar='key', type=str, default=None,
-                                   help='Load targets from google. (e.g. intext:powered by discuz)')
+                                   help='Load targets from baidu/bing/360so. (e.g. powered by discuz)')
     base_target_group.add_argument('-gg', "--target_google", metavar='key', type=str, default=None,
                                    help='Load targets from google. (e.g. intext:powered by discuz)')
     base_target_group.add_argument('-sd', "--target_shodan", metavar='key', type=str, default=None,

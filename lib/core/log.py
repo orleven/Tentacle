@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
-
+import platform
 import logging
 import os
 import sys
 import time
 from lib.core.enums import CUSTOM_LOGGING
-
+from lib.utils.colorer import ColoredFormatter
+# from lib.utils.colorer import _AnsiColorStreamHandler
 class logger:
     def __init__(self, set_level=CUSTOM_LOGGING.SYSINFO,
                  name=os.path.split(os.path.splitext(sys.argv[0])[0])[-1],
@@ -37,26 +38,36 @@ class logger:
         log_handler.setFormatter(logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S"))
         self.logger.addHandler(log_handler)
 
-        if use_console:
-            try:
-                from thirdparty.ansistrm.ansistrm import ColorizingStreamHandler
-
-                try:
-                    self.console_handler = ColorizingStreamHandler(sys.stdout)
-                    self.console_handler.level_map[logging.getLevelName("*")] = (None, "cyan", False)
-                    self.console_handler.level_map[logging.getLevelName("+")] = (None, "green", False)
-                    self.console_handler.level_map[logging.getLevelName("-")] = (None, "red", False)
-                    self.console_handler.level_map[logging.getLevelName("!")] = (None, "yellow", False)
-                    self.console_handler.level_map[logging.getLevelName("DEBUG")] = (None, "white", False)
-                except Exception:
-                    self.console_handler = logging.StreamHandler(sys.stdout)
-
-            except ImportError:
-                self.console_handler = logging.StreamHandler(sys.stdout)
-
-            console_handler = logging.StreamHandler()
-            console_handler.setFormatter(logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S"))
-            self.logger.addHandler(console_handler)
+        # if use_console:
+        #     try:
+        #         from thirdparty.ansistrm.ansistrm import ColorizingStreamHandler
+        #         # if True:
+        #         try:
+        #             self.console_handler = ColorizingStreamHandler(sys.stdout)
+        #             self.console_handler.level_map = {}
+        #             self.console_handler.level_map[logging.getLevelName("*")] = (None, "cyan", False)
+        #             self.console_handler.level_map[logging.getLevelName("+")] = (None, "green", False)
+        #             self.console_handler.level_map[logging.getLevelName("-")] = (None, "red", False)
+        #             self.console_handler.level_map[logging.getLevelName("!")] = (None, "yellow", False)
+        #             self.console_handler.level_map[logging.getLevelName("DEBUG")] = (None, "white", False)
+        #
+        #         except Exception:
+        #             self.console_handler = logging.StreamHandler(sys.stdout)
+        #
+        #     except ImportError:
+        #         self.console_handler = logging.StreamHandler(sys.stdout)
+        #
+        #     # console_handler = logging.StreamHandler()
+        #     self.console_handler.setFormatter(logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S"))
+        #     self.logger.addHandler(self.console_handler)
+        self.console_handler = logging.StreamHandler(stream=sys.stdout)
+        self.console_handler.setFormatter(ColoredFormatter(fmt = "[%(asctime)s] [%(levelname)s] %(message)s",  datefmt = "%H:%M:%S"))
+        # self.console_handler.setFormatter()
+        self.logger.addHandler(self.console_handler)
+            # log = logging.getLogger()
+            # log.addFilter(log_filter())
+            # //hdlr = logging.StreamHandler()
+            # //hdlr.setFormatter(formatter())
 
     def set_level(self,set_level):
         self.logger.setLevel(set_level)

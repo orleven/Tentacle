@@ -3,9 +3,11 @@
 __author__ = 'orleven'
 
 import re
+import sys
 import json
+from lib.core.settings import IS_WIN
 from functools import reduce
-
+from lib.utils.output import single_time_warn_message
 base = [str(x) for x in range(10)] + [ chr(x) for x in range(ord('A'),ord('A')+6)]
 
 
@@ -65,30 +67,29 @@ def hex2byte(data):
     return bytes.fromhex(data)
 
 
-# def stdoutencode(data):
-#     retVal = None
-#
-#     try:
-#         data = data or ""
-#
-#         # Reference: http://bugs.python.org/issue1602
-#         if IS_WIN:
-#             output = data.encode(sys.stdout.encoding, "replace")
-#
-#             if '?' in output and '?' not in data:
-#                 warnMsg = "cannot properly display Unicode characters "
-#                 warnMsg += "inside Windows OS command prompt "
-#                 warnMsg += "(http://bugs.python.org/issue1602). All "
-#                 warnMsg += "unhandled occurances will result in "
-#                 warnMsg += "replacement with '?' character. Please, find "
-#                 warnMsg += "proper character representation inside "
-#                 warnMsg += "corresponding output files. "
-#                 singleTimeWarnMessage(warnMsg)
-#
-#             retVal = output
-#         else:
-#             retVal = data.encode(sys.stdout.encoding)
-#     except:
-#         retVal = data.encode(UNICODE_ENCODING) if isinstance(data, str) else data
-#
-#     return retVal
+
+def stdoutencode(data):
+    retVal = None
+
+    try:
+        data = data or ""
+
+        # Reference: http://bugs.python.org/issue1602
+        if IS_WIN:
+            output = data.encode(sys.stdout.encoding, "replace")
+            if '?' in output and '?' not in data:
+                warnMsg = "cannot properly display Unicode characters "
+                warnMsg += "inside Windows OS command prompt "
+                warnMsg += "(http://bugs.python.org/issue1602). All "
+                warnMsg += "unhandled occurances will result in "
+                warnMsg += "replacement with '?' character. Please, find "
+                warnMsg += "proper character representation inside "
+                warnMsg += "corresponding output files. "
+                single_time_warn_message(warnMsg)
+            retVal = output
+        else:
+            retVal = data.encode(sys.stdout.encoding)
+    except:
+        retVal = data.encode('utf-8') if isinstance(data, str) else data
+
+    return retVal

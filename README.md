@@ -42,11 +42,9 @@ py -3 tentacle.py -n -m script/info/web_status -iE "powered by discuz"          
 py -3 tentacle.py -n -m script/info/web_status -gg 'intext:powered by discuz'   # Load target by google api
 py -3 tentacle.py -n -m script/info/web_status -sd 'apache'                     # Load target by shodan api
 py -3 tentacle.py -n -m script/info/web_status -ze 'app:weblogic'               # Load target by zoomeye api
-py -3 tentacle.py -n -m script/info/web_status -ff 'domain="nosec.org"'         # Load target by fofa api
+py -3 tentacle.py -n -m script/info/web_status -ff 'domain="example.com"'         # Load target by fofa api
 
 py -3 tentacle.py -n -m test -gh "163"     # Search github's infomation about pass,email by api(need adjust)
-
-
 
 # Show all function of module by -f show or -f help
 py -3 tentacle.py -n -m script/info/web_status -f show
@@ -81,7 +79,7 @@ py -3 tentacle.py -n --update
 7. config(proxy...)
 8. port scan
 9. api adjust
-10. program over and wait for a min.
+
 
 ### Thanks
 
