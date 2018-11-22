@@ -68,7 +68,7 @@ class logger:
             CUSTOM_LOGGING.ERROR: 31,  # Red
             CUSTOM_LOGGING.DEBUG: 35,  # burgundy
         }
-        self.console_handler.setFormatter(ColoredFormatter(fmt = "[%(asctime)s] [%(levelname)s] %(message)s",  datefmt = "%H:%M:%S",colors =colors ))
+        self.console_handler.setFormatter(ColoredFormatter(fmt = "%(color)s[%(asctime)s] [%(levelname)s] %(message)s%(end_color)s",  datefmt = "%H:%M:%S",colors =colors ))
         # self.console_handler.setFormatter()
         self.logger.addHandler(self.console_handler)
             # log = logging.getLogger()
