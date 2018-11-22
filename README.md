@@ -15,7 +15,7 @@ Just for pentest.
 
 [![Python 3.5](https://img.shields.io/badge/python-3.5-yellow.svg)](https://www.python.org/)
 
-![show](https://raw.githubusercontent.com/orleven/tentacle/master/show/test.png)
+![show](https://raw.githubusercontent.com/orleven/Tentacle/master/show/test.png)
 
 ### Usage
 
