@@ -282,6 +282,7 @@ class Engine():
                 'target_host': None,
                 'target_port': None,
                 'url': None,
+                'base_url': None,
                 "data": [],
                 "res": [],
                 "other": {},

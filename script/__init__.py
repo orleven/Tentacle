@@ -3,6 +3,8 @@
 __author__ = 'orleven'
 
 import requests
+import urllib.parse
+requests.packages.urllib3.disable_warnings()
 
 service_table = {
     "ftp": 21,
@@ -86,6 +88,11 @@ def init(data,service='web'):
     if data['url'] :
         headers['Referer'] = data['url']
         data['headers'] = headers
+        protocol, s1 = urllib.parse.splittype(data['url'])
+        host, s2 = urllib.parse.splithost(s1)
+        host, port = urllib.parse.splitport(host)
+        port = data['target_port'] if port != None else 443 if protocol == 'https' else 80
+        data['base_url'] = protocol + "://" + host + ":" + str(port) +'/'
     return data
 
 def curl_status(pro, host,port,headers):

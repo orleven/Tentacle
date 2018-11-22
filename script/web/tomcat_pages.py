@@ -17,17 +17,12 @@ def get_script_info(data=None):
 
 def prove(data):
     data = init(data,'web')
-    if data['url']:
-        protocol, s1 = urllib.parse.splittype(data['url'])
-        host, s2 = urllib.parse.splithost(s1)
-        host, port = urllib.parse.splitport(host)
-        port = data['target_port'] if port != None else 443 if protocol == 'https' else 80
-        base_url = protocol + "://" + host +":"+str(port)
-        data = _curl(data,base_url, data['headers'],data['timeout'])
+    if data['base_url']:
+        data = _curl(data,data['base_url'], data['headers'],data['timeout'])
     return data
 
 def _curl(data,base_url,headers,timeout):
-    for url in [base_url, base_url + "/docs/", base_url + "/manager/", base_url + "/examples/"]:
+    for url in [base_url, base_url + "docs/", base_url + "manager/", base_url + "examples/"]:
         try:
             flag = -1
             res = requests.get(url, headers=headers, verify=False,timeout=timeout)

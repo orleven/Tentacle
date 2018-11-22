@@ -20,15 +20,10 @@ def get_script_info(data=None):
 
 def prove(data):
     data = init(data, 'web')
-    if data['url']:
+    if data['base_url']:
         usernamedic = _read_dic(data['dic_one']) if 'dic_one' in data.keys() else  _read_dic('dict/activemq_usernames.txt')
         passworddic = _read_dic(data['dic_two']) if 'dic_two' in data.keys() else  _read_dic('dict/activemq_passwords.txt')
-        protocol, s1 = urllib.parse.splittype(data['url'])
-        host, s2 = urllib.parse.splithost(s1)
-        host, port = urllib.parse.splitport(host)
-        port = data['target_port'] if port != None else 443 if protocol == 'https' else 80
-        base_url = protocol + "://" + host + ":" + str(port)
-        url = base_url + "/admin/"
+        url = data['base_url'] + "/admin/"
         for linef1 in usernamedic:
             username = linef1.strip('\r').strip('\n')
             for linef2 in passworddic:

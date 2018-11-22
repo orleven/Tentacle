@@ -17,15 +17,10 @@ def get_script_info(data=None):
 
 def prove(data):
     data = init(data,'web')
-    if data['url']:
-        protocol, s1 = urllib.parse.splittype(data['url'])
-        host, s2 = urllib.parse.splithost(s1)
-        host, port = urllib.parse.splitport(host)
-        port = data['target_port'] if port != None else 443 if protocol == 'https' else 80
-        base_url = protocol + "://" + host +":"+str(port)
+    if data['base_url']:
         dir = '/data/backupdata/dede_a~'
         for i in range(1, 6):
-            url = base_url + dir + str(i) + '.txt'
+            url = data['base_url'] + dir + str(i) + '.txt'
             try:
                 res = requests.get(url, headers=data['headers'], timeout=data['timeout'])
                 if res.status_code == 200 :
