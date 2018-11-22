@@ -10,3 +10,7 @@ pycurl
 openpyxl
 selenium
 shodan
+
+
+
+windows-curses

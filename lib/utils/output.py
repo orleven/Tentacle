@@ -87,85 +87,25 @@ def print_dic(data):
     #         logger.info(address+'\t'+info)
 
 
-###########################
+
 def single_time_warn_message(message):  # Cross-linked function
     sys.stdout.write(message)
     sys.stdout.write("\n")
     sys.stdout.flush()
 
 
-
 def data_to_stdout(data, force_output=False, bold=False, content_type=None):
-    """
-    Writes text to the stdout (console) stream
-    """
+    sys.stdout.write(set_color(data, bold))
+    try:
+        sys.stdout.flush()
+    except IOError:
+        pass
 
-    message = ""
-
-    if not kb.get("threadException"):
-        pass # ?????
-        if force_output :
-        # if forceOutput or not getCurrentThreadData().disableStdOut:
-            if kb.get("multiThreadMode"):
-                logging._acquireLock()
-            # print(data)
-            # if isinstance(data, str):
-            #     message = stdoutencode(data)
-            #     print(data)
-            # else:
-            #     message = data
-            message = data
-            try:
-
-                sys.stdout.write(set_color(message, bold))
-                # if conf.get("api"):
-                #     sys.stdout.write(message,  content_type)
-                # else:
-                #     sys.stdout.write(setColor(message, bold))
-
-                sys.stdout.flush()
-            except IOError:
-                pass
-
-            if kb.get("multiThreadMode"):
-                logging._releaseLock()
-
-            kb.prependFlag = isinstance(data, str) and (len(data) == 1 and data not in ('\n', '\r') or len(data) > 2 and data[0] == '\r' and data[-1] != '\n')
-
-def extract_regex_result(regex, content, flags=0):
-    """
-    Returns 'result' group value from a possible match with regex on a given
-    content
-
-    >>> extract_regex_result(r'a(?P<result>[^g]+)g', 'abcdefg')
-    'bcdef'
-    """
-
-    retVal = None
-
-    if regex and content and "?P<result>" in regex:
-        match = re.search(regex, content, flags)
-
-        if match:
-            retVal = match.group("result")
-
-    return retVal
 
 def set_color(message, bold=False):
     retVal = message
-
-    level = extract_regex_result(r"\[(?P<result>[A-Z ]+)\]", message) or kb.get("stickyLevel")
-
-    if message and getattr(LOGGER_HANDLER, "is_tty", False):  # colorizing handler
+    if message and getattr(logger.console_handler, "is_tty", False):  # colorizing handler
         if bold:
             retVal = colored(message, color=None, on_color=None, attrs=("bold",))
-        elif level:
-            level = getattr(logging, level, None) if isinstance(level, str) else level
-            _ = LOGGER_HANDLER.level_map.get(level)
-            if _:
-                background, foreground, bold = _
-                retVal = colored(message, color=foreground, on_color="on_%s" % background if background else None, attrs=("bold",) if bold else None)
-
-            kb.stickyLevel = level if message and message[-1] != "\n" else None
 
     return retVal

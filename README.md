@@ -72,13 +72,12 @@ py -3 tentacle.py -n --update
 
 1. struts2 mixtake bug
 2. crawler module
-3. log color
-4. module(script) clean up
-5. server model
-6. client model
-7. config(proxy...)
-8. port scan
-9. api adjust
+3. module(script) clean up
+4. server model
+5. client model
+6. config(proxy...)
+7. port scan
+8. api adjust
 
 
 ### Thanks

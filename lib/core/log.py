@@ -1,27 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
-import platform
+
 import logging
 import os
 import sys
 import time
 from lib.core.enums import CUSTOM_LOGGING
-from lib.utils.colorer import ColoredFormatter
-# from lib.utils.colorer import _AnsiColorStreamHandler
+
 class logger:
     def __init__(self, set_level=CUSTOM_LOGGING.SYSINFO,
                  name=os.path.split(os.path.splitext(sys.argv[0])[0])[-1],
                  log_name=time.strftime("%Y-%m-%d.log", time.localtime()),
                  log_path=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "log"),
                  use_console=True):
-        '''
-            set_level： 设置日志的打印级别，默认为DEBUG
-            name： 日志中将会打印的name，默认为运行程序的name
-            log_name： 日志文件的名字，默认为当前时间（年-月-日.log）
-            log_path： 日志文件夹的路径，默认为logger.py同级目录中的log文件夹
-            use_console： 是否在控制台打印，默认为True
-        '''
+
         logging.addLevelName(CUSTOM_LOGGING.SYSINFO, "*")
         logging.addLevelName(CUSTOM_LOGGING.SUCCESS, "+")
         logging.addLevelName(CUSTOM_LOGGING.ERROR, "-")
@@ -33,65 +26,34 @@ class logger:
 
         if not os.path.exists(log_path):
             os.makedirs(log_path)
-        log_file_path = os.path.join(log_path, log_name)
-        log_handler = logging.FileHandler(log_file_path)
-        log_handler.setFormatter(logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S"))
-        self.logger.addHandler(log_handler)
 
-        # if use_console:
-        #     try:
-        #         from thirdparty.ansistrm.ansistrm import ColorizingStreamHandler
-        #         # if True:
-        #         try:
-        #             self.console_handler = ColorizingStreamHandler(sys.stdout)
-        #             self.console_handler.level_map = {}
-        #             self.console_handler.level_map[logging.getLevelName("*")] = (None, "cyan", False)
-        #             self.console_handler.level_map[logging.getLevelName("+")] = (None, "green", False)
-        #             self.console_handler.level_map[logging.getLevelName("-")] = (None, "red", False)
-        #             self.console_handler.level_map[logging.getLevelName("!")] = (None, "yellow", False)
-        #             self.console_handler.level_map[logging.getLevelName("DEBUG")] = (None, "white", False)
-        #
-        #         except Exception:
-        #             self.console_handler = logging.StreamHandler(sys.stdout)
-        #
-        #     except ImportError:
-        #         self.console_handler = logging.StreamHandler(sys.stdout)
-        #
-        #     # console_handler = logging.StreamHandler()
-        #     self.console_handler.setFormatter(logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S"))
-        #     self.logger.addHandler(self.console_handler)
-        self.console_handler = logging.StreamHandler(stream=sys.stdout)
-        colors = {
-            CUSTOM_LOGGING.SYSINFO: 0,  # Blue
-            CUSTOM_LOGGING.SUCCESS: 32,  # Green
-            CUSTOM_LOGGING.WARNING: 33,  # Yellow
-            CUSTOM_LOGGING.ERROR: 31,  # Red
-            CUSTOM_LOGGING.DEBUG: 34,  # Blue
-        }
-        self.console_handler.setFormatter(ColoredFormatter(fmt = "%(color)s[%(asctime)s] [%(levelname)s] %(message)s%(end_color)s",  datefmt = "%H:%M:%S",colors =colors ))
-        # self.console_handler.setFormatter()
+        self.log_handler = logging.FileHandler(os.path.join(log_path, log_name))
+        self.log_handler.setFormatter(logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S"))
+        self.logger.addHandler(self.log_handler)
+
+        if use_console:
+            try:
+                from thirdparty.ansistrm.ansistrm import ColorizingStreamHandler
+                try:
+                    console_handler = ColorizingStreamHandler(sys.stdout)
+                    console_handler.level_map[logging.getLevelName("*")] = (None, "white", False)
+                    console_handler.level_map[logging.getLevelName("+")] = (None, "green", False)
+                    console_handler.level_map[logging.getLevelName("-")] = (None, "red", False)
+                    console_handler.level_map[logging.getLevelName("!")] = (None, "yellow", False)
+                    console_handler.level_map[logging.getLevelName("DEBUG")] = (None, "cyan", False)
+                    self.console_handler = console_handler
+                except Exception:
+                    self.console_handler = logging.StreamHandler(sys.stdout)
+            except ImportError:
+                self.console_handler = logging.StreamHandler(sys.stdout)
+        else:
+            self.console_handler = logging.StreamHandler(sys.stdout)
+
+        self.console_handler.setFormatter(logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S"))
         self.logger.addHandler(self.console_handler)
-            # log = logging.getLogger()
-            # log.addFilter(log_filter())
-            # //hdlr = logging.StreamHandler()
-            # //hdlr.setFormatter(formatter())
 
     def set_level(self,set_level):
         self.logger.setLevel(set_level)
-
-
-        # if set_level.lower() == "critical":
-        #     self.logger.setLevel(logging.CRITICAL)
-        # elif set_level.lower() == "error":
-        #     self.logger.setLevel(logging.ERROR)
-        # elif set_level.lower() == "warning":
-        #     self.logger.setLevel(logging.WARNING)
-        # elif set_level.lower() == "info":
-        #     self.logger.setLevel(logging.INFO)
-        # elif set_level.lower() == "debug":
-        #     self.logger.setLevel(logging.DEBUG)
-        # else:
-        #     self.logger.setLevel(logging.NOTSET)
 
     def addHandler(self, hdlr):
         self.logger.addHandler(hdlr)
@@ -101,15 +63,6 @@ class logger:
 
     def critical(self, msg, *args, **kwargs):
         self.logger.critical(msg, *args, **kwargs)
-
-    # def warning(self, msg, *args, **kwargs):
-    #     self.logger.warning(msg, *args, **kwargs)
-    #
-    # def error(self, msg, *args, **kwargs):
-    #     self.logger.error(msg, *args, **kwargs)
-
-    # def debug(self, msg, *args, **kwargs):
-    #     self.logger.debug(msg, *args, **kwargs)
 
     def info(self, msg, *args, **kwargs):
         self.logger.info(msg, *args, **kwargs)
@@ -133,20 +86,6 @@ class logger:
         self.logger.log(CUSTOM_LOGGING.DEBUG, msg, *args, **kwargs)
 
 
-
-
-    # from logging.handlers import TimedRotatingFileHandler
-# from logging.handlers import RotatingFileHandler
-# from lib.core.enums import CUSTOM_LOGGING
-#
-# logging.addLevelName(CUSTOM_LOGGING.SYSINFO, "*")
-# logging.addLevelName(CUSTOM_LOGGING.SUCCESS, "+")
-# logging.addLevelName(CUSTOM_LOGGING.ERROR, "-")
-# logging.addLevelName(CUSTOM_LOGGING.WARNING, "!")
-# logging.addLevelName(CUSTOM_LOGGING.DEBUG, "DEBUG")
-# LOGGER = logging.getLogger("Tentacle")
-#
-#
 LOGGER_HANDLER = None
 LOGGER_FILE_HANDLER = None
 #

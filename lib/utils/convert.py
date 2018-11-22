@@ -66,8 +66,6 @@ def byte2hex(data):
 def hex2byte(data):
     return bytes.fromhex(data)
 
-
-
 def stdoutencode(data):
     retVal = None
 
