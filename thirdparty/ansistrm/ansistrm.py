@@ -3,8 +3,7 @@
 #
 import logging
 import os
-import ctypes
-ctypes.windll.kernel32.SetConsoleTextAttribute.argtypes = [ctypes.c_ulong, ctypes.c_ushort]
+
 
 class ColorizingStreamHandler(logging.StreamHandler):
 
@@ -73,6 +72,8 @@ class ColorizingStreamHandler(logging.StreamHandler):
         }
 
         def output_colorized(self, message):
+            import ctypes
+            ctypes.windll.kernel32.SetConsoleTextAttribute.argtypes = [ctypes.c_ulong, ctypes.c_ushort]
             parts = self.ansi_esc.split(message)
             write = self.stream.write
             h = None
