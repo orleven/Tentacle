@@ -34,7 +34,7 @@ def prove(data):
                 data['flag'] = 1
                 data['data'].append({"vulname": ""})
                 data['res'].append({"info": res, "key": vulname})
-        return data
+    return data
 
 
 def exec(data=None):

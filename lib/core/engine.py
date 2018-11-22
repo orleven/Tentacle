@@ -335,6 +335,7 @@ class Engine():
                 # POC在执行时报错如果不被处理，线程框架会停止并退出
 
                 func = getattr(module, conf['func_name'])
+
                 module.init = init
                 module.logger = logger
                 data = func(data)

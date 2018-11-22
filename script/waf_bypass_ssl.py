@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
 
-
+import re, requests, pycurl,urllib.parse,tempfile
 
 def get_script_info(data=None):
     script_info = {
@@ -28,7 +28,7 @@ def prove(data):
     # scanner.reset_knowledge_base()
     # scanner.run_scans()
     # scanner.run_reports()
-    import re, requests, pycurl,urllib.parse,tempfile
+
     if 'url' in data.keys() and data['url'] != None:
         # protocol, s1 = urllib.parse.splittype(data['url'])
         # host, s2 = urllib.parse.splithost(s1)
@@ -66,7 +66,7 @@ def prove(data):
                     res_status = _curl(base_url, ciphers_ciphers, poc)
                     # print("curl --ciphers " + ciphers_ciphers + "  " + base_url + poc, str(res_status))
                     if res_status == 200:
-                        data['flag'] = True
+                        data['flag'] = 1
                         data['data'].append({"ssl": ciphers})
                         data['res'].append({"info": ciphers + " "+ str(res_status),
                                             "key": "curl --ciphers " + ciphers_ciphers + "  " + base_url + poc})
