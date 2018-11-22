@@ -62,11 +62,11 @@ class logger:
         #     self.logger.addHandler(self.console_handler)
         self.console_handler = logging.StreamHandler(stream=sys.stdout)
         colors = {
-            CUSTOM_LOGGING.SYSINFO: 34,  # Blue
+            CUSTOM_LOGGING.SYSINFO: 0,  # Blue
             CUSTOM_LOGGING.SUCCESS: 32,  # Green
             CUSTOM_LOGGING.WARNING: 33,  # Yellow
             CUSTOM_LOGGING.ERROR: 31,  # Red
-            CUSTOM_LOGGING.DEBUG: 35,  # burgundy
+            CUSTOM_LOGGING.DEBUG: 34,  # Blue
         }
         self.console_handler.setFormatter(ColoredFormatter(fmt = "%(color)s[%(asctime)s] [%(levelname)s] %(message)s%(end_color)s",  datefmt = "%H:%M:%S",colors =colors ))
         # self.console_handler.setFormatter()
