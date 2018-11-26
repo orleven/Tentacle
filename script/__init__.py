@@ -43,7 +43,7 @@ private_key = """
     """
 
 def init(data,service='web'):
-    data['timeout'] = 4
+    # data['timeout'] = 4
 
     service = service.lower()
     if int(data['target_port']) == 0:
@@ -68,17 +68,17 @@ def init(data,service='web'):
                         data['target_port'] = 80
                     else:
                         data['target_port'] = 443
-                data['url'] = curl_status(pro, data['target_host'], data['target_port'], headers)
+                data['url'] = curl_status(pro, data['target_host'], data['target_port'], headers,data['timeout'])
                 if data['url']:
                     break
         elif service == 'http':
             if int(data['target_port']) == 0:
                 data['target_port'] = 80
-            data['url'] = curl_status("http://", data['target_host'], data['target_port'], headers)
+            data['url'] = curl_status("http://", data['target_host'], data['target_port'], headers,data['timeout'])
         elif service == 'https':
             if int(data['target_port']) == 0:
                 data['target_port'] = 443
-            data['url'] = curl_status("https://", data['target_host'], data['target_port'], headers)
+            data['url'] = curl_status("https://", data['target_host'], data['target_port'], headers,data['timeout'])
         elif service == 'api':
             if int(data['target_port']) == 0:
                 data['target_port'] = 80
@@ -95,10 +95,10 @@ def init(data,service='web'):
         data['base_url'] = protocol + "://" + host + ":" + str(port) +'/'
     return data
 
-def curl_status(pro, host,port,headers):
+def curl_status(pro, host,port,headers,timeout):
     target = pro + host + ":" + str(port)
     try:
-        requests.head(target, headers=headers, verify=False, timeout=3)
+        requests.head(target, headers=headers, verify=False, timeout=timeout)
         return target
     except:
         pass

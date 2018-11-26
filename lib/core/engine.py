@@ -334,7 +334,7 @@ class Engine():
 
             try:
                 # POC在执行时报错如果不被处理，线程框架会停止并退出
-
+                logger.debug("Test %s:%s for %s:%s" %(data['module_name'],conf['func_name'],data['target_host'],data['target_port']))
                 func = getattr(module, conf['func_name'])
 
                 module.init = init
