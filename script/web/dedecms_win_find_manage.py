@@ -41,7 +41,7 @@ def prove(data):
                 res = requests.get(url, headers=data['headers'], timeout=data['timeout'])
             except Exception as e:
                 res = None
-            if res!=None and res.status_code != 404:
+            if res!=None and res.status_code ==200:
                 for num in range(1, 7):
                     if flag:
                         break

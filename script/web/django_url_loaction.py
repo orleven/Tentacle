@@ -24,7 +24,7 @@ def prove(data):
     init(data, 'http')
     if data['base_url']:
         try:
-            url = base_url + "/baidu.com"
+            url = data['base_url'] + "/baidu.com"
             res = requests.options(url, headers=data['headers'], verify=False,
                                    timeout=data['timeout'])
             if 'Location'in res.headers.keys():
