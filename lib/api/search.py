@@ -19,10 +19,6 @@ from lib.core.settings import AGENTS_LIST
 from lib.core.data import logger
 from lib.core.data import conf
 
-_Proxy = {
-    'http':'http://127.0.0.1:7999',
-    'https':'http://127.0.0.1:7999'
-    }
 
 def search_api(search,page = 20):
     target_list = []
@@ -132,8 +128,18 @@ def _google_api(search, page):
     anslist = []
     for p in range(0,page):
         base_url = 'https://www.googleapis.com/customsearch/v1?cx={0}&key={1}&num=10&start={2}&q={3}'.format(search_enging,developer_key,str(p * 10 +1),search)
+
         try:
-            res = requests.get(base_url, headers=HEADERS,timeout=15, proxies=_Proxy )
+            _proxies = None
+            if conf['config']['proxy']['proxy'].lower() == 'true':
+                try:
+                    _proxies = {
+                        'http': conf['config']['proxy']['http_proxy'],
+                        'https': conf['config']['proxy']['https_proxy']
+                    }
+                except:
+                    logger.error("Error http(s) proxy: %s or %s." % (conf['config']['proxy']['http_proxy'], conf['config']['proxy']['https_proxy']))
+            res = requests.get(base_url, headers=HEADERS,timeout=15, proxies=_proxies )
         except:
             res = None
         if res != None:

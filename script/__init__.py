@@ -2,8 +2,15 @@
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
 
+import sys
+import socks
+import socket
+import random
 import requests
-import urllib.parse
+from requests import request
+from lib.core.data import conf
+from lib.core.data import logger
+from requests.exceptions import ChunkedEncodingError, ConnectionError, ConnectTimeout,ReadTimeout
 requests.packages.urllib3.disable_warnings()
 
 service_table = {
@@ -34,32 +41,60 @@ service_table = {
     "mongodb": 27017,
 }
 
-public_key = '''ssh-rsa ====='''
 
-private_key = """
------BEGIN RSA PRIVATE KEY-----
-=====
------END RSA PRIVATE KEY-----
-    """
+
+def get_ssh_key():
+    try:
+        public_key =  conf['config']['ssh_key']['public_key']
+        private_key= conf['config']['ssh_key']['private_key']
+    except KeyError:
+        sys.exit(logger.error("Load tentacle config error: ssh_key, please check the config in tentacle.conf."))
+    return public_key,private_key
+
+def get_rebound():
+    try:
+        local_host =  conf['config']['rebound']['local_host']
+        local_port= conf['config']['rebound']['local_port']
+    except KeyError:
+        sys.exit(logger.error("Load tentacle config error: rebound, please check the config in tentacle.conf."))
+    return local_host,local_port
+
+# def init_service(data):
+#     # unknown，都来一遍
+#     if data['service'] == None or data['service'].lower() in ["unknown",'tcpwrapped'] :
+#         data['service'] = None
+#
+#     # http or https ，只扫web
+#     elif 'http' in data['service']:
+#         pass
+#
+#     # other，匹配到对应的就扫，匹配不到都来一遍
+#     else:
+#         for _service in service_table.keys():
+#             if _service in data['service']:
+#                 data['service'] = _service
+#             else:
+#                 data['service'] = None
+#     return data
+#
+# def init(data,service):
+#     data = init_service(data)
+#     service = service.lower()
+#     if data['service'] == None:
+#         if data['target_port'] == None or int(data['target_port']) == 0:
+#             if service in service_table.keys():
+#                 data['target_port'] = service_table[service]
+#             specal = 'api'
+#
+#
+#     else:
 
 def init(data,service='web'):
-    # data['timeout'] = 4
-
     service = service.lower()
-    if int(data['target_port']) == 0:
+    if data['target_port'] ==None or int(data['target_port']) == 0:
         if service in service_table.keys():
             data['target_port'] = service_table[service]
-    # try:
-    #     if int(data['target_port']) == 0 :
-    #         if service in service_table.keys():
-    #             data['target_port'] = service_table[service]
-    #         else:
-    #             data['target_port'] = 80
-    # except:
-    #     data['target_port'] = 80
-    headers = {}
-    headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"
-    headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+
     if data['url'] == None:
         if service == 'web':
             for pro in ['http://', "https://"]:
@@ -68,38 +103,89 @@ def init(data,service='web'):
                         data['target_port'] = 80
                     else:
                         data['target_port'] = 443
-                data['url'] = curl_status(pro, data['target_host'], data['target_port'], headers,data['timeout'])
+                url = pro + data['target_host'] + ":" +str(data['target_port']) + '/'
+                data['url'] = head(data,url)
                 if data['url']:
                     break
         elif service == 'http':
             if int(data['target_port']) == 0:
                 data['target_port'] = 80
-            data['url'] = curl_status("http://", data['target_host'], data['target_port'], headers,data['timeout'])
+            url = "http://" +  data['target_host'] + ":" + str(data['target_port']) +'/'
+            data['url'] = head(data,url)
         elif service == 'https':
             if int(data['target_port']) == 0:
                 data['target_port'] = 443
-            data['url'] = curl_status("https://", data['target_host'], data['target_port'], headers,data['timeout'])
+            url = "https://" + data['target_host'] + ":" + str(data['target_port']) + '/'
+            data['url'] = head(data,url)
         elif service == 'api':
             if int(data['target_port']) == 0:
                 data['target_port'] = 80
-                data['url'] = 'http://'+ data['target_host']
-            data['url'] = 'http://' + data['target_host'] + ":" +str(data['target_port'])
+                data['url'] = 'http://'+ data['target_host'] +'/'
+            data['url'] = 'http://' + data['target_host'] + ":" +str(data['target_port']) +'/'
 
-    if data['url'] :
-        headers['Referer'] = data['url']
-        data['headers'] = headers
-        protocol, s1 = urllib.parse.splittype(data['url'])
-        host, s2 = urllib.parse.splithost(s1)
-        host, port = urllib.parse.splitport(host)
-        port = data['target_port'] if port != None else 443 if protocol == 'https' else 80
-        data['base_url'] = protocol + "://" + host + ":" + str(port) +'/'
+        if data['base_url'] == None:
+            data['base_url'] = data['url']
+
+    if conf['func_name'] == 'rebound':
+        local_host,local_port = get_rebound()
+        data['local_host'] = local_host
+        data['local_port'] = local_port
+    elif conf['func_name'] == 'sshkey':
+        public_key, private_key = get_ssh_key()
+        data['public_key'] = public_key
+        data['private_key'] = private_key
+
+
+    # sockrt proxy
+    if conf['config']['proxy']['proxy'].lower() == 'true':
+        try:
+            socks5_host, socks5_port = conf['config']['proxy']['socks5'].split(':')
+            socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, socks5_host, int(socks5_port))
+            socket.socket = socks.socksocket
+        except Exception as e:
+            logger.error("Error socket proxy: %s" % conf['config']['proxy']['socks5'])
+    socket.setdefaulttimeout(int(conf['config']['basic']['timeout']))
+
     return data
 
-def curl_status(pro, host,port,headers,timeout):
-    target = pro + host + ":" + str(port)
+
+def head(data,url, params = None):
+    s = curl('head',url, params)
+    if s!= None:
+        return url
+    return s
+
+def curl(method,url, params = None, **kwargs):
+    headers = kwargs.get('headers')
+    if headers == None:
+        headers = {}
+    headers["User-Agent"] = random.choice(conf['config']['basic']['user_agent'].split('\n'))
+    headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+    headers['Referer'] = url
+    kwargs.setdefault('headers',headers)
+    kwargs.setdefault('timeout',  int(conf['config']['basic']['timeout']))
+    kwargs.setdefault('verify', False)
+
+    if conf['config']['proxy']['proxy'].lower() == 'true':
+        try:
+            _proxies = {
+                'http': conf['config']['proxy']['http_proxy'],
+                'https': conf['config']['proxy']['https_proxy']
+            }
+            kwargs.setdefault('proxies', _proxies)
+        except:
+            logger.error("Error http(s) proxy: %s or %s." % (conf['config']['proxy']['http_proxy'],conf['config']['proxy']['https_proxy']))
     try:
-        requests.head(target, headers=headers, verify=False, timeout=timeout)
-        return target
-    except:
-        pass
-    return None
+        return request(method, url, params=params, **kwargs)
+    except ConnectionError as e:
+        # logger.error("ConnectionError: %s" % url)
+        return None
+    except ReadTimeout as e:
+        # logger.error("ReadTimeout: %s" % url)
+        return None
+    except Exception as e:
+        logger.error("Curl error: %s" % url)
+        return None
+
+
+

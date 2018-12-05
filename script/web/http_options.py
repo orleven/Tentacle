@@ -2,23 +2,20 @@
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
 
-import requests
-requests.packages.urllib3.disable_warnings()
-
-def get_script_info(data=None):
-    script_info = {
+def info(data=None):
+    info = {
         "name": "http options",
         "info": "Http options.",
         "level": "low",
         "type": "info",
     }
-    return script_info
+    return info
 
 def prove(data):
     data = init(data, 'web')
-    if data['url'] != None:
+    if data['base_url'] != None:
         try:
-            res = requests.options(data['url']+"/testbyme", headers=data['headers'],verify=False, timeout=data['timeout'])
+            res = curl('options',data['base_url']+"/testbyme")
             allow = res.headers['Allow']
             data['flag'] = 1
             data['data'].append({"method": "options"})

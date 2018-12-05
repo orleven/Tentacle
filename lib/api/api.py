@@ -6,6 +6,8 @@ import re
 import os
 import time
 import socket
+import urllib.error
+import http.client
 import requests
 import tempfile
 import contextlib
@@ -14,6 +16,7 @@ from lib.utils.convert import byte2hex
 from lib.utils.convert import jsonize
 from lib.utils.convert import dejsonize
 from lib.core.data import logger
+from lib.core.data import paths
 from lib.core.enums import MKSTEMP_PREFIX
 from lib.core.common import get_safe_ex_string
 from lib.utils.output import data_to_stdout
@@ -57,16 +60,17 @@ def myserver(host=RESTAPI_DEFAULT_HOST, port=RESTAPI_DEFAULT_PORT, adapter=RESTA
     logger.sysinfo("Running REST-JSON API server at '%s:%d'.." % (host, port))
     logger.sysinfo("Admin ID: %s" % DataStore.admin_id)
     logger.sysinfo("IPC database: '%s'" % Database.filepath)
+
     # Initialize IPC database
-    DataStore.current_db = Database()
+    DataStore.current_db = Database(os.path.join(paths.DATA_PATH, 'storage'))
     DataStore.current_db.connect()
     DataStore.current_db.init()
+
 
     # Run RESTful API
     try:
         # Supported adapters: aiohttp, auto, bjoern, cgi, cherrypy, diesel, eventlet, fapws3, flup, gae, gevent, geventSocketIO, gunicorn, meinheld, paste, rocket, tornado, twisted, waitress, wsgiref
         # Reference: https://bottlepy.org/docs/dev/deployment.html || bottle.server_names
-
         if adapter == "gevent":
             from gevent import monkey
             monkey.patch_all()
@@ -87,7 +91,7 @@ def myserver(host=RESTAPI_DEFAULT_HOST, port=RESTAPI_DEFAULT_PORT, adapter=RESTA
         else:
             errMsg = "Server support for adapter '%s' is not installed on this system " % adapter
             errMsg += "(Note: you can try to install it with 'sudo apt-get install python-%s' or 'sudo pip install %s')" % (adapter, adapter)
-        logger.critical(errMsg)
+        logger.error(errMsg)
 
 
 def myclient(host=RESTAPI_DEFAULT_HOST, port=RESTAPI_DEFAULT_PORT, username=None, password=None):
@@ -111,7 +115,7 @@ def myclient(host=RESTAPI_DEFAULT_HOST, port=RESTAPI_DEFAULT_PORT, username=None
     try:
         _client(addr)
     except Exception as ex:
-        if not isinstance(ex, urllib2.HTTPError) or ex.code == httplib.UNAUTHORIZED:
+        if not isinstance(ex, urllib.error.HTTPError) or ex.code == httplib.UNAUTHORIZED:
             errMsg = "There has been a problem while connecting to the "
             errMsg += "REST-JSON API server at '%s' " % addr
             errMsg += "(%s)" % ex
@@ -123,10 +127,10 @@ def myclient(host=RESTAPI_DEFAULT_HOST, port=RESTAPI_DEFAULT_PORT, username=None
 
     while True:
         try:
-            command = raw_input("api%s> " % (" (%s)" % taskid if taskid else "")).strip()
+            command = input("api%s> " % (" (%s)" % taskid if taskid else "")).strip()
             command = re.sub(r"\A(\w+)", lambda match: match.group(1).lower(), command)
         except (EOFError, KeyboardInterrupt):
-            print
+            logger.error("aa error")
             break
 
         if command in ("data", "log", "status", "stop", "kill"):

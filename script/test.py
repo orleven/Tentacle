@@ -8,7 +8,8 @@ __author__ = 'orleven'
 
 import time
 import random
-
+import requests
+import socket
 
 def info(data):
     """
@@ -32,50 +33,46 @@ def prove(data):
     :param data:
     :return:
     """
-    init(data, 'http')
-    time.sleep(1)
-    if random.randint(1, 10) > 7:
+    # init(data,'web')
+    # if data['url']:
+    #     res = curl('get',data['url'])
+    if random.randint(1, 100) > 99:
         data['flag'] = 1
-    elif random.randint(1, 10) > 5:
+        data['data'].append({})
+        data['res'].append({"info": "", "key": ""})
+        data['other'] = {}
+    elif random.randint(1, 100) > 2:
         data['flag'] = -1
     else:
         data['flag'] = 0
-    data['res'].append({})
-    data['data'].append({})
-    data['other'] = {}
     return data
 
 
 def exec(data):
-    time.sleep(1)
-    if random.randint(1, 10) > 7:
-        data['flag'] = True
-    elif random.randint(1, 10) > 5:
-        return data
-    else:
-        data['flag'] = False
-    data['res'].append({})
-    data['data'].append({})
-    data['other'] = {}
+    # init(data,'smb')
+    # if random.randint(1, 100) > 99:
+    #     data['flag'] = 1
+    #     data['data'].append({})
+    #     data['res'].append({"info": "", "key": ""})
+    #     data['other'] = {}
+    # elif random.randint(1, 100) > 2:
+    #     data['flag'] = -1
+    # else:
+    #     data['flag'] = 0
     return data
 
 
 def rebound(data):
-    data = init(data, 'web')
-    if data['url'] != None:  # for web
-        time.sleep(0.5)
-    else:
-        time.sleep(1)
-    # print(data["dic_one"])
-    if random.randint(1, 10) > 7:
-        data['flag'] = True
-    elif random.randint(1, 10) > 5:
-        return data
-    else:
-        data['flag'] = False
-    data['res'].append({"info":"","key":""})
-    data['data'].append({})
-    data['other'] = {}
+    # init(data,'smb')
+    # if random.randint(1, 100) > 99:
+    #     data['flag'] = 1
+    #     data['data'].append({})
+    #     data['res'].append({"info": "", "key": ""})
+    #     data['other'] = {}
+    # elif random.randint(1, 100) > 2:
+    #     data['flag'] = -1
+    # else:
+    #     data['flag'] = 0
     return data
 
 def _test(data):
@@ -110,4 +107,5 @@ if __name__ == '__main__':
     import sys
     sys.path.append("..")
     from script import init
+    from script import curl
     print(prove(init(data, 'http')))

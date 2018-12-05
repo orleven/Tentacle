@@ -10,7 +10,7 @@ def get_script_info(data=None):
         "name": "ms17_010",
         "info": "ms17_010.",
         "level": "high",
-        "type": "info",
+        "type": "rce",
     }
     return script_info
 

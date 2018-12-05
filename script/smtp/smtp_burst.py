@@ -4,19 +4,18 @@ __author__ = 'orleven'
 
 import time,socket,re,base64
 
-def get_script_info(data=None):
-    script_info = {
+def info(data=None):
+    info = {
         "name": "smtp burst",
         "info": "smtp burst.",
         "level": "high",
-        "type": "info",
+        "type": "weakpass",
     }
-    return script_info
+    return info
 
 def prove(data):
     data = init(data, 'smtb')
-    socket.setdefaulttimeout(data['timeout'])
-    if _socket_connect(data['target_host'], data['target_port'], data['timeout']):
+    if _socket_connect(data['target_host'], data['target_port']):
         usernamedic = _read_dic(data['dic_one']) if 'dic_one' in data.keys() else  _read_dic('dict/smtp_usernames.txt')
         passworddic = _read_dic(data['dic_two']) if 'dic_two' in data.keys() else  _read_dic('dict/smtp_passwords.txt')
         for linef1 in usernamedic:
@@ -72,8 +71,7 @@ def prove(data):
 def _read_dic(dicname):
     with open(dicname, 'r') as f:
         return f.readlines()
-def _socket_connect(ip, port,timeout=5,msg = "test"):
-    socket.setdefaulttimeout(timeout)
+def _socket_connect(ip, port,msg = "test"):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         s.connect(ip, port)

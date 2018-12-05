@@ -2,21 +2,19 @@
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
 
-import requests
 import chardet
 from bs4 import BeautifulSoup
 import sys
-requests.packages.urllib3.disable_warnings()
 type=sys.getfilesystemencoding()
 
-def get_script_info(data=None):
-    script_info = {
+def info(data=None):
+    info = {
         "name": "web content",
         "info": "web content.",
         "level": "low",
         "type": "info",
     }
-    return script_info
+    return info
 
 def prove(data):
     data = init(data,'web')
@@ -24,7 +22,7 @@ def prove(data):
         webkeydic = _read_dic(data['dic_one']) if 'dic_one' in data.keys() else  _read_dic('dict/web_content_key.txt')
         codes = ['utf-8', 'gbk']
         try:
-            result = requests.get(data['url'], headers=data['headers'], verify=False, timeout=data['timeout'])
+            result = curl('get',data['url'])
         except:
             return data
 

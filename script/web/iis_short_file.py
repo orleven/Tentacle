@@ -2,47 +2,41 @@
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
 
-import urllib.parse
-import requests
-import queue
-requests.packages.urllib3.disable_warnings()
-
-def get_script_info(data=None):
-    script_info = {
+def info(data=None):
+    info = {
         "name": "iis short file",
         "info": "iis short file.",
         "level": "low",
         "type": "info"
     }
-    return script_info
-
+    return info
 
 
 def prove(data):
     data = init(data,'web')
-    if data['url']:
-        status_1 = _get_status(data['url']+ '/*~1*/a.aspx', data['headers'], data['timeout']) # an existed file/folder
-        status_2 = _get_status(data['url'] + '/l1j1e*~1*/a.aspx', data['headers'], data['timeout']) # not existed file/folder
+    if data['base_url']:
+        status_1 = _get_status(data['base_url']+ '/*~1*/a.aspx') # an existed file/folder
+        status_2 = _get_status(data['base_url'] + '/l1j1e*~1*/a.aspx') # not existed file/folder
         if status_1 == 404 and status_2 != 404:
             data['flag'] = 1
-            data['data'].append({"url": data['url']+ '/*~1*/a.aspx'})
+            data['data'].append({"url": data['base_url']+ '/*~1*/a.aspx'})
             data['res'].append({"info": '/*~1*/a.aspx', "key": 'iis_short_file'})
 
     return data
 
 def exec(data):
     data = init(data, 'web')
-    if data['url']:
+    if data['base_url']:
         q = queue.Queue()
         alphanum = 'abcdefghijklmnopqrstuvwxyz0123456789_-'
-        path = data['url'] if data['url'][-1] == '/' else  data['url'] + '/'
+        path = data['base_url'] if data['base_url'][-1] == '/' else  data['base_url'] + '/'
         for c in alphanum:
             q.put( (path + c, '.*') )    # filename, extension
         while True:
             if q.qsize() <= 0:
                 break
             url, ext = q.get(timeout=1.0)
-            status = _get_status(url + '*~1' + ext + '/1.aspx', data['headers'], data['timeout'])
+            status = _get_status(url + '*~1' + ext + '/1.aspx')
             if status == 404:
                 if len(url) - len(path) < 6:  # enum first 6 chars only
                     for c in alphanum:
@@ -68,9 +62,9 @@ def exec(data):
 
 
 
-def _get_status(url,headers,timeout):
+def _get_status(url):
     try:
-        res = requests.get(url, headers=headers, timeout=timeout).status_code
+        res = curl('get',url).status_code
     except:
         res = 0
     return res

@@ -28,8 +28,8 @@ def arg_set(parser):
     base = parser.add_argument_group('Base')
     base_mode_group = base.add_mutually_exclusive_group()
     # base_mode_group.add_argument("-n", "--normal", help="Act as a normal model", default=False, action='store_true')
-    base_mode_group.add_argument("-s", "--server", help="Act as a REST-JSON API server model", default=False, action='store_true')
-    base_mode_group.add_argument("-c", "--client", help="Act as a REST-JSON API client model", default=False, action='store_true')
+    # base_mode_group.add_argument("-s", "--server", help="Act as a REST-JSON API server model", default=False, action='store_true')
+    # base_mode_group.add_argument("-c", "--client", help="Act as a REST-JSON API client model", default=False, action='store_true')
     # base.add_argument("-u", "--url", type=str, help="The target e.g http://www.baidu.com", default=None, action="store")
     # base.add_argument("-th", "--target_host", type=str, help="The target host e.g 127.0.0.1", default=None, action="store")
     # base.add_argument("-tp", "--target_port", type=str, help="The target port e.g 127.0.0.1", default=None, action="store")
@@ -37,6 +37,8 @@ def arg_set(parser):
     base_target_group = base.add_mutually_exclusive_group()
     base_target_group.add_argument('-iS', "--target_simple",metavar='Target' ,type=str, default=None,help="Scan a single target (e.g. www.baidu.com)")
     base_target_group.add_argument('-iF', "--target_file",metavar='File', type=str, default=None,help='Load targets from targetFile (e.g. target.txt)')
+    base_target_group.add_argument('-iX', "--target_nmap_xml", metavar='File', type=str, default=None,
+                                   help='Load targets from nmap xml (e.g. nmap_res.xml)')
     base_target_group.add_argument('-iN', "--target_network",metavar='IP/Mask', type=str, default=None,help='Generate IP from IP/MASK. (e.g. 192.168.111.0/24)')
     base_target_group.add_argument('-iT', "--target_task", metavar='Task', type=str, default=None,
                                    help='Taskid (e.g. c81fc4f8f91ab191)')
@@ -94,10 +96,10 @@ def handle(parser):
 
     if args.help:
         parser.print_help()
-    elif args.server:
-        server(args.host, args.port, adapter=args.adapter, username=args.username, password=args.password)
-    elif args.client:
-        client(args.host, args.port, username=args.username, password=args.password)
+    # elif args.server:
+    #     server(args.host, args.port, adapter=args.adapter, username=args.username, password=args.password)
+    # elif args.client:
+    #     client(args.host, args.port, username=args.username, password=args.password)
     else:
         normal(args)
 

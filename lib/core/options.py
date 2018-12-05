@@ -200,6 +200,13 @@ def target_register(args):
             msg = 'Target file not exist: %s' % args.target_file
             sys.exit(logger.error(msg))
 
+    elif args.target_nmap_xml:
+        if os.path.isfile(args.target_nmap_xml):
+            conf['target_nmap_xml'] = args.target_nmap_xml
+        else:
+            msg = 'Target file not exist: %s' % args.target_nmap_xml
+            sys.exit(logger.error(msg))
+
     elif args.target_network:
         conf['target_network'] = args.target_network
 

@@ -5,6 +5,7 @@ __author__ = 'orleven'
 
 import os
 import sys
+import random
 from lib.core.data import logger
 from lib.core.data import conf
 import configparser
@@ -16,10 +17,30 @@ def init_conf(path):
     logger.debug("Init tentacle config...")
     configs = {
         "basic": {
-            # "timeout": "5",
-
+            "timeout": "5",
+            "user_agent": '\n'.join([
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36",
+                'Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 5.2; .NET CLR 1.1.4322; .NET CLR 2.0.50727; InfoPath.2; .NET CLR 3.0.04506.30)',
+                'Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 5.1; Media Center PC 3.0; .NET CLR 1.0.3705; .NET CLR 1.1.4322; .NET CLR 2.0.50727; InfoPath.1)',
+                'Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 5.1; FDM; .NET CLR 1.1.4322)',
+                'Mozilla/5.0 (Windows; U; MSIE 7.0; Windows NT 6.0; en-US)',
+            ])
+        },
+        'rebound' :{
+            'local_host': '127.0.0.1',
+            'local_port': '4444',
+        },
+        "ssh_key":{
+            "public_key" : 'ssh-rsa =====',
+            "private_key" : """
+-----BEGIN RSA PRIVATE KEY-----
+=====
+-----END RSA PRIVATE KEY-----
+        """
         },
         "proxy": {
+            "proxy": False,
+            "socks5": "127.0.0.1:1080",
             "http_proxy": "http://127.0.0.1:1080",
             "https_proxy": "https://127.0.0.1:1080"
         },
@@ -69,3 +90,4 @@ def update_conf(path,section,option,value):
     cf.set(section,option,value)
     with open(path, 'w+') as configfile:
         cf.write(configfile)
+

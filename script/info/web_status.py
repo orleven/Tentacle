@@ -3,20 +3,17 @@
 __author__ = 'orleven'
 
 import sys
-import requests
-import chardet
 from bs4 import BeautifulSoup
-requests.packages.urllib3.disable_warnings()
 type=sys.getfilesystemencoding()
 
-def get_script_info(data=None):
-    script_info = {
+def info(data=None):
+    info = {
         "name": "web status",
         "info": "Web status.",
         "level": "low",
         "type": "info",
     }
-    return script_info
+    return info
 
 def prove(data):
     data = init(data, 'web')
@@ -25,7 +22,7 @@ def prove(data):
         status = str(0)
         title= ''
         try:
-            result = requests.get(data['url'], headers=data['headers'], verify=False, timeout=data['timeout'])
+            result = curl('get',data['url'])
             soup = BeautifulSoup(result.text, "html5lib")
             status = str(result.status_code)
             title = soup.title

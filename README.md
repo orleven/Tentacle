@@ -2,7 +2,7 @@
 
 ```
 .___________. _______ .__   __. .___________.    ___       ______  __       _______
-|           ||   ____||  \ |  | |           |   /   \     /      ||  |     |   ____|{0.1.1#test}
+|           ||   ____||  \ |  | |           |   /   \     /      ||  |     |   ____|{0.1.7#test}
 `---|  |----`|  |__   |   \|  | `---|  |----`  /  ^  \   |  ,----'|  |     |  |__
     |  |     |   __|  |  . `  |     |  |      /  /_\  \  |  |     |  |     |   __|
     |  |     |  |____ |  |\   |     |  |     /  _____  \ |  `----.|  `----.|  |____
@@ -32,11 +32,13 @@ py -3 tentacle.py -m @web                                 # Load all module of w
 py -3 tentacle.py -m script/info/web_status,@web          # Load all module of web path and web_status module
 py -3 tentacle.py -m *                                    # Load all module
 
-# Load target by iS/iN/iF/iT/iE/gg/sd/ze/ff.
+# Load target by iS/iN/iF/iT/iX/iE/gg/sd/ze/ff.
 py -3 tentacle.py -m script/info/web_status -iS www.examples.com             # Load target by url or host
 py -3 tentacle.py -m script/info/web_status -iN 192.168.111.0/24             # Load target by network
 py -3 tentacle.py -m script/info/web_status -iF target.txt                   # Load target by file
 py -3 tentacle.py -m script/info/web_status -iT dcc54c3e1cc2c2e1             # Load target by recode's target
+py -3 tentacle.py -m script/info/web_status -iX nmap_xml.txt                 # Load target by nmap.xml
+
 py -3 tentacle.py -m script/info/web_status -iE "powered by discuz"          # Load target by baidu/bing/360so
 
 py -3 tentacle.py -m script/info/web_status -gg 'intext:powered by discuz'   # Load target by google api
@@ -67,6 +69,7 @@ py -3 tentacle.py --update
 
 * [2018-11-15] Code refactoring and fix  bug.
 * [2018-11-22] fix log error bug.
+* [2018-12-06] add onfig, e.g. proxy, api.
 
 ### Coming
 
@@ -75,8 +78,7 @@ py -3 tentacle.py --update
 3. module(script) clean up
 4. server model
 5. client model
-6. config(proxy...)
-7. port scan
+6. port scan
 
 ### Thanks
 

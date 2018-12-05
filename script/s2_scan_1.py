@@ -1,3 +1,18 @@
+
+
+
+def get_script_info(data=None):
+    script_info = {
+        "name": "struts scan",
+        "info": "This is a test.",
+        "level": "low",
+        "type": "info",
+    }
+    return script_info
+
+def prove(data):
+    return data
+
 # # coding=UTF-8
 # __title__ = 'Struts2 Scan'
 # __version__ = '0.1'

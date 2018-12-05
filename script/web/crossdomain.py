@@ -6,21 +6,21 @@ import urllib.parse
 import requests
 requests.packages.urllib3.disable_warnings()
 
-def get_script_info(data=None):
-    script_info = {
+def info(data=None):
+    info = {
         "name": "crossdomain",
         "info": "crossdomain.",
         "level": "low",
         "type": "info"
     }
-    return script_info
+    return info
 
 def prove(data):
     data = init(data,'web')
     if data['base_url']:
-        url = data['base_url']+'/crossdomain.xml'
+        url = data['base_url']+'crossdomain.xml'
         try:
-            res = requests.get(url, headers=data['headers'], verify=False, timeout=data['timeout'])
+            res = curl('get',url)
             if 'allow-access-from domain="*"' in res.text:
                 data['flag'] = 1
                 data['data'].append({"page": '/crossdomain.xml'})

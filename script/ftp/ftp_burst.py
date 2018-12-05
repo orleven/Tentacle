@@ -3,20 +3,18 @@
 __author__ = 'orleven'
 
 import ftplib
-import socket
 
-def get_script_info(data=None):
-    script_info = {
+def info(data=None):
+    info = {
         "name": "FTP burst",
         "info": "FTP burst.",
         "level": "high",
-        "type": "info",
+        "type": "unauth",
     }
-    return script_info
+    return info
 
 def prove(data):
     data = init(data, 'ftp')
-    socket.setdefaulttimeout(data['timeout'])
     ftp = ftplib.FTP()
     try:
         ftp.connect(data['target_host'], data['target_port'])
@@ -28,25 +26,24 @@ def prove(data):
     anonymous = False
     for linef1 in usernamedic:
         username = linef1.strip('\r').strip('\n')
-        if username == 'anonymous':
-            if anonymous:
-                continue
-            else:
-                anonymous = True
-        else:
-            for linef2 in passworddic:
-                try:
-                    password = (
+        for linef2 in passworddic:
+            try:
+                if username == 'anonymous':
+                    if anonymous:
+                        continue
+                    else:
+                        anonymous = True
+                password = (
                     linef2 if '%user%' not in linef2 else str(linef2).replace("%user%", str(username))).strip(
-                        '\r').strip('\n')
-                    ftp.connect(data['target_host'], data['target_port'])
-                    ftp.login(username, password)
-                    data['flag'] = 1
-                    data['data'].append({"username":username,"password":password})
-                    data['res'].append({"info":username+"/"+password,"key":ftp.getwelcome()})
-                    ftp.quit()
-                except Exception as e:
-                    pass
+                    '\r').strip('\n')
+                ftp.connect(data['target_host'], data['target_port'])
+                ftp.login(username, password)
+                data['flag'] = 1
+                data['data'].append({"username": username, "password": password})
+                data['res'].append({"info": username + "/" + password, "key": ftp.getwelcome()})
+                ftp.quit()
+            except Exception as e:
+                pass
     return data
 
 

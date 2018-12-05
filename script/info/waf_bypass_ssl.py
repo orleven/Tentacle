@@ -4,14 +4,14 @@ __author__ = 'orleven'
 
 import re, requests, pycurl,urllib.parse,tempfile
 
-def get_script_info(data=None):
-    script_info = {
+def info(data=None):
+    info = {
         "name": "web status",
         "info": "This is a test.",
         "level": "low",
         "type": "info",
     }
-    return script_info
+    return info
 
 def prove(data):
     # from sslscan import ui
@@ -58,8 +58,8 @@ def prove(data):
                         if res_status == 200:
                             data['flag'] = 1
                             data['data'].append({"ssl": ciphers})
-                            data['res'].append({"info": ciphers + " "+ str(res_status),
-                                                "key": "curl --ciphers " + ciphers_ciphers + "  " + data['base_url'] + poc})
+                            data['res'].append({"key": ciphers + " "+ str(res_status),
+                                                "info": "curl --ciphers " + ciphers_ciphers + "  " + data['base_url'] + poc})
                         ssllist.append(ciphers_ciphers)
 
     # code = chardet.detect(waf_ssl)['encoding'] if chardet.detect(waf_ssl)['encoding'] not in ['ISO-8859-5','KOI8-R'] else 'gbk'

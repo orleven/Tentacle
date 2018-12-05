@@ -4,19 +4,18 @@ __author__ = 'orleven'
 
 import socket
 
-def get_script_info(data=None):
-    script_info = {
+def info(data=None):
+    info = {
         "name": "dubbo unauth",
-        "info": "This is a test.",
+        "info": "dubbo unauth",
         "level": "medium",
-        "type": "info",
+        "type": "unauth",
     }
-    return script_info
+    return info
 
 
 def prove(data):
     data = init(data,"dubbo")
-    socket.setdefaulttimeout(data['timeout'])
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         s.connect((data['target_host'], data['target_port']))

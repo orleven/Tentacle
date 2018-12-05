@@ -4,32 +4,29 @@ __author__ = 'orleven'
 
 import re
 import time
-import urllib.parse
-import requests
-requests.packages.urllib3.disable_warnings()
 
 _ERROR_KEYS = ['Struts Problem Report','org.apache.struts2','struts.devMode','struts-tags',
               'There is no Action mapped for namespace']
 
 
-def get_script_info(data=None):
-    script_info = {
+def info(data=None):
+    info = {
         "name": "struts scan",
         "info": "This is a test.",
         "level": "low",
         "type": "info",
     }
-    return script_info
+    return info
 
 def prove(data):
     data = init(data, 'web')
     # _status_flag = 5 # 暂定
     if data['base_url'] :
-        test = _gethtml(data['url'],data['headers'], data['timeout'])
+        test = _gethtml(data['url'])
         if test['code'] != 0:
             funlist = [_checkDevMode,_checkBySuffix,_checActionsErrors,_checkCheckBox,_checkl18n]
             for fun in funlist:
-                flag = fun(data['base_url'], data['headers'], data['timeout'])
+                flag = fun(data['base_url'])
                 info = fun.__name__
                 if flag:
                     data['flag'] = 1
@@ -41,9 +38,9 @@ def prove(data):
 
 
 # check suffix :.do,.action
-def _checkBySuffix(url,headers,timeout):
-    
-    info = _gethtml(url, headers,timeout)
+def _checkBySuffix(url):
+
+    info = _gethtml(url)
     if info['code'] == 404:
         return False
     html = info['html']
@@ -59,9 +56,9 @@ def _checkBySuffix(url,headers,timeout):
 
 
 # check devMode page
-def _checkDevMode(url,headers,timeout):
+def _checkDevMode(url):
     target_url = url+"/struts/webconsole.html"
-    info = _gethtml(target_url,headers,timeout)
+    info = _gethtml(target_url)
 
     if info['code'] == 200 and "Welcome to the OGNL console" in info['html']:
         return True
@@ -69,7 +66,7 @@ def _checkDevMode(url,headers,timeout):
         return False
 
 # check Error Messages.
-def _checActionsErrors(url,headers,timeout):
+def _checActionsErrors(url):
     test_tmpurls = []
     test_tmpurls.append(url+"/?actionErrors=1111")
     test_tmpurls.append(url+"/tmp2017.action")
@@ -78,18 +75,17 @@ def _checActionsErrors(url,headers,timeout):
     test_tmpurls.append(url + "/system/index!testme.do")
 
     for test_url in test_tmpurls:
-        info = _gethtml(test_url,headers,timeout)
+        info = _gethtml(test_url)
         for error_message in _ERROR_KEYS:
             if error_message in info['html'] and info['code'] == 500:
-                print ("[+] found error_message:",error_message)
                 return True
     return False
 
 # check CheckboxInterceptor.
-def _checkCheckBox(url,headers,timeout):
+def _checkCheckBox(url):
     for match in re.finditer(r"((\A|[?&])(?P<parameter>[^_]\w*)=)(?P<value>[^&#]+)", url):
 
-        info = _gethtml(url.replace(match.group('parameter'), "__checkbox_"+match.group('parameter')),headers,timeout)
+        info = _gethtml(url.replace(match.group('parameter'), "__checkbox_"+match.group('parameter')))
         check_key = 'name="{}"'.format(match.group('parameter'))
         check_value = 'value="false"'
 
@@ -103,12 +99,12 @@ def _checkCheckBox(url,headers,timeout):
 
 
 
-def _checkl18n(target,headers,timeout):
-    info_orgi = _gethtml(target,headers,timeout)
+def _checkl18n(target):
+    info_orgi = _gethtml(target)
     time.sleep(0.5)
-    info_zhCN = _gethtml(target+"?"+'request_locale=zh_CN',headers,timeout)
+    info_zhCN = _gethtml(target+"?"+'request_locale=zh_CN')
     time.sleep(0.5)
-    info_enUS = _gethtml(target+"?"+ 'request_locale=en_US',headers,timeout)
+    info_enUS = _gethtml(target+"?"+ 'request_locale=en_US')
     time.sleep(0.5)
 
     if "request_locale=zh_CN" in info_orgi['html'] and "request_locale=en_US" in info_orgi['html']:
@@ -119,9 +115,9 @@ def _checkl18n(target,headers,timeout):
 
     return False
 
-def _gethtml(url,headers,timeout):
+def _gethtml(url):
     try:
-        u = requests.get(url, timeout=timeout, headers=headers, allow_redirects=True)
+        u = curl('get',url)
         content = u.text
         return {"html":content,"code":u.status_code,"url":url}
     except Exception as e:
