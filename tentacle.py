@@ -26,10 +26,8 @@ except ImportError:
 
 def arg_set(parser):
     base = parser.add_argument_group('Base')
-    base_mode_group = base.add_mutually_exclusive_group()
+    # base_mode_group = base.add_mutually_exclusive_group()
     # base_mode_group.add_argument("-n", "--normal", help="Act as a normal model", default=False, action='store_true')
-    # base_mode_group.add_argument("-s", "--server", help="Act as a REST-JSON API server model", default=False, action='store_true')
-    # base_mode_group.add_argument("-c", "--client", help="Act as a REST-JSON API client model", default=False, action='store_true')
     # base.add_argument("-u", "--url", type=str, help="The target e.g http://www.baidu.com", default=None, action="store")
     # base.add_argument("-th", "--target_host", type=str, help="The target host e.g 127.0.0.1", default=None, action="store")
     # base.add_argument("-tp", "--target_port", type=str, help="The target port e.g 127.0.0.1", default=None, action="store")
@@ -57,6 +55,10 @@ def arg_set(parser):
     base.add_argument('-iP', "--target_port",metavar='Port', type=int, default=None,help='Generate port  (e.g. 80)')
 
     mode = parser.add_argument_group('Mode')
+    mode.add_argument("-s", "--server", help="Act as a REST-JSON API server model", default=False,
+                                 action='store_true')
+    mode.add_argument("-c", "--client", help="Act as a REST-JSON API client model", default=False,
+                                 action='store_true')
     # mode.add_argument("-p", "--port", help="Port of the the REST-JSON API server (default %d)" % RESTAPI_DEFAULT_PORT, default=RESTAPI_DEFAULT_PORT, type=int, action='store')
     # mode.add_argument("-h", "--host", help="Host of the the REST-JSON API server (default %s)" % RESTAPI_DEFAULT_HOST, default=RESTAPI_DEFAULT_HOST, type=str, action='store')
     # mode.add_argument("--adapter", help="Server (bottle) adapter to use (default \"%s\")" % RESTAPI_DEFAULT_ADAPTER,default=RESTAPI_DEFAULT_ADAPTER, action="store")
@@ -83,8 +85,6 @@ def arg_set(parser):
     other.add_argument("-o", "--out", type=str, help="Output file e.g res.txt", default=None)
     other.add_argument("--update", action='store_true', help="Update", default=False)
 
-    # Mark
-    # parser.add_argument("-t", "--timeout", type=str, help="Timeout", default="3")
     return parser
 
 def handle(parser):
@@ -93,7 +93,6 @@ def handle(parser):
     # Initialize
     paths.ROOT_PATH  = os.path.dirname(os.path.realpath(__file__))
     init(args)
-
     if args.help:
         parser.print_help()
     # elif args.server:
