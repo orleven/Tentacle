@@ -228,6 +228,9 @@ def target_register(args):
     elif args.target_fofa:
         conf['target_fofa'] = args.target_fofa
 
+    elif args.target_fofa_today_poc:
+        conf['target_fofa_today_poc'] = args.target_fofa_today_poc
+
     elif args.target_google:
         conf['target_google'] = args.target_google
 

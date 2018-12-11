@@ -36,7 +36,10 @@ def search_api(search,page = 20):
 
         elif 'target_fofa' in conf.keys():
             for z in _fofa_api(search, page):
-                # for url in z:
+                    target_list.append(z)
+
+        elif 'target_fofa_today_poc' in conf.keys():
+            for z in _fofa_api_today_poc(page):
                     target_list.append(z)
 
         elif 'target_github' in conf.keys():
@@ -119,6 +122,7 @@ def _google_api(search, page):
         https://console.developers.google.com
         https://developers.google.com/custom-search/v1/cse/list
         poc-t search_enging 011385053819762433240:ljmmw2mhhau
+        https://cse.google.com.hk/cse?cx=011385053819762433240:ljmmw2mhhau&gws_rd=cr
     '''
     try:
         developer_key =  conf['config']['google_api']['developer_key']
@@ -266,6 +270,23 @@ def _fofa_api(search, page):
                         logger.info("(No test!)Found: %s" % item[0])
                         result.append(item[0])
     return result
+
+
+def _fofa_api_today_poc(page):
+    # today_poc=[]
+    url = "https://fofa.so/about_client"
+    poc = requests.get(url,headers=HEADERS)
+    poc_soup = BeautifulSoup(poc.content,'lxml')
+    poc_result_name = poc_soup.select('body > div.fdo > div:nth-of-type(3) > div > div > ul > li:nth-of-type(1)')
+    poc_result_raw = poc_soup.select('body > div.fdo > div:nth-of-type(3) > div > div > ul > li:nth-of-type(4) > a')
+    for i in range(len(poc_result_name)):
+        result_name = str(poc_result_name[i])[11:-5]
+        result_raw = str(poc_result_raw[i])[str(poc_result_raw[i]).find(';">'):-4];result_raw = result_raw.replace(';">','')
+        # result = result_name + ':' + result_raw
+        _fofa_api(result_raw, page)
+        # today_poc.append(result)
+    # print(today_poc)
+    #
 
 
 def _github_api(search, page):

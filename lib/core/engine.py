@@ -194,6 +194,13 @@ class Engine():
                 if _url:
                     self._load_target(_url)
 
+        elif 'target_fofa_today_poc' in conf.keys():
+            logger.sysinfo("Loading target by fofa today poc: %s" % (conf['target_fofa_today_poc']))
+            urls = search_api(conf['target_fofa_today_poc'])
+            # for _url in urls:
+            #     if _url:
+            #         self._load_target(_url)
+
         elif 'target_google' in conf.keys():
             logger.sysinfo("Loading target by google: %s" % (conf['target_google']))
             urls = search_api(conf['target_google'])

@@ -71,14 +71,7 @@ py -3 tentacle.py --update
 * [2018-11-22] fix log error bug.
 * [2018-12-06] add config, e.g. proxy, api.
 
-### Coming
 
-1. struts2 mixtake bug
-2. crawler module
-3. module(script) clean up
-4. server model
-5. client model
-6. port scan
 
 ### Thanks
 

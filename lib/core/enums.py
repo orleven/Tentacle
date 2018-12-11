@@ -28,16 +28,16 @@ class PRIORITY:
     HIGHER = 50
     HIGHEST = 100
 
-class MKSTEMP_PREFIX:
-    HASHES = "tentaclehashes-"
-    CRAWLER = "tentaclecrawler-"
-    IPC = "tentacleipc-"
-    CONFIG = "tentacleconfig-"
-    TESTING = "tentacletesting-"
-    RESULTS = "tentacleresults-"
-    COOKIE_JAR = "tentaclecookiejar-"
-    BIG_ARRAY = "tentaclebigarray-"
-    SPECIFIC_RESPONSE = "sqlmapresponse-"
+# class MKSTEMP_PREFIX:
+#     HASHES = "tentaclehashes-"
+#     CRAWLER = "tentaclecrawler-"
+#     IPC = "tentacleipc-"
+#     CONFIG = "tentacleconfig-"
+#     TESTING = "tentacletesting-"
+#     RESULTS = "tentacleresults-"
+#     COOKIE_JAR = "tentaclecookiejar-"
+#     BIG_ARRAY = "tentaclebigarray-"
+#     SPECIFIC_RESPONSE = "sqlmapresponse-"
 
 # class SORT_ORDER:
 #     FIRST = 0

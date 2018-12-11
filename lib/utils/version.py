@@ -8,7 +8,7 @@ import sys
 version = sys.version.split()[0]
 
 if version <= "3" :
-    exit("[CRITICAL] incompatible Python version detected ('%s'). For successfully running program you'll have to use version 3.x  (visit 'http://www.python.org/download/')" % PYVERSION)
+    exit("[CRITICAL] incompatible Python version detected ('%s'). For successfully running program you'll have to use version 3.x  (visit 'http://www.python.org/download/')" % version)
 
 extensions = ("gzip", "ssl", "sqlite3", "zlib")
 

@@ -21,36 +21,34 @@ def prove(data):
         codes = ['utf-8','gbk']
         status = str(0)
         title= ''
-        try:
-            result = curl('get',data['url'])
-            soup = BeautifulSoup(result.text, "html5lib")
+        result = curl('get',data['url'])
+        if result!=None:
             status = str(result.status_code)
-            title = soup.title
-            if title == None or title.string == '':
-                title = "[None Title]".encode('utf-8')
+
+            soup = BeautifulSoup(result.text, "html5lib")
+            if soup!=None:
+                title = soup.title
+                if title == None or title.string == '':
+                    title = "[None Title]".encode('utf-8')
+                else:
+                    if result.encoding != None:
+                        title = title.string.encode(result.encoding)
+                        codes.append(result.encoding)
+                    else:
+                        title = title.string
+                codes.append(type)
+                for j in range(0, len(codes)):
+                    try:
+                        title = title.decode(codes[j]).strip().replace("\r", "").replace("\n", "")
+                        break
+                    except:
+                        continue
+                    finally:
+                        if j + 1 == len(codes):
+                            title = '[Error Code]'
             else:
-                title = title.string.encode(result.encoding)
-            # code = chardet.detect(title)['encoding'] if chardet.detect(title)['encoding'] not in ['windows-1255','GB2312','ISO-8859-5','ISO-8859-9','KOI8-R','IBM855'] else 'gbk'
+                title = '[None Title]'
 
-            # if chardet.detect(title)['encoding'] in ['windows-1255','GB2312','ISO-8859-5','ISO-8859-9','KOI8-R','IBM855']:
-            #     code = 'gbk'
-            # else:
-            #     code = chardet.detect(title)['encoding']
-            # title = title.decode(code).strip().replace("\r", "").replace("\n", "")
-
-            codes.append(result.encoding)
-            codes.append(type)
-            for j in range(0, len(codes)):
-                try:
-                    title = title.decode(codes[j]).strip().replace("\r", "").replace("\n", "")
-                    break
-                except:
-                    pass
-                finally:
-                    if j + 1 == len(codes):
-                        title = '[Error Code]'
-        except:
-            pass
         if  status !='0':
             data['flag'] = 1
             data['res'].append({"info": title , "key": status, "status": status})

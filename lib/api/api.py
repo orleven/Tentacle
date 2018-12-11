@@ -17,7 +17,6 @@ from lib.utils.convert import jsonize
 from lib.utils.convert import dejsonize
 from lib.core.data import logger
 from lib.core.data import paths
-from lib.core.enums import MKSTEMP_PREFIX
 from lib.core.common import get_safe_ex_string
 from lib.utils.output import data_to_stdout
 from lib.core.settings import RESTAPI_DEFAULT_HOST
@@ -39,7 +38,6 @@ class DataStore(object):
     username = None
     password = None
 
-
 def myserver(host=RESTAPI_DEFAULT_HOST, port=RESTAPI_DEFAULT_PORT, adapter=RESTAPI_DEFAULT_ADAPTER, username=None, password=None):
     """
     REST-JSON API server
@@ -49,7 +47,7 @@ def myserver(host=RESTAPI_DEFAULT_HOST, port=RESTAPI_DEFAULT_PORT, adapter=RESTA
     DataStore.username = username
     DataStore.password = password
 
-    _, Database.filepath = tempfile.mkstemp(prefix=MKSTEMP_PREFIX.IPC, text=False)
+    _, Database.filepath = tempfile.mkstemp(prefix="tentacle_", text=False)
     os.close(_)
 
     if port == 0:  # random

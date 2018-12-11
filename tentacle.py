@@ -50,6 +50,8 @@ def arg_set(parser):
                                    help='Load targets from zoomeye  (e.g. powered by discuz)')
     base_target_group.add_argument('-ff', "--target_fofa", metavar='key', type=str, default=None,
                                    help='Load targets from fofa  (e.g. app:weblogic)')
+    base_target_group.add_argument('-fft', "--target_fofa_today_poc", action='store_true',default=False,
+                                   help='Load targets from fofa today poc ')
     base_target_group.add_argument('-gh', "--target_github", metavar='key', type=str, default=None,
                                    help='Load targets from github  (e.g. 163)')
     base.add_argument('-iP', "--target_port",metavar='Port', type=int, default=None,help='Generate port  (e.g. 80)')
@@ -59,9 +61,9 @@ def arg_set(parser):
                                  action='store_true')
     mode.add_argument("-c", "--client", help="Act as a REST-JSON API client model", default=False,
                                  action='store_true')
-    # mode.add_argument("-p", "--port", help="Port of the the REST-JSON API server (default %d)" % RESTAPI_DEFAULT_PORT, default=RESTAPI_DEFAULT_PORT, type=int, action='store')
-    # mode.add_argument("-h", "--host", help="Host of the the REST-JSON API server (default %s)" % RESTAPI_DEFAULT_HOST, default=RESTAPI_DEFAULT_HOST, type=str, action='store')
-    # mode.add_argument("--adapter", help="Server (bottle) adapter to use (default \"%s\")" % RESTAPI_DEFAULT_ADAPTER,default=RESTAPI_DEFAULT_ADAPTER, action="store")
+    mode.add_argument("-p", "--port", help="Port of the the REST-JSON API server (default %d)" % RESTAPI_DEFAULT_PORT, default=RESTAPI_DEFAULT_PORT, type=int, action='store')
+    mode.add_argument("-h", "--host", help="Host of the the REST-JSON API server (default %s)" % RESTAPI_DEFAULT_HOST, default=RESTAPI_DEFAULT_HOST, type=str, action='store')
+    mode.add_argument("--adapter", help="Server (bottle) adapter to use (default \"%s\")" % RESTAPI_DEFAULT_ADAPTER,default=RESTAPI_DEFAULT_ADAPTER, action="store")
     mode.add_argument("--username", type=str, help="Basic authentication username (optional)", action="store")
     mode.add_argument("--password", type=str, help="Basic authentication username (optional)", action="store")
 
@@ -95,10 +97,10 @@ def handle(parser):
     init(args)
     if args.help:
         parser.print_help()
-    # elif args.server:
-    #     server(args.host, args.port, adapter=args.adapter, username=args.username, password=args.password)
-    # elif args.client:
-    #     client(args.host, args.port, username=args.username, password=args.password)
+    elif args.server:
+        server(args.host, args.port, adapter=args.adapter, username=args.username, password=args.password)
+    elif args.client:
+        client(args.host, args.port, username=args.username, password=args.password)
     else:
         normal(args)
 

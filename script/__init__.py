@@ -10,7 +10,11 @@ import requests
 from requests import request
 from lib.core.data import conf
 from lib.core.data import logger
-from requests.exceptions import ChunkedEncodingError, ConnectionError, ConnectTimeout,ReadTimeout
+from requests.exceptions import ConnectionError
+from requests.exceptions import TooManyRedirects
+from requests.exceptions import ChunkedEncodingError
+from requests.exceptions import ConnectTimeout
+from requests.exceptions import ReadTimeout
 requests.packages.urllib3.disable_warnings()
 
 service_table = {
@@ -183,6 +187,9 @@ def curl(method,url, params = None, **kwargs):
     except ReadTimeout as e:
         # logger.error("ReadTimeout: %s" % url)
         return None
+    except TooManyRedirects as e:
+        kwargs.setdefault('allow_redirects', False)
+        return request('get', url, params=params, **kwargs)
     except Exception as e:
         logger.error("Curl error: %s" % url)
         return None

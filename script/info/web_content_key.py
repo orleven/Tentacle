@@ -19,53 +19,52 @@ def info(data=None):
 def prove(data):
     data = init(data,'web')
     if data['url']:
-        webkeydic = _read_dic(data['dic_one']) if 'dic_one' in data.keys() else  _read_dic('dict/web_content_key.txt')
-        codes = ['utf-8', 'gbk']
-        try:
-            result = curl('get',data['url'])
-        except:
-            return data
+        result = curl('get', data['url'])
+        if result != None:
+            status = result.status_code
 
-        content = result.text
-        soup = BeautifulSoup(content, "html5lib")
-        status = result.status_code
-        try:
-            title = soup.title.string
-            title = title.encode(result.encoding)
-        except:
-            title = "[None Title]".encode('utf-8')
+            # Text
+            webkeydic = _read_dic(data['dic_one']) if 'dic_one' in data.keys() else  _read_dic('dict/web_content_key.txt')
+            content = result.text
+            key = ''
+            for searchkey in webkeydic:
+                searchkey = str(searchkey, 'utf-8').replace("\r", "").replace("\n", "")
+                try:
+                    if searchkey in content:
+                        key += searchkey + ','
+                        data['flag'] = 1
+                except Exception as e:
+                    print(e)
+                    pass
 
-        try:
-            codes.append(type)
-            codes.append(result.encoding)
-            content = content.encode(result.encoding) if content != None else ''.encode('utf-8')
-        except:
-            pass
+            # title
+            soup = BeautifulSoup(result.text, "html5lib")
+            if soup != None:
+                codes = ['utf-8', 'gbk']
+                title = soup.title
+                if title == None or title.string == '':
+                    title = "[None Title]".encode('utf-8')
+                else:
+                    if result.encoding != None:
+                        title = title.string.encode(result.encoding)
+                        codes.append(result.encoding)
+                    else:
+                        title = title.string
+                codes.append(type)
+                for j in range(0, len(codes)):
+                    try:
+                        title = title.decode(codes[j]).strip().replace("\r", "").replace("\n", "")
+                        break
+                    except:
+                        continue
+                    finally:
+                        if j + 1 == len(codes):
+                            title = '[Error Code]'
+            else:
+                title = '[None Title]'
 
-        for j in range(0, len(codes)):
-            try:
-                title = title.decode(codes[j]).strip().replace("\r", "").replace("\n", "")
-                break
-            except:
-                pass
-            finally:
-                if j + 1 == len(codes):
-                    content = ''
-                    title = '[Error Code]'
-
-        key = ''
-        for searchkey in webkeydic:
-            searchkey = str(searchkey,'utf-8').replace("\r", "").replace("\n", "")
-            try:
-
-                if searchkey  in title or searchkey in content.encode(result.encoding):
-                    key += searchkey + ','
-                    data['flag'] = 1
-            except:
-                pass
-
-        if data['flag'] == 1:
-            data['res'].append({"info": title, "key": key[:-1], "status": status})
+            if data['flag'] == 1:
+                data['res'].append({"info": title, "key": key[:-1], "status": status})
 
     return data
 

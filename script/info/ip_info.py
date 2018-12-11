@@ -31,11 +31,11 @@ def prove(data):
                     jsondata['data'] = {'region': '', 'city': '', 'isp': ''}
                 else:
                     if jsondata['data']['region']:
-                        info += "| Region: " + jsondata['data']['region']
+                        info += " | Region: " + jsondata['data']['region']
                     if jsondata['data']['isp']:
-                        info += "| ISP: " + jsondata['data']['isp']
+                        info += " | ISP: " + jsondata['data']['isp']
                     if jsondata['data']['city']:
-                        info += "| City: " + jsondata['data']['city']
+                        info += " | City: " + jsondata['data']['city']
                 break
             elif res.status_code == 502:
                 time.sleep(0.3)

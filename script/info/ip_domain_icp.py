@@ -48,7 +48,7 @@ def prove(data):
     if len(dic['ICP'])>0:
         data['flag'] = 1
         for _icp in dic['ICP']:
-            data['res'].append({"info": _icp,"key": "icp"})
+            data['res'].append({"info": _icp.strip('\r'),"key": "icp"})
     return data
 
 
