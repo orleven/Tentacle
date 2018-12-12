@@ -14,13 +14,12 @@ from random import choice
 from lib.utils.cipher import base64encode
 from bs4 import BeautifulSoup
 from lib.core.settings import HEADERS
-from lib.core.settings import AGENTS_LIST
-# from lib.core.settings import ZOOMEYS_API
+from lib.utils.curl import mycurl
 from lib.core.data import logger
 from lib.core.data import conf
 
 
-def search_api(search,page = 20):
+def search_api(search,page = 50):
     target_list = []
     try:
         if 'target_zoomeye' in conf.keys():
@@ -31,16 +30,15 @@ def search_api(search,page = 20):
 
         elif 'target_shodan' in conf.keys():
             for z in _shodan_api(search, page):
-                # for url in z:
-                    target_list.append(z)
+                target_list.append(z)
 
         elif 'target_fofa' in conf.keys():
             for z in _fofa_api(search, page):
-                    target_list.append(z)
+                target_list.append(z)
 
         elif 'target_fofa_today_poc' in conf.keys():
             for z in _fofa_api_today_poc(page):
-                    target_list.append(z)
+                target_list.append(z)
 
         elif 'target_github' in conf.keys():
             for z in _github_api(search, page):
@@ -53,6 +51,8 @@ def search_api(search,page = 20):
     except KeyboardInterrupt:
         sys.exit(logger.error("Exit by user."))
 
+    if isinstance(target_list,tuple):
+        return target_list
     return list(set(target_list))
 
 def search_engine(search,page = 5):
@@ -239,7 +239,7 @@ def _shodan_api(search, page):
     return anslist
 
 
-def _fofa_api(search, page):
+def _fofa_api(search, page, flag = True):
     '''
            https://fofa.so/api#auth
     '''
@@ -251,8 +251,8 @@ def _fofa_api(search, page):
         key = conf['config']['fofa_api']['token']
     except KeyError:
         sys.exit(logger.error("Load tentacle config error: zfofa_api, please check the config in tentacle.conf."))
-
-    logger.sysinfo("Using fofa api...")
+    if flag:
+        logger.sysinfo("Using fofa api...")
     search = str(base64encode(bytes(search, 'utf-8')),'utf-8')
     for p in range(1,page+1):
         logger.debug("Find fofa url of %d page..." % int(p))
@@ -267,13 +267,12 @@ def _fofa_api(search, page):
                 res_json = json.loads( res.text)
                 if res_json["error"] is None:
                     for item in res_json.get('results'):
-                        logger.info("(No test!)Found: %s" % item[0])
                         result.append(item[0])
     return result
 
 
 def _fofa_api_today_poc(page):
-    # today_poc=[]
+    target_list = []
     url = "https://fofa.so/about_client"
     poc = requests.get(url,headers=HEADERS)
     poc_soup = BeautifulSoup(poc.content,'lxml')
@@ -282,11 +281,17 @@ def _fofa_api_today_poc(page):
     for i in range(len(poc_result_name)):
         result_name = str(poc_result_name[i])[11:-5]
         result_raw = str(poc_result_raw[i])[str(poc_result_raw[i]).find(';">'):-4];result_raw = result_raw.replace(';">','')
-        # result = result_name + ':' + result_raw
-        _fofa_api(result_raw, page)
-        # today_poc.append(result)
-    # print(today_poc)
-    #
+        logger.sysinfo("Search fofa api %s: %s"%(result_name,result_raw))
+        matchObj = re.search( r'[a-zA-Z0-9]+', result_name)
+        if matchObj:
+            server =  matchObj.group().lower()
+            for z in _fofa_api(result_raw, page, False):
+                target_list.append((z, server))
+        else:
+            for z in _fofa_api(result_raw, page, False):
+                target_list.append(z, None)
+
+    return target_list
 
 
 def _github_api(search, page):
@@ -327,7 +332,6 @@ def _github_api(search, page):
         git_urls = []
         for p in range(1,page_num + 1):
             # Search url
-
             _url_api = "https://api.github.com/search/code?sort=updated&order=desc&page=%d&per_page=%s&q=" % (p,per_page_limit)
             try:
                 _resp = requests.get(_url_api + search, headers=headers, timeout=github_timeout)

@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 __author__ = 'orleven'
 
-import struct
 import re
+import struct
 from lib.core.data import logger
 
 class CIDRHelper:
@@ -67,14 +67,13 @@ def check_host(host):
     match = pattern.match(host)
     if match:
         return True
-        # return match.group()
     else:
         try:
             import socket
             socket.gethostbyname(host)
             return True
         except Exception as e:
-            logger.error('Address error,%s' % host)
+            logger.error('Address error: %s' % host)
     return False
 
 def check_domain(domain):
@@ -90,7 +89,6 @@ def check_ip(ip):
     match = pattern.match(ip)
     if match:
         return True
-        # return match.group()
     return False
 
 
@@ -101,6 +99,5 @@ def check_ippool(ip):
         return True
     elif pattern1.match(ip):
         return True
-        # return match.group()
     return False
 

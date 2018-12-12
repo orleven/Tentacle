@@ -13,11 +13,10 @@ import threading
 import importlib.util
 
 from lib.core.hashdb import HashDB
-from lib.core.enums import ENGINE_MODE_STATUS
 from lib.core.data import conf, logger,paths
 from lib.utils.output import print_dic
 from lib.utils.cipher import md5
-from lib.utils.output import to_excal
+from lib.utils.output import output_excal
 from lib.core.common import unserialize_object
 from lib.utils.iputil import build
 from lib.utils.iputil import check_host
@@ -41,10 +40,8 @@ class Engine():
         self.targets = []
         self.modules = []
         self.put_queue_flag = True
-        # selff_flag = conf.FILE_OUTPUT
-        # self.s_flag = conf.SCREEN_OUTPUT
         self.thread_count = self.thread_num  = conf['thread_num']
-        self.scanning_count = self.scan_count = self.found_count = self.error_count = self.total = 0
+        self.scanning_count = self.scan_count = self.found_count = self.error_count = self.total = self.exclude =0
         self.is_continue = True
         self.queue_pool_total = 3000
         self.queue_pool_cache = 1000
@@ -63,6 +60,7 @@ class Engine():
             module = importlib.import_module(module_name)
             self.modules.append(module)
         else:
+            module = None
             logger.error('Can\'t load modual: %s.' % conf.module_path)
         return module
 
@@ -70,10 +68,15 @@ class Engine():
     def load_modules(self):
         modules_name = conf['modules_name']
         func_name = conf['func_name']
-        if len(modules_name) == 1:
+
+        if len(modules_name) < 0:
+            msg = 'Can\'t find any modules. Please check you input.'
+            sys.exit(logger.error(msg))
+
+        elif len(modules_name) == 1:
             logger.sysinfo('Loading modual: %s.' % (modules_name[0]))
             module = self._load_module(modules_name[0])
-            if func_name.lower() in ['show','help'] and module :
+            if func_name.lower() in ['show','help'] and module:
                 sys.exit(help(module))
 
         else:
@@ -85,10 +88,10 @@ class Engine():
                     sys.exit(logger.error('Can\'t show so many modules.'))
 
                 elif func_name not in dir(module):
-                    logger.error('Can\'t find function: %s:%s().' % (module.__name__, func_name))
+                    logger.error('Can\'t find function: %s:%s(), please make sure the function is in the module.' % (module.__name__, func_name))
 
+    def _load_target(self,target,service=None):
 
-    def _load_target(self,target,service = None):
         # http://localhost
         if "http://" in target or "https://" in target:
             self.put_target(target,service)
@@ -122,12 +125,14 @@ class Engine():
         if 'target_simple' in conf.keys():
             self._load_target(conf['target_simple'])
             logger.sysinfo("Loading target: %s" % (conf['target_simple']))
+
         elif 'target_file' in conf.keys():
             for _line in open(conf['target_file'], 'r'):
                 line = _line.strip()
                 if line:
                     self._load_target(line)
             logger.sysinfo("Loading target: %s" % (conf['target_file']))
+
         elif 'target_nmap_xml' in conf.keys():
             import xml.etree.ElementTree as ET
             tree = ET.parse(conf['target_nmap_xml'])
@@ -150,9 +155,11 @@ class Engine():
                 # resDic = {"host": host_id, "info": infoLit}
                 # resLit.append(resDic)
             logger.sysinfo("Loading target: %s" % (conf['target_nmap_xml']))
+
         elif 'target_network' in conf.keys():
             self._load_target(conf['target_network'])
             logger.sysinfo("Loading target: %s" % (conf['target_network']))
+
         elif 'target_task' in conf.keys():
             hashdb = HashDB(os.path.join(paths.DATA_PATH,conf['target_task']))
             hashdb.connect()
@@ -162,6 +169,7 @@ class Engine():
                 else:
                     self._load_target(_row[2] + ":" + _row[3])
             logger.sysinfo("Loading target: %s" % (conf['target_task']))
+
         elif 'target_search_engine' in conf.keys():
             logger.sysinfo("Loading target by baidu/bing/360so: %s" % (conf['target_search_engine']))
             urls = search_engine(conf['target_search_engine'])
@@ -175,10 +183,6 @@ class Engine():
             for _url in urls:
                 if _url:
                     self._load_target(_url)
-
-        elif 'target_github' in conf.keys():
-            logger.sysinfo("Loading target by github: %s" %(conf['target_github']))
-            urls = search_api(conf['target_github'])
 
         elif 'target_shodan' in conf.keys():
             logger.sysinfo("Loading target by shadon: %s" % (conf['target_shodan']))
@@ -196,10 +200,10 @@ class Engine():
 
         elif 'target_fofa_today_poc' in conf.keys():
             logger.sysinfo("Loading target by fofa today poc: %s" % (conf['target_fofa_today_poc']))
-            urls = search_api(conf['target_fofa_today_poc'])
-            # for _url in urls:
-            #     if _url:
-            #         self._load_target(_url)
+            obj = search_api(conf['target_fofa_today_poc'])
+            for _url,_server in obj:
+                if _url:
+                    self._load_target(_url,_server)
 
         elif 'target_google' in conf.keys():
             logger.sysinfo("Loading target by google: %s" % (conf['target_google']))
@@ -207,6 +211,10 @@ class Engine():
             for _url in urls:
                 if _url:
                     self._load_target(_url)
+
+        elif 'target_github' in conf.keys():
+            logger.sysinfo("Loading target by github: %s" %(conf['target_github']))
+            urls = search_api(conf['target_github'])
 
         else:
             sys.exit(logger.error("Can't load any targets! Please check input." ))
@@ -218,23 +226,26 @@ class Engine():
         thread.setDaemon(True)
 
     def put_target(self,obj,service = None):
-        # self.target_total += 1
-        self.targets.append(obj)
+        self.targets.append([obj, service])
         if len(self.targets) > self.target_pool_total:
             msg = 'Too many targets! Please control the target\'s numbers under the %d.' % self.target_pool_total
             sys.exit(logger.error(msg))
 
-        # self.queue.put([self.target_total,obj])
     def _put_queue(self):
         for module in self.modules:
             for i in range(0,len(self.targets)):
-                self.queue.put([i+1,module,self.targets[i]])
+                obj, service = self.targets[i]
+                if service !=None and service.lower() not in ['','unknown'] and service.lower() not in module.__name__:
+                    self.exclude += 1
+                    continue
+
+                self.queue.put([i+1,module,obj])
                 if self.queue.qsize() >= self.queue_pool_total + self.queue_pool_cache:
                     yield self.queue
         yield self.queue
 
 
-    def _output_excal(self):
+    def _get_data(self):
         if conf.OUT != None:
             logger.info('(%s) Task sort out the data. ' % self.name)
             datas = []
@@ -250,7 +261,7 @@ class Engine():
                     "other": unserialize_object(_row[7])
                 }
                 datas.append(data)
-            to_excal(datas, conf.OUT, self.name)
+            output_excal(datas, conf.OUT, self.name)
 
     def run(self):
         logger.sysinfo('Task running: %s', self.name)
@@ -264,7 +275,7 @@ class Engine():
             t.start()
 
         logger.debug("Wait for thread...")
-        # It can quit with Ctrl-C
+
         while True:
             if self.thread_count > 0 and self.is_continue:
                 now_time = time.time()
@@ -275,6 +286,7 @@ class Engine():
                 if  self.put_queue_flag and self.queue.qsize() < self.queue_pool_total :
                     try:
                         next(pool)
+                        logger.debug("Add queue pool for engine.")
                     except StopIteration:
                         self.put_queue_flag = False
 
@@ -282,7 +294,7 @@ class Engine():
 
             else:
                 self.print_progress()
-                self._output_excal()
+                self._get_data()
                 break
         logger.sysinfo('Task Finished: %s', self.name)
 
@@ -300,8 +312,8 @@ class Engine():
                 self.load_lock.release()
 
                 # Wait for pool
-                # if self.total > self.target_pool_total :
-                #     time.sleep(3)
+                if self.total > self.queue_pool_total + self.queue_pool_cache :
+                    time.sleep(3)
 
                 if self.queue.qsize() <= 0 and self.scan_count == self.total :
                     break
@@ -329,8 +341,6 @@ class Engine():
                 self.hashdb.flush()
                 print_dic(data)
         except AttributeError:
-            # self.errmsg = traceback.format_exc()
-            # logger.error(self.errmsg)
             self.change_error_count(1)
         except Exception:
             self.errmsg = traceback.format_exc()
@@ -371,7 +381,6 @@ class Engine():
             "res": [],
             "other": {},
             'headers': {},
-
         }
 
         if target.startswith('http://') or target.startswith('https://'):
@@ -397,7 +406,7 @@ class Engine():
 
 
     def print_progress(self):
-        self.total = len(self.targets) * len(self.modules)
+        self.total = len(self.targets) * len(self.modules) - self.exclude
         msg = '[%s] %s found | %s error | %s remaining | %s scanning | %s scanned in %.2f seconds.(total %s)' % (
             self.name, self.found_count, self.error_count, self.queue.qsize(),  self.scanning_count, self.scan_count, time.time() - self.start_time,self.total)
         logger.sysinfo(msg)
@@ -425,7 +434,6 @@ class Engine():
         self.scanning_count_lock.acquire()
         self.scanning_count += num
         self.scanning_count_lock.release()
-
 
     def change_error_count(self, num):
         self.error_count_lock.acquire()

@@ -17,6 +17,7 @@ def info(data=None):
 
 def prove(data):
     data = init(data, 'web')
+
     if data['url']:
         codes = ['utf-8','gbk']
         status = str(0)

@@ -13,6 +13,11 @@ def serialize_object(object_):
 def unserialize_object(value):
     return base64unpickle(value) if value else None
 
+def get_time():
+    return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+def get_timestamp():
+    return int(round(time.time() * 1000))
 
 def get_safe_ex_string(ex, encoding=None):
     """

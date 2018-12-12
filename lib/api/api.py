@@ -60,7 +60,7 @@ def myserver(host=RESTAPI_DEFAULT_HOST, port=RESTAPI_DEFAULT_PORT, adapter=RESTA
     logger.sysinfo("IPC database: '%s'" % Database.filepath)
 
     # Initialize IPC database
-    DataStore.current_db = Database(os.path.join(paths.DATA_PATH, 'storage'))
+    DataStore.current_db = Database(paths.DATABASE_PATH )
     DataStore.current_db.connect()
     DataStore.current_db.init()
 

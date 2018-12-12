@@ -5,17 +5,10 @@ __author__ = 'orleven'
 import sys
 import socks
 import socket
-import random
-import requests
-from requests import request
 from lib.core.data import conf
 from lib.core.data import logger
-from requests.exceptions import ConnectionError
-from requests.exceptions import TooManyRedirects
-from requests.exceptions import ChunkedEncodingError
-from requests.exceptions import ConnectTimeout
-from requests.exceptions import ReadTimeout
-requests.packages.urllib3.disable_warnings()
+from lib.utils.curl import mycurl
+
 
 service_table = {
     "ftp": 21,
@@ -62,36 +55,6 @@ def get_rebound():
     except KeyError:
         sys.exit(logger.error("Load tentacle config error: rebound, please check the config in tentacle.conf."))
     return local_host,local_port
-
-# def init_service(data):
-#     # unknown，都来一遍
-#     if data['service'] == None or data['service'].lower() in ["unknown",'tcpwrapped'] :
-#         data['service'] = None
-#
-#     # http or https ，只扫web
-#     elif 'http' in data['service']:
-#         pass
-#
-#     # other，匹配到对应的就扫，匹配不到都来一遍
-#     else:
-#         for _service in service_table.keys():
-#             if _service in data['service']:
-#                 data['service'] = _service
-#             else:
-#                 data['service'] = None
-#     return data
-#
-# def init(data,service):
-#     data = init_service(data)
-#     service = service.lower()
-#     if data['service'] == None:
-#         if data['target_port'] == None or int(data['target_port']) == 0:
-#             if service in service_table.keys():
-#                 data['target_port'] = service_table[service]
-#             specal = 'api'
-#
-#
-#     else:
 
 def init(data,service='web'):
     service = service.lower()
@@ -154,45 +117,13 @@ def init(data,service='web'):
 
 
 def head(data,url, params = None):
-    s = curl('head',url, params)
+    s = mycurl('head',url, params)
     if s!= None:
         return url
     return s
 
 def curl(method,url, params = None, **kwargs):
-    headers = kwargs.get('headers')
-    if headers == None:
-        headers = {}
-    headers["User-Agent"] = random.choice(conf['config']['basic']['user_agent'].split('\n'))
-    headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-    headers['Referer'] = url
-    kwargs.setdefault('headers',headers)
-    kwargs.setdefault('timeout',  int(conf['config']['basic']['timeout']))
-    kwargs.setdefault('verify', False)
-
-    if conf['config']['proxy']['proxy'].lower() == 'true':
-        try:
-            _proxies = {
-                'http': conf['config']['proxy']['http_proxy'],
-                'https': conf['config']['proxy']['https_proxy']
-            }
-            kwargs.setdefault('proxies', _proxies)
-        except:
-            logger.error("Error http(s) proxy: %s or %s." % (conf['config']['proxy']['http_proxy'],conf['config']['proxy']['https_proxy']))
-    try:
-        return request(method, url, params=params, **kwargs)
-    except ConnectionError as e:
-        # logger.error("ConnectionError: %s" % url)
-        return None
-    except ReadTimeout as e:
-        # logger.error("ReadTimeout: %s" % url)
-        return None
-    except TooManyRedirects as e:
-        kwargs.setdefault('allow_redirects', False)
-        return request('get', url, params=params, **kwargs)
-    except Exception as e:
-        logger.error("Curl error: %s" % url)
-        return None
+    return mycurl(method,url, params = params, **kwargs)
 
 
 

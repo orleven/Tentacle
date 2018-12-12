@@ -7,6 +7,11 @@ import re
 import types
 import sys
 
+INDEX_DATABASE = 'storage'
+
+#_______________________________________________________-
+
+
 AGENTS_LIST = [
     'Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 5.2; .NET CLR 1.1.4322; .NET CLR 2.0.50727; InfoPath.2; .NET CLR 3.0.04506.30)',
     'Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 5.1; Media Center PC 3.0; .NET CLR 1.0.3705; .NET CLR 1.1.4322; .NET CLR 2.0.50727; InfoPath.1)',

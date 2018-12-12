@@ -31,7 +31,7 @@ def base64decode(message, altchars=b'+/'):
     # missing_padding = len(data) % 4
     # if missing_padding:
     #     data += b'=' * (4 - missing_padding)
-    return b64decode(data, altchars)
+    return b64decode(message, altchars)
 
 def base64encode(message):
     return b64encode(message)

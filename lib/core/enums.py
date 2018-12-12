@@ -85,9 +85,7 @@ class OS:
     LINUX = "Linux"
     WINDOWS = "Windows"
 
-class ENGINE_MODE_STATUS:
-    THREAD = 9
-    GEVENT = 8
+
 
 # class PLACE:
 #     GET = "GET"
