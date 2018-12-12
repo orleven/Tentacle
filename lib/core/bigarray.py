@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-__author__ = 'orleven'
+# @author: 'orleven'
 
 try:
    import cPickle as pickle
@@ -75,7 +75,7 @@ class BigArray(list):
             try:
                 with open(self.chunks[-1], "rb") as fp:
                     self.chunks[-1] = pickle.load(fp)
-            except IOError, ex:
+            except IOError as ex:
                 errMsg = "exception occurred while retrieving data "
                 errMsg += "from a temporary file ('%s')" % ex.message
                 raise SqlmapSystemException, errMsg
@@ -95,7 +95,7 @@ class BigArray(list):
             with open(filename, "w+b") as fp:
                 pickle.dump(chunk, fp, pickle.HIGHEST_PROTOCOL)
             return filename
-        except (OSError, IOError), ex:
+        except (OSError, IOError) as ex:
             errMsg = "exception occurred while storing data "
             errMsg += "to a temporary file ('%s'). Please " % ex.message
             errMsg += "make sure that there is enough disk space left. If problem persists, "
@@ -111,7 +111,7 @@ class BigArray(list):
             try:
                 with open(self.chunks[index], "rb") as fp:
                     self.cache = Cache(index, pickle.load(fp), False)
-            except IOError, ex:
+            except IOError as ex:
                 errMsg = "exception occurred while retrieving data "
                 errMsg += "from a temporary file ('%s')" % ex.message
                 raise SqlmapSystemException, errMsg

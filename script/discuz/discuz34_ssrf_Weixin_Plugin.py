@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-__author__ = 'orleven'
+# @author: 'orleven'
 # https://zhuanlan.zhihu.com/p/51907363
 
 def info(data):

@@ -16,7 +16,7 @@ License: MIT (see LICENSE for details)
 from __future__ import with_statement
 import sys
 
-__author__ = 'Marcel Hellkamp'
+# @author: 'Marcel Hellkamp'
 __version__ = '0.13-dev'
 __license__ = 'MIT'
 

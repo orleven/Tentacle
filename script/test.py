@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-__author__ = 'orleven'
+# @author: 'orleven'
 
-"""
-    This is a test for script.
-"""
+'''
+This is a example for script
+'''
 
 import time
 import random
 import requests
 import socket
+
 
 def info(data):
     """
@@ -89,12 +90,8 @@ if __name__ == '__main__':
     data = {
         "target_host": "",
         "target_port": "",
-
-        "proxy": "",
-        "dic_one": "",
-        "dic_two": "",
-        "cookie": "",
         "url": "",
+        "base_url": "",
         "flag": "",
 
         "data": [],
@@ -104,8 +101,6 @@ if __name__ == '__main__':
         "local_host": "",
         "local_port": "",
     }
-    import sys
-    sys.path.append("..")
     from script import init
     from script import curl
     print(prove(init(data, 'http')))

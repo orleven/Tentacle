@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-__author__ = 'orleven'
+# @author: 'orleven'
 
 from lib.core.datatype import AttribDict
 
@@ -22,7 +22,7 @@ logger = logger()
 # # mergedOptions = AttribDict()
 #
 # object to store all engines
-# engine = AttribDict()
+engine = None
 #
 
 # line options and settings

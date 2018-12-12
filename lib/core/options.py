@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-__author__ = 'orleven'
+# @author: 'orleven'
 
 import re
 import os
@@ -67,16 +67,26 @@ def module_register(args):
     _len = len(paths.ROOT_PATH) + 1
     if args.show:
         msg = 'There are available modules as follows: \r\n'
-        msg += '------------------------------------------------------\r\n'
-        msg += '| {: <50} |\r\n'.format('Module and path,you can load module by -m ')
-        msg += '------------------------------------------------------\r\n'
+        msg += '-----------------------------------------------------------\r\n'
+        msg += '| {: <55} |\r\n'.format('Module path, you can load module by -m module_path,')
+        msg += '| {: <55} |\r\n'.format('and you can see module\' description for -f show')
+        msg += '-----------------------------------------------------------\r\n'
         for parent, dirnames, filenames in os.walk(paths.SCRIPT_PATH, followlinks=True):
             for each in filenames:
                 if '__init__' in each:
                     continue
                 file_path = os.path.join(parent, each)
-                msg += '| {: <50} |\r\n'.format(file_path[_len:-3])
-        msg += '------------------------------------------------------\r\n'
+                msg += '| {: <55} |\r\n'.format(file_path[_len:-3])
+                # import importlib.util
+                # module_name = '.'.join(re.split('[\\\\/]',file_path[_len:-3]))
+                # module_spec = importlib.util.find_spec(module_name)
+                # if module_spec:
+                    # module = importlib.import_module(module_name)
+                    # from inspect import getmembers, isfunction
+                    # fun= [_fun[0] for _fun in getmembers(module) if isfunction(_fun[1]) and '_' not in _fun[0]]
+                    # doc = module.__doc__ if module.__doc__ !=None else ''
+                    # msg += '| {: <50} | {:<} \r\n'.format(file_path[_len:-3], doc )
+        msg += '-----------------------------------------------------------\r\n'
         sys.exit(logger.sysinfo(msg))
 
     input_module = args.module
@@ -196,7 +206,8 @@ def target_register(args):
         logger.debug("Set target: %s." % conf['target_github'])
 
     else:
-        exit(logger.error("Can't find any targets. Please load target by -iS/iN/iF/iX/iE/iT/gg/ff/fft/ze/sd/gh."))
+        if conf['func_name'].lower() not in  ['show','help']:
+            exit(logger.error("Can't find any targets. Please load target by -iS/iN/iF/iX/iE/iT/gg/ff/fft/ze/sd/gh."))
 
     if args.target_port:
         if args.target_port >0 and args.target_port < 65536:

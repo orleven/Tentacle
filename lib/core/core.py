@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-__author__ = 'orleven'
+# @author: 'orleven'
 
 import os
 import time
@@ -17,6 +17,7 @@ from lib.core.options import init_options
 from lib.core.engine import Engine
 from lib.core.data import paths
 from lib.core.data import logger
+from lib.core.data import engine
 from lib.core.database import Database
 from lib.core.settings import RESTAPI_DEFAULT_HOST
 from lib.core.settings import RESTAPI_DEFAULT_PORT

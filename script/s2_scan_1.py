@@ -16,7 +16,7 @@ def prove(data):
 # # coding=UTF-8
 # __title__ = 'Struts2 Scan'
 # __version__ = '0.1'
-# __author__ = 'HatBoy'
+# # @author: 'HatBoy'
 #
 #
 # import shlex

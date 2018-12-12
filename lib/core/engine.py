@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-__author__ = 'orleven'
+# @author: 'orleven'
 
 import queue
 import time
@@ -84,7 +84,7 @@ class Engine():
             for module_name in conf['modules_name']:
                 module = self._load_module(module_name)
 
-                if len(self.modules) > 1 and func_name.lower() == 'show':
+                if len(self.modules) > 1 and func_name.lower() in  ['show','help']:
                     sys.exit(logger.error('Can\'t show so many modules.'))
 
                 elif func_name not in dir(module):
@@ -235,7 +235,7 @@ class Engine():
         for module in self.modules:
             for i in range(0,len(self.targets)):
                 obj, service = self.targets[i]
-                if service !=None and service.lower() not in ['','unknown'] and service.lower() not in module.__name__:
+                if service !=None and service.lower() not in ['','unknown'] and service.lower() not in module.__name__.lower():
                     self.exclude += 1
                     continue
 
@@ -349,38 +349,18 @@ class Engine():
         pass
 
     def _init_data(self,id,module,target):
-
-        # 未来替换为这个
-        # data = {
-        #     "id": id,
-        #     'module_name': module.__name__ ,
-        #     'func_name': conf['func_name'],
-        #     "flag": -1,
-        #      "service": None,
-        #     'target_host': None,
-        #     'target_port': None,
-        #     'url': None,
-        #     'base_url': None,
-        #     'headers': {},
-        #
-        #     "data": [],  # Send
-        #     "res": [],  # Rec
-        # }
-
         data = {
             "id": id,
             "flag": -1,
-            "service": None,
+            'module_name': module.__name__,
+            'func_name': conf['func_name'],
             'target_host': None,
             'target_port': None,
             'url': None,
             'base_url': None,
-            'module_name': module.__name__,
-            'func_name': conf['func_name'],
             "data": [],
             "res": [],
             "other": {},
-            'headers': {},
         }
 
         if target.startswith('http://') or target.startswith('https://'):
@@ -391,7 +371,6 @@ class Engine():
             data['target_host'] = host
             data['target_port'] = port if port != None else 443 if protocol == 'https' else 80
             data['base_url'] = protocol + "://" + host + ":" + str(data['target_port']) + '/'
-            data['service'] = "http" if protocol == 'http' else "https"
         else:
             if ":" in target:
                 _v = target.split(':')

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-__author__ = 'orleven'
+# @author: 'orleven'
 
 """
 Copyright (c) 2006-2017 Tentacle developers (http://Tentacle.org/)

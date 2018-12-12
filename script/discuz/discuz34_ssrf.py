@@ -1,6 +1,6 @@
 # #!/usr/bin/env python
 # # -*- coding: utf-8 -*-
-# __author__ = 'orleven'
+# # @author: 'orleven'
 #https://www.cnblogs.com/iamstudy/articles/discuz_x34_ssrf_1.html
 # def info(data):
 #     info = {
