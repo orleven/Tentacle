@@ -40,3 +40,7 @@ def prove(data):
                     data['res'].append({"info": url, "key": "pbootcms v1.3.2 rec"})
                     break
     return data
+
+if __name__=='__main__':
+    from script import init, curl
+    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))

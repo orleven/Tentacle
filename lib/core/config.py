@@ -67,6 +67,10 @@ def init_conf(path):
         "github_api": {
             "token": "token@tentacle",
         },
+        "ceye_api":{
+            "identifier": "test.ceye.io",
+            "token": "66ca15b9e782b5127d846af76bbe2aa1"
+        }
     }
     cf = configparser.ConfigParser()
     for section in configs.keys():

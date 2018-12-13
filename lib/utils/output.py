@@ -5,7 +5,7 @@
 import re
 import sys
 import logging
-from lib.core.data import kb
+# from lib.core.data import kb
 from lib.core.data import logger
 from lib.core.log import LOGGER_HANDLER
 from lib.core.settings import BANNER

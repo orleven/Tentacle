@@ -1,18 +1,13 @@
 #!/usr/bin/evn python
 # -*- coding: utf-8 -*-
+
+'''
+Get ip infomation
+'''
+
 import socket
 import json
 import time
-
-
-def assign(service, arg):
-    if service == 'www' and _G["find_service"]:
-        url_info = urlparse.urlparse(arg)
-        try:
-            hostname = socket.gethostbyname(url_info.netloc)
-            return True, hostname
-        except:
-            return False
 
 def prove(data):
     try:
@@ -45,3 +40,7 @@ def prove(data):
             pass
     data['res'].append({"info": info, "key": 'IP Information'})
     return data
+
+if __name__=='__main__':
+    from script import init, curl
+    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))

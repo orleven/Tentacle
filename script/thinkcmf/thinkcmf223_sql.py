@@ -24,3 +24,7 @@ def prove(data):
             data['data'].append({"flag": url})
             data['res'].append({"info": url, "key": "thinkcmf 2.2.3 sql"})
     return data
+
+if __name__=='__main__':
+    from script import init, curl
+    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))

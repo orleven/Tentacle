@@ -126,16 +126,7 @@ def _gethtml(url):
         return {"html":"", "code":0, "url": url}
         # return _get_html_phantomJS(url)
 
-# 使用PhantomJS获取网页源码
-def _get_html_phantomJS(url):
-    try:
-        from selenium import webdriver
-        dr = webdriver.PhantomJS()
-        dr.get(url)
-        time.sleep(2)
-        return {"html": dr.page_source, "code": 200, "url": url}
 
-    except Exception as e:
-        # http://phantomjs.org/
-        print (e)
-        return {"html":"", "code":500, "url":url}
+if __name__=='__main__':
+    from script import init, curl
+    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))

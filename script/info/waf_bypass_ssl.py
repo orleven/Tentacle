@@ -330,6 +330,8 @@ _openssl_ssls = {
     "SSL_CK_RC4_64_WITH_MD5": "RC4-64-MD5",
     "SSL_CK_DES_64_CFB64_WITH_MD5_1": "DES-CFB-M1",
 
-
 }
 
+if __name__=='__main__':
+    from script import init, curl
+    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))

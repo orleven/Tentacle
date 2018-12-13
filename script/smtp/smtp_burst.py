@@ -16,8 +16,8 @@ def info(data=None):
 def prove(data):
     data = init(data, 'smtb')
     if _socket_connect(data['target_host'], data['target_port']):
-        usernamedic = _read_dic(data['dic_one']) if 'dic_one' in data.keys() else  _read_dic('dict/smtp_usernames.txt')
-        passworddic = _read_dic(data['dic_two']) if 'dic_two' in data.keys() else  _read_dic('dict/smtp_passwords.txt')
+        usernamedic = _read_dic(data['d1']) if 'd1' in data.keys() else  _read_dic('dict/smtp_usernames.txt')
+        passworddic = _read_dic(data['d2']) if 'd2' in data.keys() else  _read_dic('dict/smtp_passwords.txt')
         for linef1 in usernamedic:
             username = linef1.strip('\r').strip('\n')
             for linef2 in passworddic:
@@ -81,3 +81,7 @@ def _socket_connect(ip, port,msg = "test"):
         return True
     except:
         return False
+
+if __name__=='__main__':
+    from script import init, curl
+    print(prove({'target_host':'www.baidu.com','target_port': 22,'flag':-1,'data':[],'res':[]}))

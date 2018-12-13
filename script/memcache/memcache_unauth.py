@@ -30,3 +30,8 @@ def prove(data):
     except Exception as err:
         pass
     return data
+
+
+if __name__=='__main__':
+    from script import init, curl
+    print(prove({'target_host':'www.baidu.com','target_port': 22,'flag':-1,'data':[],'res':[]}))

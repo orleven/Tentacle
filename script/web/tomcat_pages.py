@@ -35,3 +35,7 @@ def _curl(data,base_url):
         except Exception:
             pass
     return data
+
+if __name__=='__main__':
+    from script import init, curl
+    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))

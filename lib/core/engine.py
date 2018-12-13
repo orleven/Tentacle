@@ -22,10 +22,12 @@ from lib.utils.iputil import build
 from lib.utils.iputil import check_host
 from lib.utils.iputil import check_ip
 from lib.utils.iputil import check_ippool
-from lib.api.search import search_engine
-from lib.api.search import search_api
+from lib.api.api import search_engine
+from lib.api.api import search_api
 from script import init
 from script import curl
+from script import ceye_verify_api
+from script import ceye_dns_api
 
 class Engine():
 
@@ -333,6 +335,8 @@ class Engine():
             func = getattr(module, conf['func_name'])
             module.init = init
             module.curl = curl
+            module.ceye_verify_api = ceye_verify_api
+            module.ceye_dns_api = ceye_dns_api
             module.logger = logger
             data = func(data)
             if conf.VERBOSE or data['flag'] == 1:

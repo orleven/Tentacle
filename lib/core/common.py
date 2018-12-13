@@ -23,6 +23,10 @@ def get_timestamp():
 def random_IP():
     return '.'.join([str(random.randint(0, 255)) for x in range(0,4)])
 
+def print_all(data):
+    from pprint import pprint
+    pprint(vars(data))
+
 def get_safe_ex_string(ex, encoding=None):
     """
     Safe way how to get the proper exception represtation as a string

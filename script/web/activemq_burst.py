@@ -18,8 +18,8 @@ def info(data=None):
 def prove(data):
     data = init(data, 'web')
     if data['base_url']:
-        usernamedic = _read_dic(data['dic_one']) if 'dic_one' in data.keys() else  _read_dic('dict/activemq_usernames.txt')
-        passworddic = _read_dic(data['dic_two']) if 'dic_two' in data.keys() else  _read_dic('dict/activemq_passwords.txt')
+        usernamedic = _read_dic(data['d1']) if 'dic_one' in data.keys() else  _read_dic('dict/activemq_usernames.txt')
+        passworddic = _read_dic(data['d2']) if 'dic_two' in data.keys() else  _read_dic('dict/activemq_passwords.txt')
         url = data['base_url'] + "admin/"
         for linef1 in usernamedic:
             username = linef1.strip('\r').strip('\n')
@@ -45,3 +45,8 @@ def prove(data):
 def _read_dic(dicname):
     with open(dicname, 'r') as f:
         return f.readlines()
+
+
+if __name__=='__main__':
+    from script import init, curl
+    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))

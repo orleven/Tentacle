@@ -9,6 +9,8 @@ from lib.core.data import conf
 from lib.core.data import logger
 from lib.utils.curl import mycurl
 from lib.core.data import engine
+from lib.api.api import _ceye_dns_api
+from lib.api.api import _ceye_verify_api
 
 service_table = {
     "ftp": 21,
@@ -47,11 +49,11 @@ def init(data,service='web'):
 
     # Don't have url but have port
     if data['url'] == None:
-        if service in service_table.keys() or service in ['http','web','https']:
+        if service == 'api':
+            data['url'] = data['base_url'] = 'http://' + data['target_host'] + ":" +str(data['target_port']) +'/'
+        else:
             data['url'], data['target_host'], data['target_port'] = geturl(data['target_host'], data['target_port'])
             data['base_url'] = data['url']
-        elif service == 'api':
-            data['url'] = data['base_url'] = 'http://' + data['target_host'] + ":" +str(data['target_port']) +'/'
 
     if conf['func_name'] == 'rebound':
         local_host,local_port = get_rebound()
@@ -82,9 +84,12 @@ def load_targets(target,service=None):
 def geturl(host, port, params = None, **kwargs):
     for pro in ['http://', "https://"]:
         _port = port if port != None and port != 0 else 443 if pro == 'https' else 80
-        url = pro + host + ":" + str(_port) + '/'
+        _pro = 'https://' if port == 443 else pro
+        url = _pro + host + ":" + str(_port) + '/'
         res = mycurl('head',url, params, **kwargs)
-        if res!= None:
+        if res != None :
+            if res.status_code == 400 and 'The plain HTTP request was sent to HTTPS port' in res.text:
+                continue
             return url,host,_port
     return None,host,port
 
@@ -104,6 +109,20 @@ def get_rebound():
         sys.exit(logger.error("Load tentacle config error: rebound, please check the config in tentacle.conf."))
     return local_host,local_port
 
+def ceye_dns_api(t = 'url'):
+    '''
+    curl ssrf
+    :param t:
+    :return:
+    '''
+    return _ceye_dns_api(t = t)
 
-
+def ceye_verify_api(filter, t = 'dns'):
+    '''
+    verify ssrf
+    :param filter:
+    :param t:
+    :return:
+    '''
+    return _ceye_verify_api(filter = filter, t = t)
 

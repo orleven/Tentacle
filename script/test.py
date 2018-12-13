@@ -34,9 +34,19 @@ def prove(data):
     :param data:
     :return:
     """
+    # Examples for ssrf
     # init(data,'web')
-    # if data['url']:
-    #     res = curl('get',data['url'])
+    # if data['base_url']:
+    #     dns = ceye_dns_api(t = 'url')
+    #     url = data['base_url'] + "url.php?=%s" %dns
+    #     res = curl('get', url)
+    #     if res != None :
+    #         time.sleep(3)
+    #         if ceye_verify_api(dns,'http'):
+    #             data['flag'] = 1
+    #             data['data'].append({"flag": url})
+    #             data['res'].append({"info": url, "key": "ssrf"})
+
     if random.randint(1, 100) > 99:
         data['flag'] = 1
         data['data'].append({})
@@ -50,6 +60,11 @@ def prove(data):
 
 
 def exec(data):
+    '''
+    Exec
+    :param data:
+    :return:
+    '''
     # init(data,'smb')
     # if random.randint(1, 100) > 99:
     #     data['flag'] = 1
@@ -64,6 +79,11 @@ def exec(data):
 
 
 def rebound(data):
+    '''
+    rebound
+    :param data:
+    :return:
+    '''
     # init(data,'smb')
     # if random.randint(1, 100) > 99:
     #     data['flag'] = 1
@@ -97,10 +117,6 @@ if __name__ == '__main__':
         "data": [],
         "res": [],
         "other": {},
-
-        "local_host": "",
-        "local_port": "",
     }
-    from script import init
-    from script import curl
+    from script import init, curl,ceye_verify_api,ceye_dns_api
     print(prove(init(data, 'http')))

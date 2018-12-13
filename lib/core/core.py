@@ -9,9 +9,9 @@ import tempfile
 import contextlib
 
 
-from lib.api.api import myserver
+from lib.api.controller import myserver
+from lib.api.controller import myclient
 
-from lib.api.api import myclient
 from lib.utils.utils import random_MD5
 from lib.core.options import init_options
 from lib.core.engine import Engine

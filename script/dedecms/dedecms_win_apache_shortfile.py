@@ -2,17 +2,21 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
+'''
+Search admin' infomation for dedecms with apache, windows and shorf file.
+'''
+
 def info(data=None):
     info = {
         "name": "dedecms_win_apache_shortfile",
         "info": "dedecms_win_apache_shortfile.",
-        "level": "low",
+        "level": "high",
         "type": "info"
     }
     return info
 
 def prove(data):
-    data = init(data,'web')
+    data = init(data,'dedecms')
     if data['base_url']:
         dir = 'data/backupdata/dede_a~'
         for i in range(1, 6):

@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
+'''
+get web status and title
+'''
+
 import sys
 from bs4 import BeautifulSoup
 type=sys.getfilesystemencoding()
@@ -17,7 +21,6 @@ def info(data=None):
 
 def prove(data):
     data = init(data, 'web')
-
     if data['url']:
         codes = ['utf-8','gbk']
         status = str(0)
@@ -55,3 +58,6 @@ def prove(data):
             data['res'].append({"info": title , "key": status, "status": status})
     return data
 
+if __name__=='__main__':
+    from script import init, curl
+    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))

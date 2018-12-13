@@ -68,3 +68,8 @@ def _get_status(url):
     except:
         res = 0
     return res
+
+
+if __name__=='__main__':
+    from script import init, curl
+    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))
