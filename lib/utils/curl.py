@@ -5,6 +5,7 @@
 import sys
 import socks
 import socket
+import backoff
 import random
 import requests
 from requests import request
@@ -16,6 +17,7 @@ from requests.exceptions import ChunkedEncodingError
 from requests.exceptions import ReadTimeout
 requests.packages.urllib3.disable_warnings()
 
+@backoff.on_exception(backoff.expo, TimeoutError, max_tries=3)
 def mycurl(method,url, params = None, **kwargs):
     headers = kwargs.get('headers')
     if headers == None:

@@ -44,15 +44,14 @@ def init(data,service='web'):
     if data['target_port'] == None or int(data['target_port']) == 0:
         if service in service_table.keys():
             data['target_port'] = service_table[service]
-        else:
-            data['url'] = data['base_url'] = geturl(data['target_host'], data['target_port'])
 
     # Don't have url but have port
     if data['url'] == None:
         if service in service_table.keys() or service in ['http','web','https']:
-            data['url'] = data['base_url'] = geturl(data['target_host'], data['target_port'])
+            data['url'], data['target_host'], data['target_port'] = geturl(data['target_host'], data['target_port'])
+            data['base_url'] = data['url']
         elif service == 'api':
-            data['url'] = data['base_url'] =  'http://' + data['target_host'] + ":" +str(data['target_port']) +'/'
+            data['url'] = data['base_url'] = 'http://' + data['target_host'] + ":" +str(data['target_port']) +'/'
 
     if conf['func_name'] == 'rebound':
         local_host,local_port = get_rebound()
@@ -82,25 +81,25 @@ def load_targets(target,service=None):
 
 def geturl(host, port, params = None, **kwargs):
     for pro in ['http://', "https://"]:
-        port = port if port != None or port != 0 else 443 if pro == 'https' else 80
-        url = pro + host + ":" + str(port) + '/'
+        _port = port if port != None and port != 0 else 443 if pro == 'https' else 80
+        url = pro + host + ":" + str(_port) + '/'
         res = mycurl('head',url, params, **kwargs)
         if res!= None:
-            return url
-    return None
+            return url,host,_port
+    return None,host,port
 
 def get_ssh_key():
     try:
-        public_key =  conf['config']['ssh_key']['public_key']
-        private_key= conf['config']['ssh_key']['private_key']
+        public_key = conf['config']['ssh_key']['public_key']
+        private_key = conf['config']['ssh_key']['private_key']
     except KeyError:
         sys.exit(logger.error("Load tentacle config error: ssh_key, please check the config in tentacle.conf."))
     return public_key,private_key
 
 def get_rebound():
     try:
-        local_host =  conf['config']['rebound']['local_host']
-        local_port= conf['config']['rebound']['local_port']
+        local_host = conf['config']['rebound']['local_host']
+        local_port = conf['config']['rebound']['local_port']
     except KeyError:
         sys.exit(logger.error("Load tentacle config error: rebound, please check the config in tentacle.conf."))
     return local_host,local_port

@@ -110,6 +110,7 @@ class Engine():
 
             # 192.168.111.1
             else:
+                target = target[:-1] if target[-1] == '/' else target
                 if ":" in target:
                     _v = target.split(':')
                     host = _v[0]
@@ -369,7 +370,7 @@ class Engine():
             host, s2 = urllib.parse.splithost(s1)
             host, port = urllib.parse.splitport(host)
             data['target_host'] = host
-            data['target_port'] = port if port != None else 443 if protocol == 'https' else 80
+            data['target_port'] = port if port != None and port!= 0 else 443 if protocol == 'https' else 80
             data['base_url'] = protocol + "://" + host + ":" + str(data['target_port']) + '/'
         else:
             if ":" in target:
