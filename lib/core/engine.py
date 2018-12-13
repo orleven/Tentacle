@@ -342,6 +342,7 @@ class Engine():
                 self.hashdb.flush()
                 print_dic(data)
         except AttributeError:
+            logger.error("Error %s:%s for %s:%s" %(data['module_name'], conf['func_name'], data['target_host'], data['target_port']))
             self.change_error_count(1)
         except Exception:
             self.errmsg = traceback.format_exc()

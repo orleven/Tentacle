@@ -11,6 +11,7 @@ import requests
 from requests import request
 from lib.core.data import conf
 from lib.core.data import logger
+from lib.core.common import random_IP
 from requests.exceptions import ConnectionError
 from requests.exceptions import TooManyRedirects
 from requests.exceptions import ChunkedEncodingError
@@ -22,9 +23,14 @@ def mycurl(method,url, params = None, **kwargs):
     headers = kwargs.get('headers')
     if headers == None:
         headers = {}
-    headers["User-Agent"] = random.choice(conf['config']['basic']['user_agent'].split('\n'))
-    headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+    headers['Accept-Charset'] = 'GB2312,utf-8;q=0.7,*;q=0.7'
+    headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+    headers['Accept-Encoding'] = 'gzip, deflate, sdch, br'
     headers['Referer'] = url
+    if 'User-Agent' not in headers.keys():
+        headers["User-Agent"] = random.choice(conf['config']['basic']['user_agent'])
+    # if 'X-Forwarded-For' not in headers.keys():
+    #     headers['X-Forwarded-For'] = random_IP()
     kwargs.setdefault('headers',headers)
     kwargs.setdefault('timeout',  int(conf['config']['basic']['timeout']))
     kwargs.setdefault('verify', False)

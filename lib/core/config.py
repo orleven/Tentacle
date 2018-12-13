@@ -88,6 +88,7 @@ def load_conf(path):
             config[option] = cf.get(section,option)
         configs[section] = config
     conf['config'] = configs
+    conf['config']['basic']['user_agent'] = conf['config']['basic']['user_agent'].split('\n')
 
 def update_conf(path,section,option,value):
     logger.debug("Update tentacle config: [%s][%s] => %s" %(section,option,value))

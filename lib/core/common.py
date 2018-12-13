@@ -3,6 +3,7 @@
 # @author: 'orleven'
 
 import time
+import random
 from lib.utils.cipher import base64pickle
 from lib.utils.cipher import base64unpickle
 from lib.utils.output import data_to_stdout
@@ -18,6 +19,9 @@ def get_time():
 
 def get_timestamp():
     return int(round(time.time() * 1000))
+
+def random_IP():
+    return '.'.join([str(random.randint(0, 255)) for x in range(0,4)])
 
 def get_safe_ex_string(ex, encoding=None):
     """

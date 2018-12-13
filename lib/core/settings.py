@@ -9,33 +9,6 @@ import sys
 
 INDEX_DATABASE = 'storage'
 
-#_______________________________________________________-
-
-
-AGENTS_LIST = [
-    'Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 5.2; .NET CLR 1.1.4322; .NET CLR 2.0.50727; InfoPath.2; .NET CLR 3.0.04506.30)',
-    'Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 5.1; Media Center PC 3.0; .NET CLR 1.0.3705; .NET CLR 1.1.4322; .NET CLR 2.0.50727; InfoPath.1)',
-    'Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 5.1; FDM; .NET CLR 1.1.4322)',
-    'Mozilla/5.0 (Windows; U; MSIE 7.0; Windows NT 6.0; en-US)',
-]
-
-HEADERS = {
-    'Accept-Charset':'GB2312,utf-8;q=0.7,*;q=0.7',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    'Accept-Encoding': 'gzip, deflate, sdch, br',
-    'User-Agent': random.choice(AGENTS_LIST),
-}
-
-# '''
-#     curl -X POST https://api.zoomeye.org/user/login -d '
-#     {
-#     "username": "username@qq.com",
-#     "password": "password"
-#     }'
-# '''
-# ZOOMEYS_API = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGl0eSI6IjEzNzAyNjM1NjZAcXEuY29tIiwiaWF0IjoxNTQyNTIyODg0LCJuYmYiOjE1NDI1MjI4ODQsImV4cCI6MTU0MjU2NjA4NH0.fsuyYr5Za2Zr7NCdA_92VFkS2-yKcMyiBUEVkFZAGxs"
-
-
 GIT_REPOSITORY = "https://github.com/orleven/tentacle.git"
 
 # String representation for NULL value
@@ -55,7 +28,7 @@ RESTAPI_DEFAULT_ADAPTER = "wsgiref"
 # System variables
 IS_WIN = True if sys.platform == 'win32' else False
 
-VERSION = "0.1.1"
+VERSION = "0.1.8"
 SITE = "http://www.orleven.com"
 TYPE_COLORS = {"dev": 33, "test": 90, "pip": 34}
 TYPE = "dev" if VERSION.count('.') > 2 and VERSION.split('.')[-1] != '0' else "test"

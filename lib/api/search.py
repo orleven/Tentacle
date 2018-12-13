@@ -2,18 +2,14 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import requests
 import re
 import json
 import time
-import random
 import sys
 import shodan
 from urllib.parse import quote
-from random import choice
 from lib.utils.cipher import base64encode
 from bs4 import BeautifulSoup
-from lib.core.settings import HEADERS
 from lib.utils.curl import mycurl
 from lib.core.data import logger
 from lib.core.data import conf
@@ -78,10 +74,11 @@ def _baidu(search, page):
         base_url = 'https://www.baidu.com/s?wd=' + str(quote(search)) + '&oq=' + str(
             quote(search)) + '&ie=utf-8' + '&pn=' + str(n)
         try:
-            r = requests.get(base_url, headers=HEADERS)
+            r = mycurl('get',base_url)
             soup = BeautifulSoup(r.text, "html.parser")
             for a in soup.select('div.c-container > h3 > a'):
-                url = requests.get(a['href'], headers=HEADERS, timeout=5).url
+                url = mycurl('get', a['href']).url
+                logger.debug("Baidu Found: %s" % url)
                 yield url
         except:
             yield None
@@ -92,11 +89,12 @@ def _360so(search, page):
     for n in range(1, page + 1):
         base_url = 'https://www.so.com/s?q=' + str(quote(search)) + '&pn=' + str(n) + '&fr=so.com'
         try:
-            r = requests.get(base_url, headers=HEADERS)
+            r = mycurl('get', base_url)
             soup = BeautifulSoup(r.text, "html.parser")
             for a in soup.select('li.res-list > h3 > a'):
-                url1 = requests.get(a['href'], headers=HEADERS, timeout=5)
+                url1 = mycurl('get', a['href'])
                 url = re.findall("URL='(.*?)'", url1.text)[0] if re.findall("URL='(.*?)'", url1.text) else url1.url
+                logger.debug("360so Found: %s" % url)
                 yield url
         except:
             yield None
@@ -107,10 +105,11 @@ def _bing(search, page):
     for n in range(1, (page * 10) + 1, 10):
         base_url = 'http://cn.bing.com/search?q=' + str(quote(search)) + '&first=' + str(n)
         try:
-            r = requests.get(base_url, headers=HEADERS)
+            r = mycurl('get', base_url)
             soup = BeautifulSoup(r.text, "html.parser")
             for a in soup.select('li.b_algo > div.b_algoheader > a'):
                 url = a['href']
+                logger.debug("Bing Found: %s" % url)
                 yield url
         except:
             yield None
@@ -143,7 +142,7 @@ def _google_api(search, page):
                     }
                 except:
                     logger.error("Error http(s) proxy: %s or %s." % (conf['config']['proxy']['http_proxy'], conf['config']['proxy']['https_proxy']))
-            res = requests.get(base_url, headers=HEADERS,timeout=15, proxies=_proxies )
+            res = mycurl('get',base_url, proxies=_proxies,timeout=10)
         except:
             res = None
         if res != None:
@@ -160,8 +159,6 @@ def _google_api(search, page):
     return anslist
 
 
-
-
 def _zoomeye_api(search, page, z_type):
     """
         app:"Drupal" country:"JP"
@@ -171,18 +168,23 @@ def _zoomeye_api(search, page, z_type):
         "password": "password"
         }'
     """
-    headers = HEADERS
+    headers = {}
     url_login = 'https://api.zoomeye.org/user/login'
     try:
         data = {
             'username': conf['config']['zoomeye_api']['username'],
             'password': conf['config']['zoomeye_api']['password']
         }
-        res = requests.post(url_login, json=data, headers=headers)
+        res = mycurl("post", url_login, json=data, headers=headers)
+        if res == None :
+            sys.exit(logger.error("Zoomeye api is not available."))
+        headers["Authorization"] = "JWT " + json.loads(res.text)['access_token']
     except KeyError:
         sys.exit(logger.error("Load tentacle config error: zoomeye_api, please check the config in tentacle.conf."))
-    headers["Authorization"] = "JWT " + json.loads(res.text)['access_token']
-
+    except AttributeError as e :
+        sys.exit(logger.error("Zoomeye api error: the response is none."))
+    except Exception as e:
+        sys.exit(logger.error("Zoomeye api error: %s" %type(e).__name__))
     if z_type.lower() == 'web':
         url_api = "https://api.zoomeye.org/web/search"
     elif z_type.lower() == 'host':
@@ -195,17 +197,17 @@ def _zoomeye_api(search, page, z_type):
         logger.debug("Find zoomeye url of %d page..." % int(n))
         try:
             data = {'query': search, 'page': str(n)}
-            res = requests.get(url_api, params=data, headers=headers)
+            res = mycurl("get", url_api, params=data, headers=headers)
             if int(res.status_code) == 422:
                 sys.exit(logger.error("Error zoomeye api token."))
             if z_type.lower() == 'web':
                 result = re.compile('"url": "(.*?)"').findall(res.text)
             elif z_type.lower() == 'host':
                 result = [str(item['ip']) + ':' + str(item['portinfo']['port']) for item in json.loads(res.text)['matches']]
-
+            logger.debug("Zoomeye Found: %s" % result)
             yield result
         except Exception:
-            yield None
+            yield []
 
 
 def _shodan_api(search, page):
@@ -221,8 +223,18 @@ def _shodan_api(search, page):
     anslist = []
     for p in range(1,page+1):
         logger.debug("Find shodan url of %d page..." % int(p))
+        _proxies = None
+        if conf['config']['proxy']['proxy'].lower() == 'true':
+            try:
+                _proxies = {
+                    'http': conf['config']['proxy']['http_proxy'],
+                    'https': conf['config']['proxy']['https_proxy']
+                }
+            except:
+                logger.error("Error http(s) proxy: %s or %s." % (
+                    conf['config']['proxy']['http_proxy'], conf['config']['proxy']['https_proxy']))
         try:
-            api = shodan.Shodan(token)
+            api = shodan.Shodan(token, proxies=_proxies)
             result = api.search(query=search, page=p)
         except shodan.APIError as e:
             logger.error("Error shodan api access, maybe you should pay $49 and enjoy service.")
@@ -234,7 +246,9 @@ def _shodan_api(search, page):
             return anslist
         else :
             for match in result.get('matches'):
-                anslist.append(match.get('ip_str') + ':' + str(match.get('port')))
+                target = match.get('ip_str') + ':' + str(match.get('port'))
+                logger.debug("Shodan Found: %s" % target)
+                anslist.append(target)
 
     return anslist
 
@@ -243,7 +257,6 @@ def _fofa_api(search, page, flag = True):
     '''
            https://fofa.so/api#auth
     '''
-    headers = HEADERS
     url_login = 'https://fofa.so/api/v1/search/all'
     result = []
     try:
@@ -256,10 +269,7 @@ def _fofa_api(search, page, flag = True):
     search = str(base64encode(bytes(search, 'utf-8')),'utf-8')
     for p in range(1,page+1):
         logger.debug("Find fofa url of %d page..." % int(p))
-        try:
-            res = requests.post(url_login + '?email={0}&key={1}&page={2}&qbase64={3}'.format(email, key,p, search), headers=headers)
-        except :
-            res = None
+        res = mycurl('post',url_login + '?email={0}&key={1}&page={2}&qbase64={3}'.format(email, key,p, search))
         if res !=None :
             if int(res.status_code) == 401:
                 sys.exit(logger.error("Error fofa api access, maybe you should pay fofa coin and enjoy service."))
@@ -267,6 +277,7 @@ def _fofa_api(search, page, flag = True):
                 res_json = json.loads( res.text)
                 if res_json["error"] is None:
                     for item in res_json.get('results'):
+                        logger.debug("Fofa Found: %s" % item[0])
                         result.append(item[0])
     return result
 
@@ -274,22 +285,23 @@ def _fofa_api(search, page, flag = True):
 def _fofa_api_today_poc(page):
     target_list = []
     url = "https://fofa.so/about_client"
-    poc = requests.get(url,headers=HEADERS)
-    poc_soup = BeautifulSoup(poc.content,'lxml')
-    poc_result_name = poc_soup.select('body > div.fdo > div:nth-of-type(3) > div > div > ul > li:nth-of-type(1)')
-    poc_result_raw = poc_soup.select('body > div.fdo > div:nth-of-type(3) > div > div > ul > li:nth-of-type(4) > a')
-    for i in range(len(poc_result_name)):
-        result_name = str(poc_result_name[i])[11:-5]
-        result_raw = str(poc_result_raw[i])[str(poc_result_raw[i]).find(';">'):-4];result_raw = result_raw.replace(';">','')
-        logger.sysinfo("Search fofa api %s: %s"%(result_name,result_raw))
-        matchObj = re.search( r'[a-zA-Z0-9]+', result_name)
-        if matchObj:
-            server =  matchObj.group().lower()
-            for z in _fofa_api(result_raw, page, False):
-                target_list.append((z, server))
-        else:
-            for z in _fofa_api(result_raw, page, False):
-                target_list.append(z, None)
+    res =  mycurl('get',url)
+    if res != None:
+        poc_soup = BeautifulSoup(res.content,'lxml')
+        poc_result_name = poc_soup.select('body > div.fdo > div:nth-of-type(3) > div > div > ul > li:nth-of-type(1)')
+        poc_result_raw = poc_soup.select('body > div.fdo > div:nth-of-type(3) > div > div > ul > li:nth-of-type(4) > a')
+        for i in range(len(poc_result_name)):
+            result_name = str(poc_result_name[i])[11:-5]
+            result_raw = str(poc_result_raw[i])[str(poc_result_raw[i]).find(';">'):-4];result_raw = result_raw.replace(';">','')
+            logger.sysinfo("Search fofa api %s: %s"%(result_name,result_raw))
+            matchObj = re.search( r'[a-zA-Z0-9]+', result_name)
+            if matchObj:
+                server =  matchObj.group().lower()
+                for z in _fofa_api(result_raw, page, False):
+                    target_list.append((z, server))
+            else:
+                for z in _fofa_api(result_raw, page, False):
+                    target_list.append(z, None)
 
     return target_list
 
@@ -310,8 +322,7 @@ def _github_api(search, page):
                         "root": r"(root[^<|?]{0,30})",
                         "title": r"<title>(.*)<\/title>",
                         "ip": r"([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:*[0-9]{0,5})"}
-
-    headers = HEADERS
+    headers = {}
     url_api = "https://api.github.com/search/code?sort=updated&order=desc&per_page=%s&q=" %per_page_limit
     try:
         token = conf['config']['github_api']['token']
@@ -319,7 +330,7 @@ def _github_api(search, page):
         sys.exit(logger.error("Load tentacle config error: github_api, please check the config in tentacle.conf."))
     headers["Authorization"] = "token " + token
     try:
-        resp = requests.get(url_api + search, headers=headers, timeout=github_timeout)
+        resp = mycurl('get',url_api + search, headers = headers, timeout=github_timeout)
     except:
         resp = None
     if resp and resp.status_code == 200:
@@ -334,7 +345,7 @@ def _github_api(search, page):
             # Search url
             _url_api = "https://api.github.com/search/code?sort=updated&order=desc&page=%d&per_page=%s&q=" % (p,per_page_limit)
             try:
-                _resp = requests.get(_url_api + search, headers=headers, timeout=github_timeout)
+                _resp = mycurl('get',_url_api + search, headers=headers, timeout=github_timeout)
             except:
                 _resp = None
             if _resp!=None and _resp.status_code == 200:
@@ -354,7 +365,7 @@ def _github_api(search, page):
                 git_urls = list(set(git_urls))
                 for url in git_urls:
                     try:
-                        _resp = requests.get(url, timeout=github_timeout)
+                        _resp = mycurl('get',url,timeout=github_timeout)
                     except:
                         _resp = None
                     if _resp and _resp.status_code == 200:

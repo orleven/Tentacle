@@ -15,7 +15,6 @@ def random_string(length=8):
 def random_digits(length=8):
     return ''.join([random.choice(digits) for _ in range(length)])
 
-
 def random_MD5(length = 16, ret_plain = False):
     """
     生成随机MD5键值对
