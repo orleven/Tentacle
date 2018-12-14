@@ -1,24 +1,27 @@
-# #!/usr/bin/env python
-# # -*- coding: utf-8 -*-
-# # @author: 'orleven'
-#
-# '''
-# version < 41eb5bb0a3a716f84b0ce4e4feb41e6f25a980a3
-# PHP version > 5.3
-# php-curl <= 7.54
-# discuz is runing on 80 port
-# windows
-# https://www.cnblogs.com/iamstudy/articles/discuz_x34_ssrf_1.html
-# '''
-#
-# def info(data):
-#     info = {
-#         "name": "discuz x3.4 ssrf",
-#         "info": "discuz x3.4 ssrf",
-#         "level": "high",
-#         "type": "ssrf",
-#     }
-#     return info
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# @author: 'orleven'
+
+'''
+version < 41eb5bb0a3a716f84b0ce4e4feb41e6f25a980a3
+PHP version > 5.3
+php-curl <= 7.54
+discuz is runing on 80 port
+windows
+https://www.cnblogs.com/iamstudy/articles/discuz_x34_ssrf_1.html
+'''
+
+def info(data):
+    info = {
+        "name": "discuz x3.4 ssrf",
+        "info": "discuz x3.4 ssrf",
+        "level": "high",
+        "type": "ssrf",
+    }
+    return info
+
+def prove(data):
+    return data
 #
 # def prove(data):
 #     init(data,'discuz')

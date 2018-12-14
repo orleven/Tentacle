@@ -12,7 +12,7 @@ def info(data=None):
     return info
 
 def prove(data):
-    data = init(data,'web')
+    data = init(data,'tomcat')
     if data['base_url']:
         data = _curl(data,data['base_url'])
     return data

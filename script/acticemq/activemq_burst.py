@@ -16,10 +16,10 @@ def info(data=None):
 
 
 def prove(data):
-    data = init(data, 'web')
+    data = init(data, 'acticemq')
     if data['base_url']:
-        usernamedic = _read_dic(data['d1']) if 'dic_one' in data.keys() else  _read_dic('dict/activemq_usernames.txt')
-        passworddic = _read_dic(data['d2']) if 'dic_two' in data.keys() else  _read_dic('dict/activemq_passwords.txt')
+        usernamedic = _read_dic(data['d1']) if 'd1' in data.keys() else  _read_dic('dict/activemq_usernames.txt')
+        passworddic = _read_dic(data['d2']) if 'd2' in data.keys() else  _read_dic('dict/activemq_passwords.txt')
         url = data['base_url'] + "admin/"
         for linef1 in usernamedic:
             username = linef1.strip('\r').strip('\n')

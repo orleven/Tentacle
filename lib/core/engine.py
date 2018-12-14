@@ -4,23 +4,19 @@
 
 import queue
 import time
-import random
 import sys
 import urllib.parse
-import re,os
+import os
 import traceback
 import threading
 import importlib.util
-
 from lib.core.hashdb import HashDB
 from lib.core.data import conf, logger,paths
 from lib.utils.output import print_dic
-from lib.utils.cipher import md5
 from lib.utils.output import output_excal
 from lib.core.common import unserialize_object
 from lib.utils.iputil import build
 from lib.utils.iputil import check_host
-from lib.utils.iputil import check_ip
 from lib.utils.iputil import check_ippool
 from lib.api.api import search_engine
 from lib.api.api import search_api

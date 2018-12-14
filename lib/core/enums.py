@@ -106,17 +106,6 @@ class OS:
 #     XML = "XML (generic)"
 #     ARRAY_LIKE = "Array-like"
 
-class HTTPMETHOD:
-    GET = "GET"
-    POST = "POST"
-    HEAD = "HEAD"
-    PUT = "PUT"
-    DELETE = "DELETE"
-    TRACE = "TRACE"
-    OPTIONS = "OPTIONS"
-    CONNECT = "CONNECT"
-    PATCH = "PATCH"
-
 # class NULLCONNECTION:
 #     HEAD = "HEAD"
 #     RANGE = "Range"

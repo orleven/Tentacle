@@ -13,7 +13,7 @@ def info(data):
     return info
 
 def prove(data):
-    init(data,'web')
+    init(data,'thinkcmf')
     if data['base_url']:
         url = data[
                   'base_url'] + "index.php?g=Api&m=Plugin&a=fetch"

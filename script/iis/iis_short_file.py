@@ -13,7 +13,7 @@ def info(data=None):
 
 
 def prove(data):
-    data = init(data,'web')
+    data = init(data,'iis')
     if data['base_url']:
         status_1 = _get_status(data['base_url']+ '/*~1*/a.aspx') # an existed file/folder
         status_2 = _get_status(data['base_url'] + '/l1j1e*~1*/a.aspx') # not existed file/folder

@@ -20,6 +20,7 @@ def info(data=None):
 
 
 def prove(data):
+    data = init(data, 'pbootcms')
     if data['base_url']:
         for path in ["","PbootCMS/"]:
             for poc in [

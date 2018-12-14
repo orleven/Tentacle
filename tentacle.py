@@ -75,12 +75,6 @@ def arg_set(parser):
     module.add_argument("--show", action='store_true', help="Show all poc scripts module", default=False)
     module.add_argument("--thread", type=int, help="Thread Num e.g. 100", default=100 ,action='store')
 
-
-    # burst = parser.add_argument_group('Burst')
-    # burst.add_argument('-d1', "--dic_one", metavar='File', type=str, default=None,help='load dictionary from targetFile (e.g. ./data/dic1.txt)')
-    # burst.add_argument('-d2', "--dic_two", metavar='File', type=str, default=None,help='load dictionary from targetFile (e.g. ./data/dic2.txt)')
-    # burst.add_argument('-dM', "--dic_mode", metavar='Mode', type=int, default=1,help='load dictionary mode, 1 is cluster bomb(n*n),2 is pitchfork(n)')
-
     other = parser.add_argument_group('Other')
     other.add_argument('-tS',"--task_show",  metavar='TaskID', type=str, default=None,help='Show task (e.g. all,c81fc4f8f9ab1902)')
     other.add_argument("-v", "--verbose", action='store_true', help="Show verbose", default=False)

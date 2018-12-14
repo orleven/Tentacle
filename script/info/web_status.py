@@ -36,8 +36,11 @@ def prove(data):
                     title = "[None Title]".encode('utf-8')
                 else:
                     if result.encoding != None:
-                        title = title.string.encode(result.encoding)
-                        codes.append(result.encoding)
+                        try:
+                            title = title.string.encode(result.encoding)
+                            codes.append(result.encoding)
+                        except:
+                            title = "[Error Code]".encode('utf-8')
                     else:
                         title = title.string
                 codes.append(type)

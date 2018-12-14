@@ -43,6 +43,7 @@ py -3 tentacle.py -m script/info/web_status -gg 'intext:powered by discuz'   # L
 py -3 tentacle.py -m script/info/web_status -sd 'apache'                     # Load target by shodan api
 py -3 tentacle.py -m script/info/web_status -ze 'app:weblogic'               # Load target by zoomeye api
 py -3 tentacle.py -m script/info/web_status -ff 'domain="example.com"'       # Load target by fofa api
+py -3 tentacle.py -m script/info/web_status -fft                             # Load target by fofa today api
 
 py -3 tentacle.py -gh "163"    # Search github's infomation about pass,email by api(need adjust)
 
@@ -66,10 +67,9 @@ py -3 tentacle.py --update
 ### Update
 
 * [2018-11-15] Code refactoring and fix  bug.
-* [2018-11-22] fix log error bug.
+* [2018-11-22] fix bug
 * [2018-12-06] add config, e.g. proxy, api.
-
-
+* [2018-12-14] fix bug and add script
 
 ### Thanks
 

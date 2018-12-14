@@ -74,7 +74,7 @@ def print_dic(data):
     for res in data['res']:
         info = res['info'] if 'info' in res.keys() else ""
         key = res['key'] if 'key' in res.keys() else ""
-        msg = '[{0}] [{1}]: {2}\t[{3}]'.format(data['module_name'], message, info, key)
+        msg = '[{0}] [{1}]: {2} \t[{3}]'.format(data['module_name'], message, info, key)
 
         if data['flag'] == 1:
             logger.success(msg)

@@ -34,7 +34,6 @@ def load_module():
             help(module)
             # logger.info('Show modual: %s: %s' %(module_path,[_name for _name in dir(module) if  _name[0] != '_']))
         elif func_name not in dir(module):
-            # if not getattr(module, conf.FUNCTION) :
             logger.error('Can\' load function: %s.%s(). You can use -f show.' % (module_path ,func_name))
         else:
             return module

@@ -1,20 +1,23 @@
-# #!/usr/bin/env python
-# # -*- coding: utf-8 -*-
-# # @author: 'orleven'
-#
-# '''
-# discuz x3.4 ssrf
-# https://zhuanlan.zhihu.com/p/51907363
-# '''
-#
-# def info(data):
-#     info = {
-#         "name": "discuz x3.4 ssrf",
-#         "info": "discuz x3.4 ssrf",
-#         "level": "high",
-#         "type": "ssrf",
-#     }
-#     return info
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# @author: 'orleven'
+
+'''
+discuz x3.4 ssrf
+https://zhuanlan.zhihu.com/p/51907363
+'''
+
+def info(data):
+    info = {
+        "name": "discuz x3.4 ssrf",
+        "info": "discuz x3.4 ssrf",
+        "level": "high",
+        "type": "ssrf",
+    }
+    return info
+
+def prove(data):
+    return data
 #
 # def prove(data):
 #     init(data,'discuz')

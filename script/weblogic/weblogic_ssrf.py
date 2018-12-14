@@ -16,7 +16,7 @@ def info(data=None):
     return info
 
 def prove(data):
-    data = init(data,'web')
+    data = init(data,'weblogic')
     if data['base_url']:
         url = data['base_url']+'uddiexplorer/SearchPublicRegistries.jsp?operator=http://www.baidu.com/robots.txt&rdoSearch=name&txtSearchname=sdf&txtSearchkey=&txtSearchfor=&selfor=Business+location&btnSubmit=Search'
         try:

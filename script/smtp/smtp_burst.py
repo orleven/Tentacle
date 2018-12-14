@@ -14,7 +14,7 @@ def info(data=None):
     return info
 
 def prove(data):
-    data = init(data, 'smtb')
+    data = init(data, 'smtp')
     if _socket_connect(data['target_host'], data['target_port']):
         usernamedic = _read_dic(data['d1']) if 'd1' in data.keys() else  _read_dic('dict/smtp_usernames.txt')
         passworddic = _read_dic(data['d2']) if 'd2' in data.keys() else  _read_dic('dict/smtp_passwords.txt')

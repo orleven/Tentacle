@@ -17,7 +17,7 @@ def info(data):
     return info
 
 def prove(data):
-    init(data, 'http')
+    init(data, 'django')
     if data['base_url']:
         try:
             url = data['base_url'] + "/baidu.com"

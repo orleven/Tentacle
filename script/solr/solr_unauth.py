@@ -12,7 +12,7 @@ def info(data=None):
     return info
 
 def prove(data):
-    data = init(data, 'web')
+    data = init(data, 'solr')
     if data['base_url']:
         for url in [data['base_url'] , data['base_url']+"solr/"]:
             try:

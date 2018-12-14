@@ -68,10 +68,8 @@ class logger:
         self.logger.info(msg, *args, **kwargs)
 
     def log(self, level, msg, *args, **kwargs):
-        try:
-            self.logger.log(level, msg, *args, **kwargs)
-        except Exception as e:
-            print(type(e).__name__)
+        self.logger.log(level, msg, *args, **kwargs)
+
 
 
     def sysinfo(self, msg, *args, **kwargs):
