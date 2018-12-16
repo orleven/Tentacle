@@ -2,16 +2,10 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-
-import os
 import sys
-import random
 from lib.core.data import logger
 from lib.core.data import conf
 import configparser
-
-
-
 
 def init_conf(path):
     logger.debug("Init tentacle config...")

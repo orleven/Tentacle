@@ -6,26 +6,12 @@ from lib.core.datatype import AttribDict
 
 from lib.core.log import logger
 
-# paths
 paths = AttribDict()
 
-#
-# # # logger
 logger = logger()
-#
-#
-#
-# # object to store original command line options
-# # cmdLineOptions = AttribDict()
-#
-# # object to store merged options (command line, configuration file and default options)
-# # mergedOptions = AttribDict()
-#
-# object to store all engines
-engine = None
-#
 
-# line options and settings
+engine = None
+
 conf = AttribDict()
 #
 # object to share within function and classes results

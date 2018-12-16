@@ -15,7 +15,6 @@ from lib.core.data import conf
 from lib.core.data import paths
 from lib.utils.output import output_excal
 
-
 def init_options(args):
 
     conf.VERBOSE = args.verbose

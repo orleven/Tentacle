@@ -25,7 +25,6 @@ def check_update(args):
         update_program()
         sys.exit(0)
 
-
 def set_paths():
     try:
         os.path.isdir(paths.ROOT_PATH)
@@ -50,8 +49,6 @@ def set_paths():
                 os.mkdir(path)
 
     paths.DATABASE_PATH = os.path.join(paths.DATA_PATH, INDEX_DATABASE)
-
-
 
 def config_parser():
     path = os.path.join(paths.CONFIG_PATH, "tentacle.conf")

@@ -7,7 +7,6 @@ from lib.core.data import logger
 from lib.core.common import get_safe_ex_string
 from lib.core.common import serialize_object
 
-
 class Database(object):
     filepath = None
 

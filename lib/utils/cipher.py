@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import io
-import re
 import string
 import hashlib
 from base64 import b64encode, b64decode
@@ -12,7 +10,6 @@ from Crypto.Cipher import DES
 from Crypto.Util import number
 from Crypto.PublicKey import RSA
 from lib.utils.output import single_time_warn_message
-# from lib.core.settings import PICKLE_REDUCE_WHITELIST
 
 try:
     import cPickle as pickle
@@ -35,7 +32,6 @@ def base64decode(message, altchars=b'+/'):
 
 def base64encode(message):
     return b64encode(message)
-
 
 def base64pickle(value):
     retVal = None

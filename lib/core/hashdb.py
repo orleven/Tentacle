@@ -10,13 +10,9 @@ import threading
 from lib.core.data import logger
 from lib.core.common import serialize_object
 from lib.core.common import unserialize_object
-from lib.core.data import conf, logger,paths
+from lib.core.data import conf
+from lib.core.data import paths
 from lib.core.common import get_safe_ex_string
-from lib.core.settings import HASHDB_FLUSH_RETRIES
-from lib.core.settings import HASHDB_FLUSH_THRESHOLD
-from lib.core.settings import HASHDB_RETRIEVE_RETRIES
-from lib.core.settings import HASHDB_END_TRANSACTION_RETRIES
-from lib.core.exception import TentacleConnectionException
 
 '''
 {'flag': True, 'data': [], 'res': [{'info': '网易', 'key': 'login,登陆', 'status': '200', 'encoding': 'GBK'}], 'tid': 0, 'url': 'https://www.163.com', 'target_host': 'www.163.com', 'target_port': 443}

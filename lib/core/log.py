@@ -27,7 +27,7 @@ class logger:
         if not os.path.exists(log_path):
             os.makedirs(log_path)
 
-        self.log_handler = logging.FileHandler(os.path.join(log_path, log_name))
+        self.log_handler = logging.FileHandler(os.path.join(log_path, log_name),encoding = 'utf-8')
         self.log_handler.setFormatter(logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S"))
         self.logger.addHandler(self.log_handler)
 
@@ -68,9 +68,10 @@ class logger:
         self.logger.info(msg, *args, **kwargs)
 
     def log(self, level, msg, *args, **kwargs):
-        self.logger.log(level, msg, *args, **kwargs)
-
-
+        try:
+            self.logger.log(level, msg, *args, **kwargs)
+        except UnicodeEncodeError:
+            print(1)
 
     def sysinfo(self, msg, *args, **kwargs):
         self.log(CUSTOM_LOGGING.SYSINFO, msg, *args, **kwargs)

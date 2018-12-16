@@ -7,11 +7,9 @@ import json
 import time
 import sys
 import shodan
-import random
-from string import ascii_lowercase
+from bs4 import BeautifulSoup
 from urllib.parse import quote
 from lib.utils.cipher import base64encode
-from bs4 import BeautifulSoup
 from lib.utils.curl import mycurl
 from lib.core.data import logger
 from lib.core.data import conf
@@ -69,8 +67,6 @@ def search_engine(search,page = 5):
 
     return list(set(target_list))
 
-
-
 def _baidu(search, page):
     for n in range(0, page * 10, 10):
         base_url = 'https://www.baidu.com/s?wd=' + str(quote(search)) + '&oq=' + str(
@@ -85,8 +81,6 @@ def _baidu(search, page):
         except:
             yield None
 
-
-# 360搜索
 def _360so(search, page):
     for n in range(1, page + 1):
         base_url = 'https://www.so.com/s?q=' + str(quote(search)) + '&pn=' + str(n) + '&fr=so.com'
@@ -101,8 +95,6 @@ def _360so(search, page):
         except:
             yield None
 
-
-# 必应搜索
 def _bing(search, page):
     for n in range(1, (page * 10) + 1, 10):
         base_url = 'http://cn.bing.com/search?q=' + str(quote(search)) + '&first=' + str(n)
@@ -116,8 +108,6 @@ def _bing(search, page):
         except:
             yield None
 
-
-# Google搜索
 def _google_api(search, page):
     '''
         https://console.developers.google.com
@@ -211,7 +201,6 @@ def _zoomeye_api(search, page, z_type):
         except Exception:
             yield []
 
-
 def _shodan_api(search, page):
     '''
         Please input your Shodan API Key (https://account.shodan.io/).
@@ -254,7 +243,6 @@ def _shodan_api(search, page):
 
     return anslist
 
-
 def _fofa_api(search, page, flag = True):
     '''
            https://fofa.so/api#auth
@@ -283,7 +271,6 @@ def _fofa_api(search, page, flag = True):
                         result.append(item[0])
     return result
 
-
 def _fofa_api_today_poc(page):
     target_list = []
     url = "https://fofa.so/about_client"
@@ -306,7 +293,6 @@ def _fofa_api_today_poc(page):
                     target_list.append(z, None)
 
     return target_list
-
 
 def _github_api(search, page):
     '''
@@ -403,7 +389,6 @@ def _github_api(search, page):
     elif int(resp.status_code) == 422:
         sys.exit(logger.error("Error github api token."))
     return []
-
 
 def _ceye_verify_api(filter, t = 'dns'):
     try:

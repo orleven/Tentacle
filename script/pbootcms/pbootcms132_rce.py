@@ -37,7 +37,7 @@ def prove(data):
                     res = None
                 if res !=None and  "php.ini" in res.text:
                     data['flag'] = 1
-                    data['data'].append({"flag": url})
+                    data['data'].append({"url": url})
                     data['res'].append({"info": url, "key": "pbootcms v1.3.2 rec"})
                     break
     return data

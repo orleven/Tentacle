@@ -8,8 +8,8 @@ import json
 from lib.core.settings import IS_WIN
 from functools import reduce
 from lib.utils.output import single_time_warn_message
-base = [str(x) for x in range(10)] + [ chr(x) for x in range(ord('A'),ord('A')+6)]
 
+base = [str(x) for x in range(10)] + [ chr(x) for x in range(ord('A'),ord('A')+6)]
 
 def bin2dec(string_num):
     return str(int(string_num, 2))

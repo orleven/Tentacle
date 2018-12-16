@@ -14,6 +14,7 @@ PySocks
 backoff==1.7.0
 windows-curses
 selenium==2.53.6
-
+aiohttp==3.4.4
+asyncio=3.4.3
 
 

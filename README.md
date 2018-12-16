@@ -2,7 +2,7 @@
 
 ```
 .___________. _______ .__   __. .___________.    ___       ______  __       _______
-|           ||   ____||  \ |  | |           |   /   \     /      ||  |     |   ____| {0.1.8#test}
+|           ||   ____||  \ |  | |           |   /   \     /      ||  |     |   ____| {1.0.0#test}
 `---|  |----`|  |__   |   \|  | `---|  |----`  /  ^  \   |  ,----'|  |     |  |__
     |  |     |   __|  |  . `  |     |  |      /  /_\  \  |  |     |  |     |   __|
     |  |     |  |____ |  |\   |     |  |     /  _____  \ |  `----.|  `----.|  |____
@@ -11,7 +11,7 @@
 
 ```
 
-Just for pentest.
+Tentacle is a POC vulnerability verification and exploit framework. It supports free extension of exploits and uses POC scripts. It supports calls to zooeyem, fofa, shodan and other APIs to perform bulk vulnerability verification for multiple targets.
 
 [![Python 3.5](https://img.shields.io/badge/python-3.5-yellow.svg)](https://www.python.org/)
 
@@ -67,9 +67,8 @@ py -3 tentacle.py --update
 ### Update
 
 * [2018-11-15] Code refactoring and fix  bug.
-* [2018-11-22] fix bug
 * [2018-12-06] add config, e.g. proxy, api.
-* [2018-12-14] fix bug and add script
+* [2018-12-16] fix bug and add script
 
 ### Thanks
 

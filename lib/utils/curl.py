@@ -2,9 +2,6 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import sys
-import socks
-import socket
 import backoff
 import random
 import requests

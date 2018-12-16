@@ -9,6 +9,15 @@ import socket
 import json
 import time
 
+def info(data=None):
+    info = {
+        "name": "ip info",
+        "info": "ip info",
+        "level": "info",
+        "type": "info",
+    }
+    return info
+
 def prove(data):
     try:
         hostname = socket.gethostbyname(data['target_host'])
