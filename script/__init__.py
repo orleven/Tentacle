@@ -20,6 +20,7 @@ service_table = {
     "dns": 53,
     "http": 80,
     "rpc": 110,
+    "pop3": 110,
     "netbios": 139,
     "ldap": 389,
     "https": 443,

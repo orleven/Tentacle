@@ -52,7 +52,7 @@ def mycurl(method,url, params = None, **kwargs):
     except TooManyRedirects as e:
         kwargs.setdefault('allow_redirects', False)
         try:
-            return request('get', url, params=params, **kwargs)
+            return request(method, url, params=params, **kwargs)
         except:
             return None
     except Exception as e:

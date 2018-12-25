@@ -49,7 +49,7 @@ def prove(data):
                                             if  '<?php' in res4.text:
                                                 data['flag'] = 1
                                                 data['data'].append({"url": url4})
-                                                data['res'].append({"info": url1, "key": "phpcms v9 download",'connect':res4})
+                                                data['res'].append({"info": url1, "key": "phpcms v9 download",'connect':res4.text})
                                                 return data
     return data
 

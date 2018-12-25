@@ -13,7 +13,6 @@ from lib.core.enums import CUSTOM_LOGGING
 from lib.core.update import update_program
 
 def initialize(args):
-
     if args.debug:
         logger.set_level(CUSTOM_LOGGING.DEBUG)
     set_paths()
