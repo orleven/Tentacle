@@ -42,7 +42,7 @@ def get_safe_ex_string(ex, encoding=None):
         retVal = ex.message
     elif getattr(ex, "msg", None):
         retVal = ex.msg
-    return retVal.strip()
+    return retVal
     # return getUnicode(retVal or "", encoding=encoding).strip()
 
 def poll_process(process, suppress_errors=False):

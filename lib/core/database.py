@@ -38,13 +38,13 @@ class Database(object):
         self.execute("UPDATE task set status = ?, update_time = ? WHERE taskid = ?",(status, update_time,taskid))
 
     def detele_task(self, taskid):
-        self.execute("DELETE from task WHERE taskid = ?",(taskid))
+        self.execute("DELETE from task WHERE taskid = ?",(taskid,))
 
     def select_all(self):
         return self.execute("SELECT * FROM task ORDER BY update_time ASC")
 
     def select_taskid(self,taskid):
-        return self.execute("SELECT * FROM task WHERE taskid = ?  ORDER BY update_time ASC" ,(taskid))
+        return self.execute("SELECT * FROM task WHERE taskid = ?  ORDER BY update_time ASC" ,(taskid,))
 
     def execute(self, statement, arguments=None):
         while True:
