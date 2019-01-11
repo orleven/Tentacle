@@ -66,13 +66,13 @@ def init(data,service='web'):
         data['private_key'] = private_key
 
     # socket proxy
-    if conf['config']['proxy']['proxy'].lower() == 'true':
-        try:
-            socks5_host, socks5_port = conf['config']['proxy']['socks5'].split(':')
-            socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, socks5_host, int(socks5_port))
-            socket.socket = socks.socksocket
-        except Exception as e:
-            logger.error("Error socket proxy: %s" % conf['config']['proxy']['socks5'])
+    # if conf['config']['proxy']['proxy'].lower() == 'true':
+    #     try:
+    #         socks5_host, socks5_port = conf['config']['proxy']['socks5'].split(':')
+    #         socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, socks5_host, int(socks5_port))
+    #         socket.socket = socks.socksocket
+    #     except Exception as e:
+    #         logger.error("Error socket proxy: %s" % conf['config']['proxy']['socks5'])
     socket.setdefaulttimeout(int(conf['config']['basic']['timeout']))
     return data
 
