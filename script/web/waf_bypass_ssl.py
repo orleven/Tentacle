@@ -69,7 +69,7 @@ def prove(data):
 
 def _subprocess(cmd):
     import tempfile,subprocess
-
+    rt = ''
     try:
 
         # 得到一个临时文件对象， 调用close后，此文件从磁盘删除
