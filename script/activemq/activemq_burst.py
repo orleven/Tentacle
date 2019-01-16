@@ -7,7 +7,7 @@ from base64 import b64encode, b64decode
 def info(data=None):
     info = {
         "name": "Acticemq burst",
-        "info": "acticemq burst.",
+        "info": "activemq burst.",
         "level": "high",
         "type": "weakpass",
     }
@@ -16,7 +16,7 @@ def info(data=None):
 
 
 def prove(data):
-    data = init(data, 'acticemq')
+    data = init(data, 'activemq')
     if data['base_url']:
         usernamedic = _read_dic(data['d1']) if 'd1' in data.keys() else  _read_dic('dict/activemq_usernames.txt')
         passworddic = _read_dic(data['d2']) if 'd2' in data.keys() else  _read_dic('dict/activemq_passwords.txt')

