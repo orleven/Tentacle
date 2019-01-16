@@ -33,15 +33,15 @@ def mycurl(method,url, params = None, **kwargs):
     kwargs.setdefault('timeout',  int(conf['config']['basic']['timeout']))
     kwargs.setdefault('verify', False)
 
-    if conf['config']['proxy']['proxy'].lower() == 'true':
-        try:
-            _proxies = {
-                'http': conf['config']['proxy']['http_proxy'],
-                'https': conf['config']['proxy']['https_proxy']
-            }
-            kwargs.setdefault('proxies', _proxies)
-        except:
-            logger.error("Error http(s) proxy: %s or %s." % (conf['config']['proxy']['http_proxy'],conf['config']['proxy']['https_proxy']))
+    # if conf['config']['proxy']['proxy'].lower() == 'true':
+    #     try:
+    #         _proxies = {
+    #             'http': conf['config']['proxy']['http_proxy'],
+    #             'https': conf['config']['proxy']['https_proxy']
+    #         }
+    #         kwargs.setdefault('proxies', _proxies)
+    #     except:
+    #         logger.error("Error http(s) proxy: %s or %s." % (conf['config']['proxy']['http_proxy'],conf['config']['proxy']['https_proxy']))
     try:
         return request(method, url, params=params, **kwargs)
     except ConnectionError as e:

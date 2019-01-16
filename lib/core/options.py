@@ -40,16 +40,10 @@ def function_register(args):
 def parameter_register(args):
 
     if args.parameter:
-        try:
-            datas = args.parameter.split('&')
-            dic = {}
-            for _data in datas:
-                _key, _value = _data.split('=')
-                dic[_key] = _value
-            logger.debug("Set parameter: %s." % str(dic))
-        except :
-            msg = 'The parameter input error, please check your input e.g. -p "userlist=user.txt", and you should make sure the module\'s function need the parameter. '
-            sys.exit(logger.error(msg))
+        conf['parameter'] = args.parameter
+
+        logger.debug("Set parameter: %s." % str(args.parameter))
+
 
 
 
@@ -118,7 +112,10 @@ def module_register(args):
 
             # @www
             if _module.startswith("@"):
-                module_name_list = glob.glob(os.path.join(paths.SCRIPT_PATH,_module[1:], '*.py'))
+                if _module[1:] == 'special':
+                    module_name_list = glob.glob(os.path.join(paths.SPECIAL_SCRIPT_PATH, _module[1:], '*.py'))
+                else:
+                    module_name_list = glob.glob(os.path.join(paths.SCRIPT_PATH,_module[1:], '*.py'))
 
                 if len(module_name_list) == 0:
                     msg = 'Module [%s] is not exist.' % _module

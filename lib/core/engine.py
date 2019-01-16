@@ -37,6 +37,8 @@ class Engine():
         self.queue = queue.Queue()
         self.targets = []
         self.modules = []
+        self.parameter = None
+        self.func_name = 'prove'
         self.put_queue_flag = True
         self.thread_count = self.thread_num  = conf['thread_num']
         self.scanning_count = self.scan_count = self.found_count = self.error_count = self.total = self.exclude =0
@@ -118,6 +120,23 @@ class Engine():
                     if check_host(target):
                         self.put_target(target,service)
 
+    def load_parameter(self):
+        if 'parameter' in conf.keys() and conf['parameter'] != None:
+            try:
+                datas = conf['parameter'].split('&')
+                dic = {}
+                for _data in datas:
+                    _key, _value = _data.split('=')
+                    dic[_key] = _value
+                self.parameter = dic
+                logger.sysinfo("Loading parameter: %s" % (conf['parameter']))
+            except:
+                msg = 'The parameter input error, please check your input e.g. -p "userlist=user.txt", and you should make sure the module\'s function need the parameter. '
+                sys.exit(logger.error(msg))
+
+    def load_function(self):
+        self.func_name = conf['func_name']
+        logger.sysinfo("Loading function: %s" % (conf['func_name']))
 
     def load_targets(self):
 
@@ -327,8 +346,8 @@ class Engine():
 
         try:
             logger.debug("Test %s:%s for %s:%s" % (
-            data['module_name'], conf['func_name'], data['target_host'], data['target_port']))
-            func = getattr(module, conf['func_name'])
+            data['module_name'], self.func_name, data['target_host'], data['target_port']))
+            func = getattr(module, self.func_name)
             module.init = init
             module.curl = curl
             module.ceye_verify_api = ceye_verify_api
@@ -342,8 +361,10 @@ class Engine():
                 self.hashdb.flush()
                 print_dic(data)
         except AttributeError:
-            logger.error("Error %s:%s for %s:%s" %(data['module_name'], conf['func_name'], data['target_host'], data['target_port']))
+            logger.error("Error %s:%s for %s:%s" %(data['module_name'],self. func_name, data['target_host'], data['target_port']))
             self.change_error_count(1)
+        except KeyError as e:
+            logger.error("Missing necessary parameters: %s, please load parameters by -p. For example. -p cmd=whoami" % e)
         except Exception:
             self.errmsg = traceback.format_exc()
             self.is_continue = False
@@ -355,7 +376,7 @@ class Engine():
             "id": id,
             "flag": -1,
             'module_name': module.__name__,
-            'func_name': conf['func_name'],
+            'func_name': self.func_name,
             'target_host': None,
             'target_port': None,
             'url': None,
@@ -364,6 +385,14 @@ class Engine():
             "res": [],
             "other": {},
         }
+
+        if self.parameter != None :
+            for _key,_val in self.parameter.items():
+                if _key not in data.keys():
+                    data[_key] = _val
+                else:
+                    logger.warning("This parameter name has already been used: %s = %s" %( _key, _val))
+                    logger.warning("And using this parameter name will cause the original value to be overwritten.")
 
         if target.startswith('http://') or target.startswith('https://'):
             data['url'] = target

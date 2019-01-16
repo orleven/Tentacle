@@ -26,7 +26,9 @@ def normal(args):
 
     engine = Engine(name)
     engine.load_modules()
+    engine.load_function()
     engine.load_targets()
+    engine.load_parameter()
 
     database.update_task_status(name, TASK_RUN_STATUS,get_time())
     engine.run()
