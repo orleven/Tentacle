@@ -24,6 +24,7 @@ def mycurl(method,url, params = None, **kwargs):
     headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
     headers['Accept-Encoding'] = 'gzip, deflate, sdch, br'
     headers['Referer'] = url
+    # kwargs.setdefault('allow_redirects', False)
     # headers['Content-Type'] = 'application/x-www-form-urlencoded'
     if 'User-Agent' not in headers.keys():
         headers["User-Agent"] = random.choice(conf['config']['basic']['user_agent'])
