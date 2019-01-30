@@ -10,6 +10,7 @@ import os
 import traceback
 import threading
 import importlib.util
+from concurrent.futures import ThreadPoolExecutor
 from lib.core.hashdb import HashDB
 from lib.core.data import conf, logger,paths
 from lib.utils.output import print_dic
@@ -24,6 +25,7 @@ from script import init
 from script import curl
 from script import ceye_verify_api
 from script import ceye_dns_api
+
 
 class Engine():
 
@@ -287,6 +289,12 @@ class Engine():
         next(pool)
 
         self.print_progress()
+
+        # add
+        # thread_pool = ThreadPoolExecutor(max_workers=self.thread_num)
+        # for i in range(0, self.thread_num):
+        #     future = thread_pool.submit(self._work)
+
         for i in range(0, self.thread_num):
             t = threading.Thread(target=self._work, name=str(i))
             self.set_thread_daemon(t)
@@ -301,7 +309,7 @@ class Engine():
                     self.current_time = now_time
                     self.print_progress()
 
-                if  self.put_queue_flag and self.queue.qsize() < self.queue_pool_total :
+                if self.put_queue_flag and self.queue.qsize() < self.queue_pool_total:
                     try:
                         next(pool)
                         logger.debug("Add queue pool for engine.")
@@ -309,11 +317,16 @@ class Engine():
                         self.put_queue_flag = False
 
                 time.sleep(0.01)
+                # try:
+                #     time.sleep(0.01)
+                # except KeyboardInterrupt:
+                #     self.is_continue = False
 
             else:
                 self.print_progress()
                 self._get_data()
                 break
+
         logger.sysinfo('Task Finished: %s', self.name)
 
     def _work(self):
@@ -328,6 +341,9 @@ class Engine():
                 self.change_scan_count(1)
             else:
                 self.load_lock.release()
+
+                if not self.is_continue:
+                    break
 
                 # Wait for pool
                 if self.total > self.queue_pool_total + self.queue_pool_cache :
@@ -369,7 +385,6 @@ class Engine():
             self.errmsg = traceback.format_exc()
             self.is_continue = False
             logger.error(self.errmsg)
-        pass
 
     def _init_data(self,id,module,target):
         data = {

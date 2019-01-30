@@ -37,6 +37,7 @@ service_table = {
     "redis": 6379,
     "elasticsearch": 9200,
     'memcache': 11211,
+    '15672': 15672,
     "dubbo": 20880,
     "mongodb": 27017,
 }
@@ -66,14 +67,14 @@ def init(data,service='web'):
         data['private_key'] = private_key
 
     # socket proxy
-    if conf['config']['proxy']['proxy'].lower() == 'true':
-        try:
-            socks5_host, socks5_port = conf['config']['proxy']['socks5'].split(':')
-            socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, socks5_host, int(socks5_port))
-            socket.socket = socks.socksocket
-        except Exception as e:
-            logger.error("Error socket proxy: %s" % conf['config']['proxy']['socks5'])
-    socket.setdefaulttimeout(int(conf['config']['basic']['timeout']))
+    # if conf['config']['proxy']['proxy'].lower() == 'true':
+    #     try:
+    #         socks5_host, socks5_port = conf['config']['proxy']['socks5'].split(':')
+    #         socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, socks5_host, int(socks5_port))
+    #         socket.socket = socks.socksocket
+    #     except Exception as e:
+    #         logger.error("Error socket proxy: %s" % conf['config']['proxy']['socks5'])
+    # socket.setdefaulttimeout(int(conf['config']['basic']['timeout']))
     return data
 
 def curl(method,url, params = None, **kwargs):
@@ -102,13 +103,13 @@ def get_ssh_key():
         sys.exit(logger.error("Load tentacle config error: ssh_key, please check the config in tentacle.conf."))
     return public_key,private_key
 
-# def get_rebound():
-#     try:
-#         local_host = conf['config']['rebound']['local_host']
-#         local_port = conf['config']['rebound']['local_port']
-#     except KeyError:
-#         sys.exit(logger.error("Load tentacle config error: rebound, please check the config in tentacle.conf."))
-#     return local_host,local_port
+def get_rebound():
+    try:
+        local_host = conf['config']['rebound']['local_host']
+        local_port = conf['config']['rebound']['local_port']
+    except KeyError:
+        sys.exit(logger.error("Load tentacle config error: rebound, please check the config in tentacle.conf."))
+    return local_host,local_port
 
 def ceye_dns_api(t = 'url'):
     '''

