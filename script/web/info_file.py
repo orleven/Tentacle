@@ -28,7 +28,7 @@ _file_dic = {
     ".DS_store": None,
     "WEB-INF/database.propertie": None,
     ".htaccess": None,
-    "phpinfo.php": None,
+    "phpinfo.php": 'php.ini',
     "test.php":None,
 }
 

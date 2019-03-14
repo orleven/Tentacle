@@ -18,7 +18,7 @@ def prove(data):
     return data
 
 def _curl(data,base_url):
-    for url in [base_url, base_url + "docs/", base_url + "manager/", base_url + "examples/"]:
+    for url in [base_url, base_url + "docs/", base_url + "manager/", base_url + "examples/", base_url + "host-manager/"]:
         try:
             flag = -1
             res = curl('get',url)

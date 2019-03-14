@@ -294,6 +294,56 @@ def _fofa_api_today_poc(page):
 
     return target_list
 
+def _github_extract(search,git_urls):
+    InformationRegex = {
+        "mail": r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9\-.]+)",
+        "domain": r"(http[s]*://[^<|\"|\s]*)",
+        "other": r"(\b(?:(?!http|jar)[a-z])+://[^<|\"|\s]*)",
+        "pass1": r"(pass[^<|?|\r|\n]{1,30})",
+        "pass2": r"(password[^<|?|\r|\n]{1,30})",
+        "pass3": r"(pwd[^<|?|\r|\n]{1,30})",
+        "root": r"(root[^<|?|\r|\n]{1,30})",
+        "title": r"<title>(.*)<\/title>",
+        "ip": r"([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:*[0-9]{0,5})"}
+    github_timeout = 20  #
+    git_urls = list(set(git_urls))
+    for url in git_urls:
+        try:
+            _resp = mycurl('get', url, timeout=github_timeout)
+        except:
+            _resp = None
+        if _resp and _resp.status_code == 200:
+            soup = BeautifulSoup(_resp, "html5lib")
+            tap = soup.table if soup.table else soup.article
+            try:
+                _text = tap.text.rstrip()
+            except:
+                continue
+            _text = _text.replace('&quot;', '"')
+            _text = _text.replace('&amp;', '&')
+            _text = _text.replace('&lt;', '<')
+            _text = _text.replace('&gt;', '>')
+            _text = _text.replace('&nbsp;', ' ')
+            for i in InformationRegex:
+                res = re.findall(InformationRegex[i], _text)
+                for _re in res:
+                    # print(_re)
+                    if 'github' not in _re and 'schema.org' not in _re:
+                        # if search in _re:
+                            if i == 'mail':
+                                logger.sysinfo("Found info: %s [%s]" % (url, _re))
+                            elif i == 'domain':
+                                logger.sysinfo("Found info: %s [%s]" % (url, _re))
+                            elif 'pass' in i:
+                                logger.sysinfo("Found info: %s [%s]" % (url, _re))
+                            else:
+                                logger.sysinfo("Found info: %s [%s]" % (url, _re))
+        elif _resp and _resp.status_code == 404:
+            pass
+        else:
+            logger.error(_resp.text)
+            logger.error(_resp.status_code)
+            time.sleep(60)
 def _github_api(search, page):
     '''
         https://github.com/settings/tokens
@@ -302,14 +352,7 @@ def _github_api(search, page):
     per_page_limit = 50
     github_timeout = 20  #
 
-    InformationRegex = {"mail": r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)",
-                        "domain": r"(http[s]*://[^<|\"|?]*)",
-                        "pass1": r"(pass[^<|?]{30})",
-                        "pass2": r"(password[^<|?]{30})",
-                        "pass3": r"(pwd[^<|?]{30})",
-                        "root": r"(root[^<|?]{0,30})",
-                        "title": r"<title>(.*)<\/title>",
-                        "ip": r"([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:*[0-9]{0,5})"}
+
     headers = {}
     url_api = "https://api.github.com/search/code?sort=updated&order=desc&per_page=%s&q=" %per_page_limit
     try:
@@ -324,7 +367,7 @@ def _github_api(search, page):
         total = res_json["total_count"]
         logger.sysinfo("Found github url: %d"%int(total))
         page_num = (total // per_page_limit) + 1
-        page_num = page_num if page < page_num else page
+        page_num = page_num if page_num < page else page
         git_urls = []
         for p in range(1,page_num + 1):
             # Search url
@@ -344,38 +387,7 @@ def _github_api(search, page):
 
                 # Access url and match, 既然限制了，那就干点其他事情。
                 logger.sysinfo("So, this program will access target url and wait for rate limit. ")
-                git_urls = list(set(git_urls))
-                for url in git_urls:
-                    try:
-                        _resp = mycurl('get',url,timeout=github_timeout)
-                    except:
-                        _resp = None
-                    if _resp and _resp.status_code == 200:
-
-                        for i in InformationRegex:
-                            _text = _resp.text.lower()
-                            _text = _text.replace('&quot;', '"')
-                            _text = _text.replace('&amp;', '&')
-                            _text = _text.replace('&lt;', '<')
-                            _text = _text.replace('&gt;', '>')
-                            _text = _text.replace('&nbsp;', ' ')
-
-                            res = re.findall(InformationRegex[i], _text)
-                            for _re in res:
-                                if 'github' not in _re:
-                                    if search in _re:
-                                        if InformationRegex[i] == 'mail' :
-                                            logger.sysinfo("Found info: %s [%s]"%(url,_re))
-                                        elif InformationRegex[i] == 'domain' :
-                                            logger.sysinfo("Found info: %s [%s]" % (url, _re))
-                                        elif 'pass' in InformationRegex[i]:
-                                            logger.sysinfo("Found info: %s [%s]" % (url, _re))
-                    elif _resp and _resp.status_code == 404:
-                        pass
-                    else :
-                        logger.error(_resp.text)
-                        logger.error(_resp.status_code)
-                        time.sleep(60)
+                _github_extract(git_urls,search)
                 git_urls = []
             elif _resp!=None and int(_resp.status_code) == 403:
                 p = p - 1
@@ -386,6 +398,8 @@ def _github_api(search, page):
                 logger.error(_resp.text)
                 logger.error(_resp.status_code)
                 time.sleep(60)
+        _github_extract(search,git_urls)
+        git_urls = []
     elif int(resp.status_code) == 422:
         sys.exit(logger.error("Error github api token."))
     return []
