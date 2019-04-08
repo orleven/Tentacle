@@ -16,3 +16,4 @@ shodan==1.10.4
 sslscan
 pycryptodome
 lxml==4.3.0
+pymssql==2.1.4

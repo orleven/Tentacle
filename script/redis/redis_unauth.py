@@ -95,7 +95,7 @@ def _random_string(length=8):
 def _socket_connect(ip, port,msg = "test"):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        s.connect(ip, port)
+        s.connect((ip, port))
         s.sendall(bytes(msg, 'utf-8'))
         message = str(s.recv(1024))
         s.close()

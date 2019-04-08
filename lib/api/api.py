@@ -266,6 +266,8 @@ def _fofa_api(search, page, flag = True):
             else:
                 res_json = json.loads( res.text)
                 if res_json["error"] is None:
+                    if len(res_json.get('results')) ==0:
+                        break
                     for item in res_json.get('results'):
                         logger.debug("Fofa Found: %s" % item[0])
                         result.append(item[0])
@@ -290,7 +292,7 @@ def _fofa_api_today_poc(page):
                     target_list.append((z, server))
             else:
                 for z in _fofa_api(result_raw, page, False):
-                    target_list.append(z, None)
+                    target_list.append((z, None))
 
     return target_list
 

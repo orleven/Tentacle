@@ -2,24 +2,23 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import time
+import pymssql
 import socket
-import poplib
 
 def info(data=None):
     info = {
-        "name": "pop3 burst",
-        "info": "pop3 burst.",
+        "name": "weakpass",
+        "info": "weakpass",
         "level": "high",
         "type": "weakpass",
     }
     return info
 
 def prove(data):
-    data = init(data, 'pop3')
+    data = init(data, 'sqlserver')
     if _socket_connect(data['target_host'], data['target_port']):
-        usernamedic = _read_dic(data['d1']) if 'd1' in data.keys() else  _read_dic('dict/pop3_usernames.txt')
-        passworddic = _read_dic(data['d2']) if 'd2' in data.keys() else  _read_dic('dict/pop3_passwords.txt')
+        usernamedic = _read_dic(data['d1']) if 'd1' in data.keys() else  _read_dic('dict/sqlserver_usernames.txt')
+        passworddic = _read_dic(data['d2']) if 'd2' in data.keys() else  _read_dic('dict/sqlserver_passwords.txt')
         for linef1 in usernamedic:
             username = linef1.strip('\r').strip('\n')
             for linef2 in passworddic:
@@ -27,22 +26,11 @@ def prove(data):
                     linef2 if '%user%' not in linef2 else str(linef2).replace("%user%", str(username))).strip(
                     '\r').strip('\n')
                 try:
-                    time.sleep(0.5)
-                    pop = poplib.POP3(data['target_host'], data['target_port'])
-                    pop.user(username)
-                    auth = pop.pass_(password)
-                    if auth.split(' ')[0] != "+OK":
-                        pop.quit()
-                        continue
-                    if pop.stat()[1] is None or pop.stat()[1] < 1:
-                        pop.quit()
-                        continue
-                    ret = (username, password, pop.stat()[0], pop.stat()[1])
+                    db = pymssql.connect(server=data['target_host'], port=data['target_port'], user=username, password=password,charset="UTF-8")
                     data['flag'] = 1
-                    data['data'].append({"username": username, "password": password})
-                    data['res'].append({"info": username + "/" + password, "key": 'pop3'})
-                    pop.quit()
-                    break
+                    data['data'].append({"username":username, "password": password})
+                    data['res'].append({"info": username + "/" + password, "key": 'sqlserver'})
+                    return data
                 except:
                     pass
     return data
@@ -68,7 +56,7 @@ def _socket_connect(ip, port,msg = "test"):
     try:
         s.connect((ip, port))
         s.sendall(bytes(msg, 'utf-8'))
-        message = str(s.recv(1024))
+        # message = str(s.recv(1024))
         s.close()
         return True
     except:
