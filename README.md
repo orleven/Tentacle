@@ -54,10 +54,10 @@ py -3 tentacle.py -m script/info/web_status -f help
 # Use function of modual by -m and -f  (e.g. -m web_status -f prove), and you should make sure the function of module is exist.
 py -3 tentacle.py -m script/info/web_status -f prove
 
-# Show task' result by -tS 
+# Show task's result by -tS 
 py -3 tentacle.py -tS 8d4b37597aaec25e
 
-# Export task' result by -tS to test.xlsx
+# Export task's result by -tS to test.xlsx
 py -3 tentacle.py -tS 8d4b37597aaec25e  -o test
 
 # Update by git
