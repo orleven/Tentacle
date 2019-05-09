@@ -40,8 +40,8 @@ def init_conf(path):
         "proxy": {
             "proxy": False,
             "socks5": "127.0.0.1:1080",
-            "http_proxy": "http://127.0.0.1:1080",
-            "https_proxy": "https://127.0.0.1:1080"
+            # "http_proxy": "http://127.0.0.1:1080",
+            # "https_proxy": "https://127.0.0.1:1080"
         },
         "google_api": {
             "developer_key": "developer_key",

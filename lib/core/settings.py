@@ -14,8 +14,8 @@ DESCRIPTION = 'Tentacle is a POC vulnerability verification and exploit framewor
 
 VERSION = "1.0.0"
 SITE = "http://www.orleven.com"
-TYPE_COLORS = {"dev": 33, "test": 90, "pip": 34}
-TYPE = "dev" if VERSION.count('.') > 2 and VERSION.split('.')[-1] != '0' else "test"
+TYPE_COLORS = {"dev": 33, "stable": 90, "pip": 34}
+TYPE = "dev" if VERSION.count('.') > 2 and VERSION.split('.')[-1] != '0' else "stable"
 VERSION_STRING = "tentacle/%s#%s" % ('.'.join(VERSION.split('.')[:-1]) if VERSION.count('.') > 2 and VERSION.split('.')[-1] == '0' else VERSION, TYPE)
 BANNER = """\033[01;33m\
 .___________. _______ .__   __. .___________.    ___       ______  __       _______
@@ -36,3 +36,11 @@ TASK_INIT_STATUS = 0
 TASK_RUN_STATUS = 1
 TASK_STOP_STATUS = -1
 TASK_COMPLETE_STATUS = 2
+
+OUTPUT_PATH = "output"
+SCRIPT_PATH = "script"
+SPECIAL_SCRIPT_PATH = "special"
+DICT_PATH = "dict"
+CONFIG_PATH = "conf"
+DATA_PATH = "data"
+LOG_PATH = "log"

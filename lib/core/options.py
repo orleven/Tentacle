@@ -44,9 +44,6 @@ def parameter_register(args):
 
         logger.debug("Set parameter: %s." % str(args.parameter))
 
-
-
-
 def engine_register(args):
 
     if  not 0 < args.thread < 501:

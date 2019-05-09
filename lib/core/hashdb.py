@@ -102,7 +102,7 @@ class HashDB(object):
                         warnMsg += "the session file ('%s')" % get_safe_ex_string(ex)
                         logger.warn(warnMsg)
 
-                    if retries >= HASHDB_FLUSH_RETRIES:
+                    if retries >= 3:
                         return
                     else:
                         retries += 1

@@ -23,6 +23,7 @@ log/
 conf/
 output/
 data/
+special/
 .setting/
 .idea/
 .apt_generated/

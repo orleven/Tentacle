@@ -267,18 +267,20 @@ class Engine():
 
     def _get_data(self):
         if conf.OUT != None:
-            logger.info('(%s) Task sort out the data. ' % self.name)
+            logger.sysinfo('(%s) Task sort out the data. ' % self.name)
             datas = []
             for _row in self.hashdb.select_all():
                 data = {
                     "id": _row[0],
-                    "flag": _row[1],
-                    'target_host': _row[2],
-                    'target_port': _row[3],
-                    'url': _row[4],
-                    "data": unserialize_object(_row[5]),
-                    "res": unserialize_object(_row[6]),
-                    "other": unserialize_object(_row[7])
+                    "tid": _row[1],
+                    "flag": _row[2],
+                    'target_host': _row[3],
+                    'target_port': _row[4],
+                    'url': _row[5],
+                    'module_name': _row[6],
+                    "data":  unserialize_object(_row[7]),
+                    "res": unserialize_object(_row[8]),
+                    "other": unserialize_object(_row[9])
                 }
                 datas.append(data)
             output_excal(datas, conf.OUT, self.name)
@@ -354,7 +356,6 @@ class Engine():
                 else:
                     continue
 
-
         self.change_thread_count(-1)
 
     def _scan(self,id,module,target):
@@ -376,12 +377,12 @@ class Engine():
                 self.hashdb.insert(data)
                 self.hashdb.flush()
                 print_dic(data)
-        except AttributeError:
-            logger.error("Error %s:%s for %s:%s" %(data['module_name'],self. func_name, data['target_host'], data['target_port']))
+        except AttributeError as e:
+            logger.error("%s %s:%s for %s:%s" %(e,data['module_name'],self. func_name, data['target_host'], data['target_port']))
             self.change_error_count(1)
         except KeyError as e:
             logger.error("Missing necessary parameters: %s, please load parameters by -p. For example. -p cmd=whoami" % e)
-        except Exception:
+        except Exception as e:
             self.errmsg = traceback.format_exc()
             self.is_continue = False
             logger.error(self.errmsg)

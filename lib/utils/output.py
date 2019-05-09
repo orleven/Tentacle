@@ -4,12 +4,13 @@
 
 import re
 import sys
+import os
 import logging
-# from lib.core.data import kb
+from lib.core.data import paths
 from lib.core.data import logger
-from lib.core.log import LOGGER_HANDLER
 from lib.core.settings import BANNER
 from lib.core.settings import IS_WIN
+from lib.core.settings import OUTPUT_PATH
 from openpyxl import Workbook
 from thirdparty.termcolor.termcolor import colored
 from thirdparty.colorama.initialise import init as coloramainit
@@ -20,7 +21,7 @@ def banner():
     data_to_stdout(BANNER)
 
 def output_excal(datalines,file,taskname = None):
-    filename = file + '.xlsx'
+    filename = os.path.join(paths.OUTPUT_PATH,file + '.xlsx')
     if taskname:
         logger.info('Task export to %s: %s' % (filename,taskname))
     else:
@@ -45,7 +46,7 @@ def output_excal(datalines,file,taskname = None):
                 elif isinstance(line[key], list):
                     ws.cell(row=i, column=titleList.index(key) + 1).value = str(line[key])
                 elif isinstance(line[key], dict):
-                    ws.cell(row=i, column=titleList.index(key) + 1).value = line[key]
+                    ws.cell(row=i, column=titleList.index(key) + 1).value = str(line[key])
                 else:
                     ws.cell(row=i, column=titleList.index(key) + 1).value = "Types of printing are not supported."
             except:

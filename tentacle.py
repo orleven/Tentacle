@@ -20,10 +20,8 @@ try:
 except ImportError:
     exit("[-] Wrong installation detected (missing modules)!")
 
-
 def arg_set(parser):
     base = parser.add_argument_group('Base')
-
     base_target_group = base.add_mutually_exclusive_group()
     base_target_group.add_argument('-iS', "--target_simple",metavar='Target' ,type=str, default=None,help="Scan a single target (e.g. www.baidu.com)")
     base_target_group.add_argument('-iF', "--target_file",metavar='File', type=str, default=None,help='Load targets from targetFile (e.g. target.txt)')
@@ -73,8 +71,6 @@ def handle(parser):
         parser.print_help()
     else:
         normal(args)
-
-
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description=DESCRIPTION,formatter_class=argparse.RawTextHelpFormatter, add_help=False)

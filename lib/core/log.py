@@ -7,12 +7,13 @@ import sys
 import time
 import logging
 from lib.core.enums import CUSTOM_LOGGING
+from lib.core.settings import LOG_PATH
 
 class logger:
     def __init__(self, set_level=CUSTOM_LOGGING.SYSINFO,
                  name=os.path.split(os.path.splitext(sys.argv[0])[0])[-1],
                  log_name=time.strftime("%Y-%m-%d.log", time.localtime()),
-                 log_path=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "log"),
+                 log_path=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), LOG_PATH),
                  use_console=True):
 
         logging.addLevelName(CUSTOM_LOGGING.SYSINFO, "*")

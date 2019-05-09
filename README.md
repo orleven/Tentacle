@@ -67,8 +67,7 @@ py -3 tentacle.py --update
 ### Update
 
 * [2018-11-15] Code refactoring and fix  bug.
-* [2018-12-06] add config, e.g. proxy, api.
-* [2018-12-16] fix bug and add script
+* [2019-04-24] fix bug and add script.
 
 ### Thanks
 
