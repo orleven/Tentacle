@@ -5,7 +5,6 @@ redis
 paramiko
 openpyxl==2.5.12
 PySocks
-backoff==1.7.0
 selenium==2.53.6
 aiohttp
 asyncio==3.4.3

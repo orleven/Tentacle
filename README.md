@@ -13,9 +13,9 @@
 
 Tentacle is a POC vulnerability verification and exploit framework. It supports free extension of exploits and uses POC scripts. It supports calls to zooeyem, fofa, shodan and other APIs to perform bulk vulnerability verification for multiple targets. (Still in DEV...)
 
-[![Python 3.5](https://img.shields.io/badge/python-3.5-yellow.svg)](https://www.python.org/)
+[![Python 3.6](https://img.shields.io/badge/python-3.6-yellow.svg)](https://www.python.org/)
 
-![show](https://raw.githubusercontent.com/orleven/Tentacle/master/show/test.png)
+![show](show/test.png)
 
 ### Usage
 
@@ -33,7 +33,8 @@ py -3 tentacle.py -m script/info/web_status,@web          # Load all module of w
 py -3 tentacle.py -m *                                    # Load all module of script path
 
 # Load target by iS/iN/iF/iT/iX/iE/gg/sd/ze/ff.
-py -3 tentacle.py -m script/info/web_status -iS www.examples.com             # Load target by url or host
+# If you don't enter the target port, then it will try the default port number by server_type.
+py -3 tentacle.py -m script/info/web_status -iS www.examples.com             # Load target by url or host 
 py -3 tentacle.py -m script/info/web_status -iN 192.168.111.0/24             # Load target by network
 py -3 tentacle.py -m script/info/web_status -iF target.txt                   # Load target by file
 py -3 tentacle.py -m script/info/web_status -iT dcc54c3e1cc2c2e1             # Load target by recode's target
@@ -44,8 +45,6 @@ py -3 tentacle.py -m script/info/web_status -sd 'apache'                     # L
 py -3 tentacle.py -m script/info/web_status -ze 'app:weblogic'               # Load target by zoomeye api
 py -3 tentacle.py -m script/info/web_status -ff 'domain="example.com"'       # Load target by fofa api
 py -3 tentacle.py -m script/info/web_status -fft                             # Load target by fofa today api
-
-py -3 tentacle.py -gh "163"    # Search github's infomation about pass,email by api(need adjust)
 
 # Show all function of module by -f show or -f help
 py -3 tentacle.py -m script/info/web_status -f show
@@ -67,10 +66,11 @@ py -3 tentacle.py --update
 ### Update
 
 * [2018-11-15] Code refactoring and fix  bug.
-* [2019-04-24] fix bug and add script.
+* [2019-04-24] Fix bug and add script.
+* [2019-05-20] Code refactoring and add script.
 
 ### Thanks
 
-1. Sqlmap
-2. POC-T
+1. [Sqlmap](https://github.com/sqlmapproject/sqlmap)
+2. [POC-T](https://github.com/Xyntax/POC-T)
 

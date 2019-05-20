@@ -42,14 +42,11 @@ def arg_set(parser):
                                    help='Load targets from fofa  (e.g. app:weblogic)')
     base_target_group.add_argument('-fft', "--target_fofa_today_poc", action='store_true',default=False,
                                    help='Load targets from fofa today poc ')
-    base_target_group.add_argument('-gh', "--target_github", metavar='key', type=str, default=None,
-                                   help='Load targets from github  (e.g. 163)')
-    base.add_argument("-iP", "--target_port", type=str, help="The target port e.g 7001", default=None)
 
     module = parser.add_argument_group('Module')
     module.add_argument("-m", "--module", help="Load script module", default=False, action='store')
     module.add_argument("-f", "--function", help="Load function of script module, e.g show,prove", default=False, action='store')
-    module.add_argument("-p", "--parameter", help="Load data for function of module, e.g. -p \"d1=username.txt&d2=password.txt\"", default=False, action='store')
+    module.add_argument("-p", "--parameter", help="Load data for function of module, e.g. -p \"U=username.txt&P=password.txt\"", default=False, action='store')
     module.add_argument("--show", action='store_true', help="Show all poc scripts module", default=False)
     module.add_argument("--thread", type=int, help="Thread Num e.g. 100", default=100 ,action='store')
 

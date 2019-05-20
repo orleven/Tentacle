@@ -1,5 +1,7 @@
 #!/usr/bin/env python
+
 import re
+from script import Script, SERVER_PORT_MAP
 
 _dna = '''WAF:Topsec-Waf|index|index|<META NAME="Copyright" CONTENT="Topsec Network Security Technology Co.,Ltd"/>|<META NAME="DESCRIPTION" CONTENT="Topsec web UI"/>
 WAF:360|headers|X-Powered-By-360wzb|wangzhan\.360\.cn
@@ -47,50 +49,45 @@ WAF:Yundun|headers|X-Cache|YUNDUN
 WAF:Yunsuo|headers|Set-Cookie|yunsuo
 '''
 
-def info(data=None):
-    info = {
-        "name": "waf_check",
-        "info": "waf_check.",
-        "level": "low",
-        "type": "info"
-    }
-    return info
+class POC(Script):
+    def __init__(self, target=None):
+        self.server_type = SERVER_PORT_MAP.WEB
+        self.name = 'waf check'
+        self.keyword = ['waf', 'web']
+        self.info = 'waf check.'
+        self.type = 'info'
+        self.level = 'info'
+        Script.__init__(self, target=target, server_type=self.server_type)
 
+    def prove(self):
+        self.get_url()
+        if self.url:
+            try:
+                waf = None
+                res = self.curl('get',  self.url)
+                header = res.headers
+                html = res.text
+                mark_list = []
+                marks = _dna.strip().splitlines()
+                for mark in marks:
+                    name, location, key, value = mark.strip().split("|", 3)
+                    mark_list.append([name, location, key, value])
 
-def prove(data):
-    data = init(data, 'web')
-    if data['url']:
-        try:
-            waf = None
-            res = curl('get', data['url'])
-            header = res.headers
-            html = res.text
-            mark_list = []
-            marks = _dna.strip().splitlines()
-            for mark in marks:
-                name, location, key, value = mark.strip().split("|", 3)
-                mark_list.append([name, location, key, value])
-
-            for mark_info in mark_list:
-                name, location, key, reg = mark_info
-                if location == "headers":
-                    if re.search(reg, header, re.I) and key in header:
-                        waf = name
-                        break
-                if location == "index":
-                    if re.search(reg, html, re.I):
-                        waf = name
-                        break
-            m = re.search('<title>(.*)?<\/title>', html)
-            if m:
-                print(m.group(1), 'title')
-            if waf !=None:
-                data['flag'] = 1
-                data['res'].append({"info": waf, "key": "waf"})
-        except:
-            pass
-    return data
-
-if __name__=='__main__':
-    from script import init, curl
-    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))
+                for mark_info in mark_list:
+                    name, location, key, reg = mark_info
+                    if location == "headers":
+                        if re.search(reg, header, re.I) and key in header:
+                            waf = name
+                            break
+                    if location == "index":
+                        if re.search(reg, html, re.I):
+                            waf = name
+                            break
+                m = re.search('<title>(.*)?<\/title>', html)
+                if m:
+                    print(m.group(1), 'title')
+                if waf !=None:
+                    self.flag = 1
+                    self.res.append({"info": waf, "key": "waf"})
+            except:
+                pass

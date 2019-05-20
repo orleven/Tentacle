@@ -4,68 +4,69 @@
 
 import re, requests, pycurl,urllib.parse,tempfile
 
-def info(data=None):
-    info = {
-        "name": "web status",
-        "info": "This is a test.",
-        "level": "low",
-        "type": "info",
-    }
-    return info
+from script import Script, SERVER_PORT_MAP
 
-def prove(data):
-    # from sslscan import ui
-    # ui.load_modules()
-    # scanner = ui.Scanner()
-    # for pro in ["ssl2","ssl3","tls10","tls11","tls12"]:
-    #     scanner.config.set_value(pro, True)
-    # name, sep, options = 'server.ciphers'.partition(":")
-    # scanner.append_load(name, options, base_class=ui.BaseScan)
-    # name, sep, options = "term:rating=builtin.0_5".partition(":")
-    # scanner.append_load(name, options, base_class=ui.BaseReport)
-    # module = scanner.load_handler_from_uri("www.baidu.com")
-    # scanner.set_handler(module)
-    # scanner.reset_knowledge_base()
-    # scanner.run_scans()
-    # scanner.run_reports()
+class POC(Script):
+    def __init__(self, target=None):
+        self.server_type = SERVER_PORT_MAP.WEB
+        self.name = 'waf bypass ssl'
+        self.keyword = ['waf', 'bypass', 'ssl', 'web']
+        self.info = 'waf bypass ssl.'
+        self.type = 'info'
+        self.level = 'info'
+        Script.__init__(self, target=target, server_type=self.server_type)
 
-    data = init(data, 'web')
-    if data['base_url']:
-        cmd = 'pysslscan scan --scan server.ciphers  --scan=server.preferred_ciphers --ssl2 --ssl3 --tls10 --tls11 --tls12 ' + data['target_host']
-        # cmd = 'sslscan --no-colour --no-heartbleed --show-ciphers --sleep 500 --timeout=45 '+ data['target_host']
-        lines = _subprocess(cmd.split())
-        lines = lines.strip().split('\n')
-        poc = "?&mtestid=1%27%20and%20%271%27$%271"
-        ssllist =[]
-        for line in lines:
-            # line = str(line, 'utf-8')
-            if "Accepted" in line or "Preferred" in line:
-                pattern = re.compile('[A-Z\d\_]{5,}')
-                match = pattern.search(line)
-                if match:
-                    # TLS_RSA_WITH_AES_128_CBC_SHA
-                    # curl --ciphers ecdhe_rsa_aes_256_sha    https://www.baidu.com'
-                    ciphers = match.group()
-                    if ciphers in _openssl_ssls.keys():
-                        ciphers_ciphers = _openssl_ssls[ciphers]
-                    elif ciphers in _curl_ssls.keys():
-                        ciphers_ciphers = _curl_ssls[ciphers]
-                    else:
-                        ciphers_ciphers = "-".join(ciphers.split("_")[1:])
-                    if ciphers_ciphers not in ssllist:
-                        res_status = _curl(data['base_url'], ciphers_ciphers, poc)
-                        # print("curl --ciphers " + ciphers_ciphers + "  " + base_url + poc, str(res_status))
-                        if res_status == 200:
-                            data['flag'] = 1
-                            data['data'].append({"ssl": ciphers})
-                            data['res'].append({"key": ciphers + " "+ str(res_status),
-                                                "info": "curl --ciphers " + ciphers_ciphers + "  " + data['base_url'] + poc})
-                        ssllist.append(ciphers_ciphers)
+    def prove(self):
+        # from sslscan import ui
+        # ui.load_modules()
+        # scanner = ui.Scanner()
+        # for pro in ["ssl2","ssl3","tls10","tls11","tls12"]:
+        #     scanner.config.set_value(pro, True)
+        # name, sep, options = 'server.ciphers'.partition(":")
+        # scanner.append_load(name, options, base_class=ui.BaseScan)
+        # name, sep, options = "term:rating=builtin.0_5".partition(":")
+        # scanner.append_load(name, options, base_class=ui.BaseReport)
+        # module = scanner.load_handler_from_uri("www.baidu.com")
+        # scanner.set_handler(module)
+        # scanner.reset_knowledge_base()
+        # scanner.run_scans()
+        # scanner.run_reports()
 
-    # code = chardet.detect(waf_ssl)['encoding'] if chardet.detect(waf_ssl)['encoding'] not in ['ISO-8859-5','KOI8-R'] else 'gbk'
-    # print(waf_ssl.decode(code)+":"+code)
+        self.get_url()
+        if self.base_url:
+            cmd = 'pysslscan scan --scan server.ciphers  --scan=server.preferred_ciphers --ssl2 --ssl3 --tls10 --tls11 --tls12 ' + self.target_host
+            # cmd = 'sslscan --no-colour --no-heartbleed --show-ciphers --sleep 500 --timeout=45 '+ data['target_host']
+            lines = _subprocess(cmd.split())
+            lines = lines.strip().split('\n')
+            poc = "?&mtestid=1%27%20and%20%271%27$%271"
+            ssllist =[]
+            for line in lines:
+                # line = str(line, 'utf-8')
+                if "Accepted" in line or "Preferred" in line:
+                    pattern = re.compile('[A-Z\d\_]{5,}')
+                    match = pattern.search(line)
+                    if match:
+                        # TLS_RSA_WITH_AES_128_CBC_SHA
+                        # curl --ciphers ecdhe_rsa_aes_256_sha    https://www.baidu.com'
+                        ciphers = match.group()
+                        if ciphers in _openssl_ssls.keys():
+                            ciphers_ciphers = _openssl_ssls[ciphers]
+                        elif ciphers in _curl_ssls.keys():
+                            ciphers_ciphers = _curl_ssls[ciphers]
+                        else:
+                            ciphers_ciphers = "-".join(ciphers.split("_")[1:])
+                        if ciphers_ciphers not in ssllist:
+                            res_status = _curl(self.base_url, ciphers_ciphers, poc)
+                            # print("curl --ciphers " + ciphers_ciphers + "  " + base_url + poc, str(res_status))
+                            if res_status == 200:
+                                self.flag = 1
+                                self.req.append({"ssl": ciphers})
+                                self.res.append({"key": ciphers + " "+ str(res_status),
+                                                    "info": "curl --ciphers " + ciphers_ciphers + "  " + self.base_url + poc})
+                            ssllist.append(ciphers_ciphers)
 
-    return data
+        # code = chardet.detect(waf_ssl)['encoding'] if chardet.detect(waf_ssl)['encoding'] not in ['ISO-8859-5','KOI8-R'] else 'gbk'
+        # print(waf_ssl.decode(code)+":"+code)
 
 def _subprocess(cmd):
     import tempfile,subprocess
@@ -331,7 +332,3 @@ _openssl_ssls = {
     "SSL_CK_DES_64_CFB64_WITH_MD5_1": "DES-CFB-M1",
 
 }
-
-if __name__=='__main__':
-    from script import init, curl
-    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))

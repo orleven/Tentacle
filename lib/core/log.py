@@ -72,7 +72,7 @@ class logger:
         try:
             self.logger.log(level, msg, *args, **kwargs)
         except UnicodeEncodeError:
-            print(1)
+            print("Error log")
 
     def sysinfo(self, msg, *args, **kwargs):
         self.log(CUSTOM_LOGGING.SYSINFO, msg, *args, **kwargs)

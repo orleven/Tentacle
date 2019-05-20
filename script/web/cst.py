@@ -2,32 +2,26 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import urllib.parse
-import requests
-requests.packages.urllib3.disable_warnings()
+from script import Script, SERVER_PORT_MAP
 
-def info(data=None):
-    info = {
-        "name": "Cross Site Tracing (XST)",
-        "info": "Cross Site Tracing (XST)",
-        "level": "low",
-        "type": "cst"
-    }
-    return info
+class POC(Script):
+    def __init__(self, target=None):
+        self.server_type = SERVER_PORT_MAP.WEB
+        self.name = 'Cross Site Tracing (XST)'
+        self.keyword = ['web']
+        self.info = 'Cross Site Tracing (XST)'
+        self.type = 'cst'
+        self.level = 'low'
+        Script.__init__(self, target=target, server_type=self.server_type)
 
-def prove(data):
-    data = init(data,'web')
-    if data['url']:
-        headers = {'fuck_by_me': 'hello_word'}
-        try:
-            res = curl('get',data['url'],headers = headers)
-            if 'fuck_by_me' in res.headers.keys():
-                data['flag'] = 1
-                data['res'].append({"info": headers, "key": "cross_site_tracing (XST)"})
-        except:
-            pass
-    return data
-
-if __name__=='__main__':
-    from script import init, curl
-    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))
+    def prove(self):
+        self.get_url()
+        if self.url:
+            headers = {'fuck_by_me': 'hello_word'}
+            try:
+                res = self.curl('get',self.url,headers = headers)
+                if 'fuck_by_me' in res.headers.keys():
+                    self.flag = 1
+                    self.res.append({"info": headers, "key": "cross_site_tracing (XST)"})
+            except:
+                pass

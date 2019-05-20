@@ -10,10 +10,10 @@ import shodan
 from bs4 import BeautifulSoup
 from urllib.parse import quote
 from lib.utils.cipher import base64encode
-from lib.utils.curl import mycurl
+from lib.utils.curl import curl
 from lib.core.data import logger
 from lib.core.data import conf
-from lib.utils.utils import random_string
+from lib.core.common import random_string
 
 def search_api(search,page = 50):
     target_list = []
@@ -36,10 +36,6 @@ def search_api(search,page = 50):
             for z in _fofa_api_today_poc(page):
                 target_list.append(z)
 
-        elif 'target_github' in conf.keys():
-            for z in _github_api(search, page):
-                target_list.append(z)
-
         elif 'target_google' in conf.keys():
             for z in _google_api(search, page):
                 target_list.append(z)
@@ -51,7 +47,7 @@ def search_api(search,page = 50):
         return target_list
     return list(set(target_list))
 
-def search_engine(search,page = 5):
+def search_engine(search,page = 10):
     target_list = []
     try:
         for url in _baidu(search,page):
@@ -72,10 +68,10 @@ def _baidu(search, page):
         base_url = 'https://www.baidu.com/s?wd=' + str(quote(search)) + '&oq=' + str(
             quote(search)) + '&ie=utf-8' + '&pn=' + str(n)
         try:
-            r = mycurl('get',base_url)
+            r = curl('get',base_url)
             soup = BeautifulSoup(r.text, "html.parser")
             for a in soup.select('div.c-container > h3 > a'):
-                url = mycurl('get', a['href']).url
+                url = curl('get', a['href']).url
                 logger.debug("Baidu Found: %s" % url)
                 yield url
         except:
@@ -85,10 +81,10 @@ def _360so(search, page):
     for n in range(1, page + 1):
         base_url = 'https://www.so.com/s?q=' + str(quote(search)) + '&pn=' + str(n) + '&fr=so.com'
         try:
-            r = mycurl('get', base_url)
+            r = curl('get', base_url)
             soup = BeautifulSoup(r.text, "html.parser")
             for a in soup.select('li.res-list > h3 > a'):
-                url1 = mycurl('get', a['href'])
+                url1 = curl('get', a['href'])
                 url = re.findall("URL='(.*?)'", url1.text)[0] if re.findall("URL='(.*?)'", url1.text) else url1.url
                 logger.debug("360so Found: %s" % url)
                 yield url
@@ -99,7 +95,7 @@ def _bing(search, page):
     for n in range(1, (page * 10) + 1, 10):
         base_url = 'http://cn.bing.com/search?q=' + str(quote(search)) + '&first=' + str(n)
         try:
-            r = mycurl('get', base_url)
+            r = curl('get', base_url)
             soup = BeautifulSoup(r.text, "html.parser")
             for a in soup.select('li.b_algo > div.b_algoheader > a'):
                 url = a['href']
@@ -123,18 +119,18 @@ def _google_api(search, page):
     anslist = []
     for p in range(0,page):
         base_url = 'https://www.googleapis.com/customsearch/v1?cx={0}&key={1}&num=10&start={2}&q={3}'.format(search_enging,developer_key,str(p * 10 +1),search)
-
         try:
-            _proxies = None
-            if conf['config']['proxy']['proxy'].lower() == 'true':
-                try:
-                    _proxies = {
-                        'http': conf['config']['proxy']['http_proxy'],
-                        'https': conf['config']['proxy']['https_proxy']
-                    }
-                except:
-                    logger.error("Error http(s) proxy: %s or %s." % (conf['config']['proxy']['http_proxy'], conf['config']['proxy']['https_proxy']))
-            res = mycurl('get',base_url, proxies=_proxies,timeout=10)
+            # _proxies = None
+            # if conf['config']['proxy']['proxy'].lower() == 'true':
+            #     try:
+            #         _proxies = {
+            #             'http': conf['config']['proxy']['http_proxy'],
+            #             'https': conf['config']['proxy']['https_proxy']
+            #         }
+            #     except:
+            #         logger.error("Error http(s) proxy: %s or %s." % (conf['config']['proxy']['http_proxy'], conf['config']['proxy']['https_proxy']))
+            # res = curl('get',base_url, proxies=_proxies,timeout=5)
+            res = curl('get', base_url, timeout=5)
         except:
             res = None
         if res != None:
@@ -167,7 +163,7 @@ def _zoomeye_api(search, page, z_type):
             'username': conf['config']['zoomeye_api']['username'],
             'password': conf['config']['zoomeye_api']['password']
         }
-        res = mycurl("post", url_login, json=data, headers=headers)
+        res = curl("post", url_login, json=data, headers=headers)
         if res == None :
             sys.exit(logger.error("Zoomeye api is not available."))
         headers["Authorization"] = "JWT " + json.loads(res.text)['access_token']
@@ -189,7 +185,7 @@ def _zoomeye_api(search, page, z_type):
         logger.debug("Find zoomeye url of %d page..." % int(n))
         try:
             data = {'query': search, 'page': str(n)}
-            res = mycurl("get", url_api, params=data, headers=headers)
+            res = curl("get", url_api, params=data, headers=headers)
             if int(res.status_code) == 422:
                 sys.exit(logger.error("Error zoomeye api token."))
             if z_type.lower() == 'web':
@@ -215,15 +211,6 @@ def _shodan_api(search, page):
     for p in range(1,page+1):
         logger.debug("Find shodan url of %d page..." % int(p))
         _proxies = None
-        if conf['config']['proxy']['proxy'].lower() == 'true':
-            try:
-                _proxies = {
-                    'http': conf['config']['proxy']['http_proxy'],
-                    'https': conf['config']['proxy']['https_proxy']
-                }
-            except:
-                logger.error("Error http(s) proxy: %s or %s." % (
-                    conf['config']['proxy']['http_proxy'], conf['config']['proxy']['https_proxy']))
         try:
             api = shodan.Shodan(token, proxies=_proxies)
             result = api.search(query=search, page=p)
@@ -259,7 +246,7 @@ def _fofa_api(search, page, flag = True):
     search = str(base64encode(bytes(search, 'utf-8')),'utf-8')
     for p in range(1,page+1):
         logger.debug("Find fofa url of %d page..." % int(p))
-        res = mycurl('post',url_login + '?email={0}&key={1}&page={2}&qbase64={3}'.format(email, key,p, search))
+        res = curl('post',url_login + '?email={0}&key={1}&page={2}&qbase64={3}'.format(email, key,p, search))
         if res !=None :
             if int(res.status_code) == 401:
                 sys.exit(logger.error("Error fofa api access, maybe you should pay fofa coin and enjoy service."))
@@ -276,7 +263,7 @@ def _fofa_api(search, page, flag = True):
 def _fofa_api_today_poc(page):
     target_list = []
     url = "https://fofa.so/about_client"
-    res =  mycurl('get',url)
+    res =  curl('get',url)
     if res != None:
         poc_soup = BeautifulSoup(res.content,'lxml')
         poc_result_name = poc_soup.select('body > div.fdo > div:nth-of-type(3) > div > div > ul > li:nth-of-type(1)')
@@ -296,116 +283,6 @@ def _fofa_api_today_poc(page):
 
     return target_list
 
-def _github_extract(search,git_urls):
-    InformationRegex = {
-        "mail": r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9\-.]+)",
-        "domain": r"(http[s]*://[^<|\"|\s]*)",
-        "other": r"(\b(?:(?!http|jar)[a-z])+://[^<|\"|\s]*)",
-        "pass1": r"(pass[^<|?|\r|\n]{1,30})",
-        "pass2": r"(password[^<|?|\r|\n]{1,30})",
-        "pass3": r"(pwd[^<|?|\r|\n]{1,30})",
-        "root": r"(root[^<|?|\r|\n]{1,30})",
-        "title": r"<title>(.*)<\/title>",
-        "ip": r"([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:*[0-9]{0,5})"}
-    github_timeout = 20  #
-    git_urls = list(set(git_urls))
-    for url in git_urls:
-        try:
-            _resp = mycurl('get', url, timeout=github_timeout)
-        except:
-            _resp = None
-        if _resp and _resp.status_code == 200:
-            soup = BeautifulSoup(_resp, "html5lib")
-            tap = soup.table if soup.table else soup.article
-            try:
-                _text = tap.text.rstrip()
-            except:
-                continue
-            _text = _text.replace('&quot;', '"')
-            _text = _text.replace('&amp;', '&')
-            _text = _text.replace('&lt;', '<')
-            _text = _text.replace('&gt;', '>')
-            _text = _text.replace('&nbsp;', ' ')
-            for i in InformationRegex:
-                res = re.findall(InformationRegex[i], _text)
-                for _re in res:
-                    # print(_re)
-                    if 'github' not in _re and 'schema.org' not in _re:
-                        # if search in _re:
-                            if i == 'mail':
-                                logger.sysinfo("Found info: %s [%s]" % (url, _re))
-                            elif i == 'domain':
-                                logger.sysinfo("Found info: %s [%s]" % (url, _re))
-                            elif 'pass' in i:
-                                logger.sysinfo("Found info: %s [%s]" % (url, _re))
-                            else:
-                                logger.sysinfo("Found info: %s [%s]" % (url, _re))
-        elif _resp and _resp.status_code == 404:
-            pass
-        else:
-            logger.error(_resp.text)
-            logger.error(_resp.status_code)
-            time.sleep(60)
-def _github_api(search, page):
-    '''
-        https://github.com/settings/tokens
-        Generate new token
-    '''
-    per_page_limit = 50
-    github_timeout = 20  #
-
-
-    headers = {}
-    url_api = "https://api.github.com/search/code?sort=updated&order=desc&per_page=%s&q=" %per_page_limit
-    try:
-        token = conf['config']['github_api']['token']
-    except KeyError:
-        sys.exit(logger.error("Load tentacle config error: github_api, please check the config in tentacle.conf."))
-    headers["Authorization"] = "token " + token
-    resp = mycurl('get',url_api + search, headers = headers, timeout=github_timeout)
-    if resp!=None and resp.status_code == 200:
-        logger.sysinfo("Using github api...")
-        res_json = json.loads(resp.content)
-        total = res_json["total_count"]
-        logger.sysinfo("Found github url: %d"%int(total))
-        page_num = (total // per_page_limit) + 1
-        page_num = page_num if page_num < page else page
-        git_urls = []
-        for p in range(1,page_num + 1):
-            # Search url
-            _url_api = "https://api.github.com/search/code?sort=updated&order=desc&page=%d&per_page=%s&q=" % (p,per_page_limit)
-            _resp = mycurl('get',_url_api + search, headers=headers, timeout=github_timeout)
-            if _resp!=None and _resp.status_code == 200:
-                logger.debug("Find github url of %d page..." % int(p))
-                try:
-                    _res_json = json.loads(_resp.content)
-                    for i in range(len(_res_json['items'])):
-                        git_urls.append(_res_json['items'][i]["html_url"])
-                except:
-                    pass
-            elif _resp!=None and int(_resp.status_code) == 422:
-                logger.error("Warning: github api access rate limit 20/minute, 5000/hour, 1000 search results.")
-                logger.error("Error github api token. Wait for a minute.")
-
-                # Access url and match, 既然限制了，那就干点其他事情。
-                logger.sysinfo("So, this program will access target url and wait for rate limit. ")
-                _github_extract(git_urls,search)
-                git_urls = []
-            elif _resp!=None and int(_resp.status_code) == 403:
-                p = p - 1
-                logger.error("Too many times for access. So we should wait for ten minute.")
-                time.sleep(60*10)
-            else:
-                p = p - 1
-                logger.error(_resp.text)
-                logger.error(_resp.status_code)
-                time.sleep(60)
-        _github_extract(search,git_urls)
-        git_urls = []
-    elif int(resp.status_code) == 422:
-        sys.exit(logger.error("Error github api token."))
-    return []
-
 def _ceye_verify_api(filter, t = 'dns'):
     try:
         token = conf['config']['ceye_api']['token']
@@ -414,7 +291,7 @@ def _ceye_verify_api(filter, t = 'dns'):
         return False
     filter = filter.replace('http://','')[0:20]
     url = "http://api.ceye.io/v1/records?token={token}&type={type}&filter={filter}".format(token = token,type = t,filter = filter)
-    res =  mycurl('get',url)
+    res = curl('get',url)
     if res == None:
         logger.error("The ceye api is unavailable.!")
     elif res.status_code == 503:

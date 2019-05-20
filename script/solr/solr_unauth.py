@@ -2,31 +2,27 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-def info(data=None):
-    info = {
-        "name": "solr unauth",
-        "info": "Solr unauth.",
-        "level": "high",
-        "type": "unauth",
-    }
-    return info
+from script import Script, SERVER_PORT_MAP
 
-def prove(data):
-    data = init(data, 'solr')
-    if data['base_url']:
-        for url in [data['base_url'] , data['base_url']+"solr/"]:
-            try:
-                res = curl('get',url)
-                if res.status_code is 200 and 'Solr Admin' in res.text and 'Dashboard' in res.text:
-                    data['flag'] = 1
-                    data['data'].append({"page": '/solr/'})
-                    data['res'].append({"info": url, "key": "/solr/"})
-            except Exception:
-                pass
-    return data
+class POC(Script):
+    def __init__(self, target=None):
+        self.server_type = SERVER_PORT_MAP.WEB
+        self.name = 'solr unauth'
+        self.keyword = ['unauth', 'solr']
+        self.info = 'solr unauth'
+        self.type = 'unauth'
+        self.level = 'high'
+        Script.__init__(self, target=target, server_type=self.server_type)
 
-
-
-if __name__=='__main__':
-    from script import init, curl
-    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))
+    def prove(self):
+        self.get_url()
+        if self.base_url:
+            for url in [self.base_url , self.base_url+"solr/"]:
+                try:
+                    res = self.curl('get',url)
+                    if res.status_code is 200 and 'Solr Admin' in res.text and 'Dashboard' in res.text:
+                        self.flag = 1
+                        self.req.append({"page": '/solr/'})
+                        self.res.append({"info": url, "key": "/solr/"})
+                except Exception:
+                    pass

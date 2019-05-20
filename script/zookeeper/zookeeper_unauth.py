@@ -3,36 +3,30 @@
 # @author: 'orleven'
 
 import socket
+from script import Script, SERVER_PORT_MAP
 
-def info(data=None):
-    info = {
-        "name": "zookeeper unauth",
-        "info": "zookeeper unauth.",
-        "level": "medium",
-        "type": "unauth",
-    }
-    return info
+class POC(Script):
+    def __init__(self, target=None):
+        self.server_type = SERVER_PORT_MAP.ZOOKEEPER
+        self.name = 'zookeeper unauth'
+        self.keyword = ['zookeeper', 'unauth']
+        self.info = 'Zookeeper unauth'
+        self.type = 'unauth'
+        self.level = 'medium'
+        Script.__init__(self, target=target, server_type=self.server_type)
 
-
-def prove(data):
-    data = init(data,'zookeeper')
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
-        s.connect((data['target_host'], data['target_port']))
-        s.sendall(bytes('envi\r\n','utf-8'))
-        message = str(s.recv(1024))
-        s.close()
-        if 'zookeeper.version' in message:
-            data['flag'] = 1
-            data['data'].append({"info": "envi"})
-            data['res'].append({"info": "zookeeper unauth", 'key':'envi',"envi": message})
-    except socket.timeout:
-        pass
-    except Exception as err:
-        pass
-
-    return data
-
-if __name__=='__main__':
-    from script import init, curl
-    print(prove({'target_host':'www.baidu.com','target_port': 22,'flag':-1,'data':[],'res':[]}))
+    def prove(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            s.connect((self.target_host, self.target_port))
+            s.sendall(bytes('envi\r\n','utf-8'))
+            message = str(s.recv(1024))
+            s.close()
+            if 'zookeeper.version' in message:
+                self.flag = 1
+                self.req.append({"info": "envi"})
+                self.res.append({"info": "zookeeper unauth", 'key':'envi',"envi": message})
+        except socket.timeout:
+            pass
+        except Exception as err:
+            pass

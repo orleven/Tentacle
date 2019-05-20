@@ -11,7 +11,6 @@ import subprocess
 from lib.core.data import paths
 from lib.core.data import logger
 from lib.core.settings import GIT_REPOSITORY
-from lib.utils.output import data_to_stdout
 from lib.core.common import poll_process
 from lib.core.common import get_safe_ex_string
 
@@ -19,7 +18,7 @@ def update_program():
     success = False
     if not os.path.exists(os.path.join(paths.ROOT_PATH, ".git")):
         msg = "Have not a git repository. Please checkout the 'tentacle' repository "
-        msg += "from GitHub (e.g. 'git clone --depth 1 https://github.com/orleven/tentacle.git tentacle')"
+        msg += "from GitHub (e.g. 'git clone --depth 1 %s tentacle')" % GIT_REPOSITORY
         logger.error(msg)
     else:
         msg = "Updating tentacle to the latest version from the gitHub repository."
@@ -28,7 +27,9 @@ def update_program():
         msg = "Tentacle will try to update itself using 'git' command."
         logger.sysinfo(msg)
 
-        data_to_stdout("\r[%s] [INFO] update in progress " % time.strftime("%X"))
+        msg = "Update in progress " % time.strftime("%X")
+        logger.sysinfo(msg)
+        # data_to_stdout("\r[%s] [INFO] update in progress " % time.strftime("%X"))
 
     try:
         process = subprocess.Popen("git checkout . && git pull %s HEAD" % GIT_REPOSITORY, shell=True,
@@ -46,7 +47,7 @@ def update_program():
     else:
         if "Not a git repository" in stderr:
             msg = "Not a valid git repository. Please checkout the 'orleven/tentacle' repository "
-            msg += "from GitHub (e.g. 'git clone --depth 1 https://github.com/orleven/tentacle.git tentacle')"
+            msg += "from GitHub (e.g. 'git clone --depth 1 %s tentacle')" % GIT_REPOSITORY
             logger.error(msg)
         else:
             logger.error("Update could not be completed ('%s')" % re.sub(r"\W+", " ", stderr).strip())
@@ -57,7 +58,7 @@ def update_program():
             msg += "to use a GitHub for Windows client for updating "
             msg += "purposes (http://windows.github.com/) or just "
             msg += "download the latest snapshot from "
-            msg += "https://github.com/orleven/tentacle"
+            msg += GIT_REPOSITORY
         else:
             msg = "For Linux platform it's required "
             msg += "to install a standard 'git' package (e.g.: 'sudo apt-get install git')"

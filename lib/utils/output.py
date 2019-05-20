@@ -2,15 +2,12 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import re
 import sys
 import os
-import logging
 from lib.core.data import paths
 from lib.core.data import logger
 from lib.core.settings import BANNER
 from lib.core.settings import IS_WIN
-from lib.core.settings import OUTPUT_PATH
 from openpyxl import Workbook
 from thirdparty.termcolor.termcolor import colored
 from thirdparty.colorama.initialise import init as coloramainit
@@ -85,6 +82,9 @@ def print_dic(data):
         else:
             logger.warning(msg)
 
+def print_all(data):
+    from pprint import pprint
+    pprint(vars(data))
 
 def single_time_warn_message(message):  # Cross-linked function
     sys.stdout.write(message)

