@@ -27,9 +27,9 @@ def update_program():
         msg = "Tentacle will try to update itself using 'git' command."
         logger.sysinfo(msg)
 
-        msg = "Update in progress " % time.strftime("%X")
+        msg = "Update in progress..."
         logger.sysinfo(msg)
-        # data_to_stdout("\r[%s] [INFO] update in progress " % time.strftime("%X"))
+
 
     try:
         process = subprocess.Popen("git checkout . && git pull %s HEAD" % GIT_REPOSITORY, shell=True,
