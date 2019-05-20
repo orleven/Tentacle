@@ -60,7 +60,7 @@ def poll_process(process, suppress_errors=False):
     Checks for process status (prints . if still running)
     """
     while True:
-        data_to_stdout(".")
+        # data_to_stdout(".")
         time.sleep(1)
 
         returncode = process.poll()

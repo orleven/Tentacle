@@ -32,8 +32,7 @@ def update_program():
 
     try:
         process = subprocess.Popen("git checkout . && git pull %s HEAD" % GIT_REPOSITORY, shell=True,
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=paths.ROOT_PATH.encode(
-                locale.getpreferredencoding()))  # Reference: http://blog.stastnarodina.com/honza-en/spot/python-unicodeencodeerror/
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=paths.ROOT_PATH)  # Reference: http://blog.stastnarodina.com/honza-en/spot/python-unicodeencodeerror/
         poll_process(process, True)
         stdout, stderr = process.communicate()
         success = not process.returncode
@@ -44,12 +43,15 @@ def update_program():
     if success:
         logger.success("The latest revision '%s'" % (get_revision_number()))
     else:
-        if "Not a git repository" in stderr:
-            msg = "Not a valid git repository. Please checkout the 'orleven/tentacle' repository "
-            msg += "from GitHub (e.g. 'git clone --depth 1 %s tentacle')" % GIT_REPOSITORY
-            logger.error(msg)
+        if isinstance(stderr, str):
+            if "Not a git repository" in stderr:
+                msg = "Not a valid git repository. Please checkout the 'orleven/tentacle' repository "
+                msg += "from GitHub (e.g. 'git clone --depth 1 %s tentacle')" % GIT_REPOSITORY
+                logger.error(msg)
+            else:
+                logger.error("Update could not be completed ('%s')" % re.sub(r"\W+", " ", stderr).strip())
         else:
-            logger.error("Update could not be completed ('%s')" % re.sub(r"\W+", " ", stderr).strip())
+            logger.error("Update could not be completed. ")
 
     if not success:
         if sys.platform == 'win32':
