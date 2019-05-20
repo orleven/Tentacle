@@ -30,7 +30,6 @@ def update_program():
         msg = "Update in progress..."
         logger.sysinfo(msg)
 
-
     try:
         process = subprocess.Popen("git checkout . && git pull %s HEAD" % GIT_REPOSITORY, shell=True,
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=paths.ROOT_PATH.encode(
