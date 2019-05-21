@@ -41,7 +41,7 @@ class Script(object):
                     self.req.append({"test": test})                     # for recode the request' info to database
                     self.res.append({"info": test, "key": "test"})      # for recode the response' info to database and show info, key to console.
         """
-        pass
+        raise AttributeError('Function is not exist.')
 
     def exec(self):
         """subclass should override this function for exec
@@ -53,7 +53,7 @@ class Script(object):
                     self.req.append({"test": test})                      # for recode the request' info to database
                     self.res.append({"info": test, "key": "test"})       # for recode the response' info to database and show info, key to console.
         """
-        pass
+        raise AttributeError('Function is not exist.')
 
     def upload(self):
         """subclass should override this function for upload
@@ -67,7 +67,7 @@ class Script(object):
                     self.req.append({"test": srcpath})                # for recode the request' info to database
                     self.res.append({"info": despath, "key": "test"}) # for recode the response' info to database and show info, key to console.
         """
-        pass
+        raise AttributeError('Function is not exist.')
 
     def rebound(self):
         """subclass should override this function for upload
@@ -82,7 +82,7 @@ class Script(object):
                     self.req.append({"test": cmd})                      # for recode the request' info to database
                     self.res.append({"info": 'success', "key": "test"}) # for recode the response' info to database and show info, key to console.
         """
-        pass
+        raise AttributeError('Function is not exist.')
 
     def get_url(self):
         if not self.url:
@@ -92,7 +92,6 @@ class Script(object):
         self.target_host = host
         self.target_port = port
         self.parameter = parameter
-
         if target.startswith('http://') or target.startswith('https://'):
             self.url = target
             protocol, s1 = urllib.parse.splittype(target)
@@ -190,8 +189,8 @@ class Script(object):
 
         return self.target_port_list
 
-    def curl(self, method, url, params=None, **kwargs):
-        return curl(method, url, params=params, **kwargs)
+    def curl(self, method, url, **kwargs):
+        return curl(method, url , **kwargs)
 
 
     def read_file(self, filename, type = 'r'):

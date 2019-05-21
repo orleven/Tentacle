@@ -291,10 +291,14 @@ class Engine():
                     #     self.exclude += 1
                     #     continue
                     if target:
-                        self.queue.put([i + 1, module, target])
+                        if target.startswith('http://') or target.startswith('https://'):
+                            self.queue.put([i + 1, module, target])
+                        else:
+                            self.queue.put([i + 1, module, obj])
                     else:
                         self.queue.put([i + 1, module, obj])
-                    if self.queue.qsize() >= self.queue_pool_total + self.queue_pool_cache:
+
+                    if self.queue.qsize() >= self.queue_pool_total + self.queue_pool_cache :
                         yield self.queue
         yield self.queue
 
@@ -424,6 +428,8 @@ class Engine():
                 logger.error('Invalid POC script, Please check the script: %s' %module.__name__,)
             elif '\'POC\' object has no attribute' in get_safe_ex_string(e):
                 logger.error('Attribute is not exist, Please check \'%s\' in the script: %s' % (self. func_name, module.__name__,))
+            elif 'Function is not exist.' in get_safe_ex_string(e):
+                logger.error('Function is not exist, Please check \'%s\' in the script: %s' % (self. func_name, module.__name__,))
             else:
                 logger.error("%s %s:%s for %s" % (e, module.__name__, self.func_name, target))
             self.change_error_count(1)

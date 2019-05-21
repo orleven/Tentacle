@@ -2,7 +2,7 @@
 
 ```
 .___________. _______ .__   __. .___________.    ___       ______  __       _______
-|           ||   ____||  \ |  | |           |   /   \     /      ||  |     |   ____| {1.0.0#test}
+|           ||   ____||  \ |  | |           |   /   \     /      ||  |     |   ____| {1.0.0#stable}
 `---|  |----`|  |__   |   \|  | `---|  |----`  /  ^  \   |  ,----'|  |     |  |__
     |  |     |   __|  |  . `  |     |  |      /  /_\  \  |  |     |  |     |   __|
     |  |     |  |____ |  |\   |     |  |     /  _____  \ |  `----.|  `----.|  |____
@@ -38,7 +38,7 @@ py -3 tentacle.py -m script/info/web_status -iS www.examples.com             # L
 py -3 tentacle.py -m script/info/web_status -iN 192.168.111.0/24             # Load target by network
 py -3 tentacle.py -m script/info/web_status -iF target.txt                   # Load target by file
 py -3 tentacle.py -m script/info/web_status -iT dcc54c3e1cc2c2e1             # Load target by recode's target
-py -3 tentacle.py -m script/info/web_status -iX nmap_xml.txt                 # Load target by nmap.xml
+py -3 tentacle.py -m script/info/web_status -iX nmap_xml.xml                 # Load target by nmap.xml
 py -3 tentacle.py -m script/info/web_status -iE "powered by discuz"          # Load target by baidu/bing/360so
 py -3 tentacle.py -m script/info/web_status -gg 'intext:powered by discuz'   # Load target by google api
 py -3 tentacle.py -m script/info/web_status -sd 'apache'                     # Load target by shodan api

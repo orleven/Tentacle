@@ -20,7 +20,7 @@ class POC(Script):
             for url in [self.base_url , self.base_url+"solr/"]:
                 try:
                     res = self.curl('get',url)
-                    if res.status_code is 200 and 'Solr Admin' in res.text and 'Dashboard' in res.text:
+                    if res and res.status_code is 200 and 'Solr Admin' in res.text and 'Dashboard' in res.text:
                         self.flag = 1
                         self.req.append({"page": '/solr/'})
                         self.res.append({"info": url, "key": "/solr/"})

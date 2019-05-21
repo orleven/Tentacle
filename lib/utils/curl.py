@@ -30,7 +30,7 @@ def geturl(host, port, **kwargs):
             return url
     return None
 
-def curl(method,url, **kwargs):
+def curl(method, url, **kwargs):
     headers = kwargs.get('headers')
     if headers == None:
         headers = {}
@@ -43,10 +43,12 @@ def curl(method,url, **kwargs):
     # if 'X-Forwarded-For' not in headers.keys():
     #     headers['X-Forwarded-For'] = random_IP()
     kwargs.setdefault('headers',headers)
-    if 'timeout' not in headers.keys():
-        kwargs.setdefault('timeout',  int(conf['config']['basic']['timeout']))
-    kwargs.setdefault('verify', False)
+    timeout = int(conf['config']['basic']['timeout'])
     max_retries = int(conf['config']['basic']['max_retries'])
+    if 'timeout' not in headers.keys():
+        kwargs.setdefault('timeout',  timeout)
+    kwargs.setdefault('verify', False)
+
     # if conf['config']['proxy']['proxy'].lower() == 'true':
     #     try:
     #         _proxies = {

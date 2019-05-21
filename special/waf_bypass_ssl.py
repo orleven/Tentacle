@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import re, requests, pycurl,urllib.parse,tempfile
-
+import re
 from script import Script, SERVER_PORT_MAP
 
 class POC(Script):
@@ -111,8 +110,6 @@ def _curl(url,ciphers,poc):
         c.setopt(pycurl.CONNECTTIMEOUT, 5)
         c.setopt(pycurl.TIMEOUT, 5)
         c.setopt(pycurl.SSL_VERIFYHOST, 0)
-        c.setopt(pycurl.PROXY, "127.0.0.1")
-        c.setopt(pycurl.PROXYPORT, 7999)
         c.setopt(pycurl.PROXYTYPE, pycurl.PROXYTYPE_SOCKS5)
         with  tempfile.NamedTemporaryFile() as fp:
             c.setopt(pycurl.WRITEHEADER, fp)
@@ -121,9 +118,10 @@ def _curl(url,ciphers,poc):
             # out_temp.seek(0)
             # rt = out_temp.read()
         return c.getinfo(pycurl.HTTP_CODE)
-    except Exception as e:
+    except ImportError as e:
+        raise ImportError("Import error: %s"%pycurl)
+    except:
         pass
-
 
 _curl_ssls = {
     "SSL_EN_RC4_128_WITH_MD5": "rc4-md5",

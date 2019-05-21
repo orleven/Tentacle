@@ -46,6 +46,7 @@ DICT_PATH = "dict"
 CONFIG_PATH = "conf"
 DATA_PATH = "data"
 LOG_PATH = "log"
+TOOL_PATH = 'tool'
 CONFIG_FILE = "tentacle.conf"
 
 USER_AGENTS = [

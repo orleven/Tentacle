@@ -19,6 +19,7 @@ from lib.core.settings import DICT_PATH
 from lib.core.settings import CONFIG_PATH
 from lib.core.settings import LOG_PATH
 from lib.core.settings import CONFIG_FILE
+from lib.core.settings import TOOL_PATH
 
 def initialize(args):
     if args.debug:
@@ -49,6 +50,7 @@ def set_paths():
     paths.DICT_PATH = os.path.join(paths.ROOT_PATH, DICT_PATH)
     paths.CONFIG_PATH = os.path.join(paths.ROOT_PATH,CONFIG_PATH)
     paths.DATA_PATH = os.path.join(paths.ROOT_PATH,DATA_PATH)
+    paths.TOOL_PATH = os.path.join(paths.ROOT_PATH, TOOL_PATH)
 
     for path in paths.values():
         if not any(path.endswith(_) for _ in (".txt", ".xml", ".zip")):

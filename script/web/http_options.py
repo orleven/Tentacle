@@ -17,11 +17,16 @@ class POC(Script):
     def prove(self):
         self.get_url()
         if self.base_url != None:
-            try:
-                res = self.curl('options',self.base_url+"/testbyme")
-                allow = res.headers['Allow']
-                self.flag = 1
-                self.req.append({"method": "options"})
-                self.res.append({"info": allow,"key":"OPTIONS"})
-            except:
-                pass
+            path_list = list(set([
+                self.url_normpath(self.base_url, '/'),
+                self.url_normpath(self.url, './'),
+            ]))
+            for path in path_list:
+                try:
+                    res = self.curl('options',path+"/testbyme")
+                    allow = res.headers['Allow']
+                    self.flag = 1
+                    self.req.append({"method": "options"})
+                    self.res.append({"info": allow,"key":"OPTIONS"})
+                except:
+                    pass

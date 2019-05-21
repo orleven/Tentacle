@@ -12,7 +12,7 @@ from script import Script, SERVER_PORT_MAP
 class POC(Script):
     def __init__(self, target=None):
         self.server_type = SERVER_PORT_MAP.REDIS
-        self.name = 'redis burst'
+        self.name = 'redis unauth'
         self.keyword = ['redis', 'unauth']
         self.info = 'redis unauth'
         self.type = 'unauth'

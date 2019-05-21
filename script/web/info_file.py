@@ -21,6 +21,7 @@ _file_dic = {
     "WEB-INF/database.propertie": '.driver',
     ".htaccess": 'rewrite',
     "phpinfo.php": 'php.ini',
+    'phpmyadmin/index.php' : "phpmyadmin",
     "test.php": None,
     "test.jsp": None,
     "test.jspx": None,
@@ -41,19 +42,25 @@ class POC(Script):
     def prove(self):
         self.get_url()
         if self.base_url:
-            flag = 3
-            for key in _file_dic.keys():
-                if flag == 0 :
-                    break
-                url = self.base_url + key
-                res = self.curl('get', url, allow_redirects=False)
-                if res != None:
-                    if res.status_code == 200:
-                        if _file_dic[key] == None :
-                            self.flag = 0
-                            self.res.append({"info": url, "key": key})
-                        elif _file_dic[key] in res.text.lower():
-                            self.flag = 1
-                            self.res.append({"info": url, "key": key})
-                else:
-                    flag -= 1
+            path_list = list(set([
+                self.url_normpath(self.base_url, '/'),
+                self.url_normpath(self.url, './'),
+            ]))
+            for path in path_list:
+                flag = 5
+                for key in _file_dic.keys():
+                    if flag == 0 :
+                        self.flag = -1
+                        break
+                    url = path + key
+                    res = self.curl('get', url, allow_redirects=False)
+                    if res != None:
+                        if res.status_code == 200:
+                            if _file_dic[key] == None :
+                                self.flag = 0
+                                self.res.append({"info": url, "key": key})
+                            elif _file_dic[key] in res.text.lower():
+                                self.flag = 1
+                                self.res.append({"info": url, "key": key})
+                    else:
+                        flag -= 1

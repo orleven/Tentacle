@@ -48,13 +48,13 @@ def arg_set(parser):
     module.add_argument("-f", "--function", help="Load function of script module, e.g show,prove", default=False, action='store')
     module.add_argument("-p", "--parameter", help="Load data for function of module, e.g. -p \"U=username.txt&P=password.txt\"", default=False, action='store')
     module.add_argument("--show", action='store_true', help="Show all poc scripts module", default=False)
-    module.add_argument("--thread", type=int, help="Thread Num e.g. 100", default=100 ,action='store')
+    module.add_argument("--thread", type=int, help="Thread Num e.g. 100", default=200 ,action='store')
 
     other = parser.add_argument_group('Other')
     other.add_argument('-tS', "--task_show",  metavar='TaskID', type=str, default=None,help= 'Show task (e.g. all,c81fc4f8f9ab1902)')
     other.add_argument("-v", "--verbose", action='store_true', help="Show verbose", default=False)
     other.add_argument("-d", "--debug", action='store_true', help="Show debug info", default=False)
-    other.add_argument("-o", "--out", type=str, help="Output file e.g res.txt", default=None)
+    other.add_argument("-o", "--out", type=str, help="Output file e.g res.xlsx", default=None)
     other.add_argument("--update", action='store_true', help="Update", default=False)
     other.add_argument("--help", help="Show help", default=False, action='store_true')
     return parser
