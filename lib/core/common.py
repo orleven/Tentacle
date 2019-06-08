@@ -12,7 +12,6 @@ from lib.utils.cipher import base64pickle
 from lib.utils.cipher import base64unpickle
 from lib.utils.output import data_to_stdout
 
-
 def random_string(length=8):
     return ''.join([random.choice(ascii_lowercase) for _ in range(length)])
 

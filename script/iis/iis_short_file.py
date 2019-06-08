@@ -3,17 +3,17 @@
 # @author: 'orleven'
 
 import queue
-from script import Script, SERVER_PORT_MAP
+from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
     def __init__(self, target=None):
-        self.server_type = SERVER_PORT_MAP.WEB
+        self.service_type = SERVICE_PORT_MAP.WEB
         self.name = 'iis short file'
         self.keyword = ['iis']
         self.info = 'iis short file'
         self.type = 'info'
         self.level = 'medium'
-        Script.__init__(self, target=target, server_type=self.server_type)
+        Script.__init__(self, target=target, service_type=self.service_type)
 
     def prove(self):
         self.get_url()

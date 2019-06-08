@@ -3,18 +3,18 @@
 # @author: 'orleven'
 
 import itertools
-from script import Script, SERVER_PORT_MAP
+from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
     def __init__(self, target=None):
-        self.server_type = SERVER_PORT_MAP.WEB
+        self.service_type = SERVICE_PORT_MAP.WEB
         self.name = 'dedecms win manager'
         self.keyword = ['dedecms', 'win', 'manager']
         self.info = 'Find manager for dedecms'
         self.type = 'burst'
         self.level = 'medium'
         self.refer = 'https://xz.aliyun.com/t/2064'
-        Script.__init__(self, target=target, server_type=self.server_type)
+        Script.__init__(self, target=target, service_type=self.service_type)
 
     def prove(self):
         self.get_url()
@@ -80,5 +80,5 @@ class POC(Script):
 
                     if x < 29 and flag ==1:
                         self.flag = 1
-                        self.req.append({"url": self.base_url + a + back_dir})
-                        self.res.append({"info":  self.base_url + a + back_dir, "key": 'dede_manager'})
+                        self.req.append({"url": path+ back_dir})
+                        self.res.append({"info": path+ back_dir, "key": 'dede_manager'})

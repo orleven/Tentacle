@@ -1,5 +1,10 @@
-administrator
 root
 admin
+vpn@%host%
+it@%host%
+admin@%host%
+dev@%host%
+test@%host%
+system
+administrator
 test
-guest

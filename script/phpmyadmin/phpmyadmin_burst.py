@@ -4,24 +4,23 @@
 
 import re
 import urllib.request
-from base64 import b64encode
-from script import Script, SERVER_PORT_MAP
+from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
     def __init__(self, target=None):
-        self.server_type = SERVER_PORT_MAP.WEB
+        self.service_type = SERVICE_PORT_MAP.WEB
         self.name = 'phpmyadmin burst'
         self.keyword = ['phpmyadmin', 'burst', 'php']
         self.info = 'phpmyadmin burst'
         self.type = 'weakpass'
         self.level = 'high'
         self.refer = 'https://github.com/ysrc/xunfeng/blob/master/vulscan/vuldb/phpmyadmin_crackpass.py'
-        Script.__init__(self, target=target, server_type=self.server_type)
+        Script.__init__(self, target=target, service_type=self.service_type)
 
     def prove(self):
         self.get_url()
         if self.base_url:
-            flag_list = ['src="navigation.php', 'frameborder="0" id="frame_content"', 'id="li_server_type">','class="disableAjax" title=']
+            flag_list = ['src="navigation.php', 'frameborder="0" id="frame_content"', 'id="li_service_type">','class="disableAjax" title=']
             usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file('dict/phpmyadmin_usernames.txt')
             passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file('dict/phpmyadmin_passwords.txt')
             path_list = list(set([

@@ -6,3 +6,4 @@ root
 admin
 test
 guest
+user

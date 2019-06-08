@@ -63,9 +63,9 @@ def print_dic(data):
 
     if len(data['res']) == 0:
         msg = '[{0}] [{1}]'.format(data['module_name'], message)
-        if data['flag'] == 1:
+        if data['flag'] >= 1:
             logger.success(msg)
-        elif data['flag'] == -1:
+        elif data['flag'] <= -1:
             logger.error(msg)
         else:
             logger.warning(msg)
@@ -75,9 +75,9 @@ def print_dic(data):
         key = res['key'] if 'key' in res.keys() else ""
         msg = '[{0}] [{1}]: {2} \t[{3}]'.format(data['module_name'], message, info, key)
 
-        if data['flag'] == 1:
+        if data['flag'] >= 1:
             logger.success(msg)
-        elif data['flag'] == -1:
+        elif data['flag'] <= -1:
             logger.error(msg)
         else:
             logger.warning(msg)

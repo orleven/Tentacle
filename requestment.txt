@@ -1,19 +1,21 @@
 html5lib
 requests
-beautifulsoup4==4.6.3
+beautifulsoup4
 redis
+pysocks
+html5lib
 paramiko
-openpyxl==2.5.12
+openpyxl
 PySocks
-selenium==2.53.6
+selenium
 aiohttp
-asyncio==3.4.3
-openpyxl==2.5.12
-shodan==1.10.4
+asyncio
+shodan
 pycryptodome
-lxml==4.3.0
-pymssql==2.1.4
+lxml
 sslscan
-windows-curses
+pymssql
+impacket
+pyopenssl==19.0
 
 

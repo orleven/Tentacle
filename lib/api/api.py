@@ -4,7 +4,6 @@
 
 import re
 import json
-import time
 import sys
 import shodan
 from bs4 import BeautifulSoup

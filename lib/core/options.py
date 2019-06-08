@@ -145,6 +145,8 @@ def module_register(args):
     conf['modules_name'] = list(set(modules))
     logger.debug("Set module: %s" % input_module)
 
+    conf['noportscan'] = args.noportscan
+    logger.debug("Set port scan: %s" % args.noportscan)
 
 def target_register(args):
 

@@ -49,11 +49,11 @@ def curl(method, url, **kwargs):
         kwargs.setdefault('timeout',  timeout)
     kwargs.setdefault('verify', False)
 
-    # if conf['config']['proxy']['proxy'].lower() == 'true':
+    # if True:
     #     try:
     #         _proxies = {
-    #             'http': conf['config']['proxy']['http_proxy'],
-    #             'https': conf['config']['proxy']['https_proxy']
+    #             'http': 'http://127.0.0.1:8080/',
+    #             'https': 'https://127.0.0.1:8080/'
     #         }
     #         kwargs.setdefault('proxies', _proxies)
     #     except:
@@ -67,7 +67,7 @@ def curl(method, url, **kwargs):
         kwargs.setdefault('allow_redirects', False)
         try:
             return request(method, url, **kwargs)
-        except ChunkedEncodingError as e:
+        except Exception as e:
             return None
     except (ConnectionError,TimeoutError,ReadTimeout,ChunkedEncodingError)as e :
         pass

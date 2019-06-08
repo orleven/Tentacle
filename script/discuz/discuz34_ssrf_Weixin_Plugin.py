@@ -5,18 +5,18 @@
 import time
 import random
 from string import ascii_lowercase
-from script import Script, SERVER_PORT_MAP
+from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
     def __init__(self, target=None):
-        self.server_type = SERVER_PORT_MAP.WEB
+        self.service_type = SERVICE_PORT_MAP.WEB
         self.name = 'discuz x3.4 ssrf'
         self.keyword = ['discuz']
         self.info = 'discuz x3.4 ssrf'
         self.type = 'ssrf'
         self.level = 'high'
         self.refer = 'https://zhuanlan.zhihu.com/p/51907363, https://www.seebug.org/vuldb/ssvid-97709'
-        Script.__init__(self, target=target, server_type=self.server_type)
+        Script.__init__(self, target=target, service_type=self.service_type)
 
     def prove(self):
         self.get_url()

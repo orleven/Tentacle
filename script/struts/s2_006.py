@@ -2,17 +2,17 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-from script import Script, SERVER_PORT_MAP
+from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
     def __init__(self, target=None):
-        self.server_type = SERVER_PORT_MAP.WEB
+        self.service_type = SERVICE_PORT_MAP.WEB
         self.name = 'Struts2-006'
         self.keyword = ['struts2', 'java']
         self.info = 'Struts2-006'
         self.type = 'rce'
         self.level = 'high'
-        Script.__init__(self, target=target, server_type=self.server_type)
+        Script.__init__(self, target=target, service_type=self.service_type)
 
 
     def prove(self):

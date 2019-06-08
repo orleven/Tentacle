@@ -3,30 +3,24 @@
 # @author = 'orleven'
 
 import os
-import sys
-import socks
 import socket
 import urllib.parse
 from lib.api.api import _ceye_dns_api
 from lib.api.api import _ceye_verify_api
-from lib.core.data import conf
 from lib.core.data import logger
 from lib.utils.curl import curl
 from lib.utils.curl import geturl
-from lib.core.enums import SERVER_PORT_MAP
+from lib.core.enums import SERVICE_PORT_MAP
 
 class Script(object):
-    def __init__(self, target=None, server_type=SERVER_PORT_MAP.WEB, parameter=None):
-        self.server_type = server_type
+    def __init__(self, target=None, service_type=SERVICE_PORT_MAP.WEB, priority=5):
+        self.service_type = service_type
 
         # in dev ...
         # self.script_type = script_type
 
-        self.target_port_list = []
-        self.initialize_target(target)
-        self.initialize_parameter(parameter)
         self.target = target
-
+        self.priority = priority
         self.parameter = {}
         self.url = self.base_url = None
         self.req = []
@@ -88,106 +82,23 @@ class Script(object):
         if not self.url:
             self.base_url = self.url = geturl(self.target_host, self.target_port)
 
-    def re_initialize(self,target, host, port, parameter):
+    def initialize(self,host, port, url, parameter):
         self.target_host = host
         self.target_port = port
         self.parameter = parameter
-        if target.startswith('http://') or target.startswith('https://'):
-            self.url = target
-            protocol, s1 = urllib.parse.splittype(target)
-            host, s2 = urllib.parse.splithost(s1)
-            host, port = urllib.parse.splitport(host)
-            self.target_host = host
-            self.target_port = int(port) if port != None and port != 0 else 443 if protocol == 'https' else 80
-            _ = target[9:].find('/')
+        if url != None and len(url) > 9:
+            _ = url[9:].find('/')
             if _ == -1 :
-                self.url += '/'
-                self.base_url = self.url
+                url += '/'
+                self.base_url = self.url = url
             else:
+                self.url = url
                 self.base_url = self.url[:_ + 10]
 
         self.flag = -1
         self.req = []
         self.res = []
         self.other = {}
-
-    def initialize_parameter(self,parameter):
-        if parameter != None:
-            for _key, _val in parameter.items():
-                if _key in self.__dict__.keys():
-                    logger.warning("This parameter name has already been used: %s = %s" % (_key, _val))
-                    logger.warning("And using this parameter name will cause the original value to be overwritten.")
-                    self.parameter[_key] = _val
-
-    def initialize_target(self, target):
-        if target :
-            if target.startswith('http://') or target.startswith('https://'):
-                self.url = target
-                protocol, s1 = urllib.parse.splittype(target)
-                host, s2 = urllib.parse.splithost(s1)
-                host, port = urllib.parse.splitport(host)
-                self.target_host = host
-                self.target_port = int(port) if port != None and port!= 0 else 443 if protocol == 'https' else 80
-                _ = target[9:].find('/')
-                if _ == -1:
-                    self.url += '/'
-                    self.base_url = self.url
-                else:
-                    self.base_url = self.url[:_ + 10]
-            else:
-                if ":" in target:
-                    _v = target.split(':')
-                    host, port = _v[0], _v[1]
-                    self.target_host = host
-                else:
-                    port = 0
-                    self.target_host = target
-
-                try:
-                    self.target_port = int(port)
-                except:
-                    self.target_port = 80
-
-            return True
-        else:
-            return False
-
-    def get_target_port_list(self):
-
-        if self.target_port == None:
-            if isinstance(self.server_type, list):
-                for port in self.server_type:
-                    self.target_port_list.append((None, port))
-            else:
-                if self.server_type:
-                    self.target_port = self.server_type
-                    self.target_port_list.append((self.target, self.server_type))
-                else:
-                    return []
-
-        elif isinstance(self.target_port,int):
-            if self.target_port !=0:
-                self.target_port = self.target_port
-                self.target_port_list.append((self.target, self.target_port))
-            else:
-                if isinstance(self.server_type,list):
-                    for port in self.server_type:
-                        self.target_port_list.append((None, port))
-                else:
-                    if self.server_type:
-                        self.target_port = self.server_type
-                        self.target_port_list.append((self.target, self.server_type))
-                    else:
-                        return []
-
-        elif isinstance(self.target_port,list):
-            for port in self.target_port:
-                self.target_port_list.append((self.target, port))
-
-        else:
-            return []
-
-        return self.target_port_list
 
     def curl(self, method, url, **kwargs):
         return curl(method, url , **kwargs)
@@ -226,4 +137,3 @@ class Script(object):
         arr = urlparse(url1)
         path = normpath(arr[2])
         return urlunparse((arr.scheme, arr.netloc, path, arr.params, arr.query, arr.fragment))
-

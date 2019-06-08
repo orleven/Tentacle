@@ -11,7 +11,7 @@
 
 ```
 
-Tentacle is a POC vulnerability verification and exploit framework. It supports free extension of exploits and uses POC scripts. It supports calls to zooeyem, fofa, shodan and other APIs to perform bulk vulnerability verification for multiple targets. (Still in DEV...)
+Tentacle is a POC vulnerability verification and exploit framework. It supports free extension of exploits and uses POC scripts. It supports calls to zoomeye, fofa, shodan and other APIs to perform bulk vulnerability verification for multiple targets. (Still in DEV...)
 
 [![Python 3.6](https://img.shields.io/badge/python-3.6-yellow.svg)](https://www.python.org/)
 
@@ -65,9 +65,9 @@ py -3 tentacle.py --update
 
 ### Update
 
-* [2018-11-15] Code refactoring and fix  bug.
+* [2018-11-15] Code refactoring and fix bug.
 * [2019-04-24] Fix bug and add script.
-* [2019-05-20] Code refactoring and add script.
+* [2019-06-08] Code refactoring and add port scan.
 
 ### Thanks
 

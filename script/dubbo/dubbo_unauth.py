@@ -3,17 +3,17 @@
 # @author: 'orleven'
 
 import socket
-from script import Script, SERVER_PORT_MAP
+from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
     def __init__(self, target=None):
-        self.server_type = SERVER_PORT_MAP.DUBBO
+        self.service_type = SERVICE_PORT_MAP.DUBBO
         self.name = 'dubbo unauth'
         self.keyword = ['dubbo','unauth']
         self.info = 'dubbo unauth'
         self.type = 'unauth'
         self.level = 'high'
-        Script.__init__(self, target=target, server_type=self.server_type)
+        Script.__init__(self, target=target, service_type=self.service_type)
 
     def prove(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

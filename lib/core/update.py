@@ -4,9 +4,6 @@
 
 import os
 import re
-import sys
-import time
-import locale
 import subprocess
 from lib.core.data import paths
 from lib.core.data import logger

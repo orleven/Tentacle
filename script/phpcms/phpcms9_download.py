@@ -3,17 +3,17 @@
 # @author: 'orleven'
 
 import re
-from script import Script, SERVER_PORT_MAP
+from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
     def __init__(self, target=None):
-        self.server_type = SERVER_PORT_MAP.WEB
+        self.service_type = SERVICE_PORT_MAP.WEB
         self.name = 'phpcms v9 download'
         self.keyword = ['phpcms', 'download']
         self.info = 'phpcms v9 download'
         self.type = 'download'
         self.level = 'high'
-        Script.__init__(self, target=target, server_type=self.server_type)
+        Script.__init__(self, target=target, service_type=self.service_type)
 
 
     def prove(self):

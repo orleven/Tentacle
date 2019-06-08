@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-from script import Script, SERVER_PORT_MAP
+from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
     def __init__(self, target=None):
-        self.server_type = SERVER_PORT_MAP.WEB
+        self.service_type = SERVICE_PORT_MAP.WEB
         self.name = 'php7cms getshell'
         self.keyword = ['php7cms']
         self.info = 'php7cms getshell'
         self.type = 'rce'
         self.level = 'high'
         self.refer = 'https://paper.tuisec.win/detail/2139f76293bdb43'
-        Script.__init__(self, target=target, server_type=self.server_type)
+        Script.__init__(self, target=target, service_type=self.service_type)
 
     def prove(self):
         self.get_url()

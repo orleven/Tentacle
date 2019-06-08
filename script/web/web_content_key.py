@@ -2,21 +2,20 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import chardet
 from bs4 import BeautifulSoup
 import sys
 type=sys.getfilesystemencoding()
-from script import Script, SERVER_PORT_MAP
+from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
     def __init__(self, target=None):
-        self.server_type = SERVER_PORT_MAP.WEB
+        self.service_type = SERVICE_PORT_MAP.WEB
         self.name = 'web content key'
         self.keyword = ['web', 'title', 'keyword']
         self.info = 'Get the web application status and search keyword'
         self.type = 'info'
         self.level = 'info'
-        Script.__init__(self, target=target, server_type=self.server_type)
+        Script.__init__(self, target=target, service_type=self.service_type)
 
     def prove(self):
         self.get_url()

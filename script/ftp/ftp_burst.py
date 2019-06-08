@@ -3,17 +3,17 @@
 # @author: 'orleven'
 
 import ftplib
-from script import Script, SERVER_PORT_MAP
+from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
     def __init__(self, target=None):
-        self.server_type = SERVER_PORT_MAP.FTP
+        self.service_type = SERVICE_PORT_MAP.FTP
         self.name = 'ftp burst'
         self.keyword = ['FTP','weakpasss']
         self.info = 'FTP burst'
         self.type = 'rce'
         self.level = 'high'
-        Script.__init__(self, target=target, server_type=self.server_type)
+        Script.__init__(self, target=target, service_type=self.service_type)
 
     def prove(self):
         ftp = ftplib.FTP()

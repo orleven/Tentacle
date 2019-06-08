@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-from script import Script, SERVER_PORT_MAP
+from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
     def __init__(self, target=None):
-        self.server_type = SERVER_PORT_MAP.WEB
+        self.service_type = SERVICE_PORT_MAP.WEB
         self.name = 'thinkcmf 2.2.3 sql'
         self.keyword = ['thinkcmf', 'php']
         self.info = 'thinkcmf 2.2.3 sql'
         self.type = 'sql'
         self.level = 'high'
         self.refer = 'https://xz.aliyun.com/t/3529'
-        Script.__init__(self, target=target, server_type=self.server_type)
+        Script.__init__(self, target=target, service_type=self.service_type)
 
     def prove(self):
         self.get_url()

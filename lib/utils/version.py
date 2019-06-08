@@ -3,7 +3,6 @@
 # @author = 'orleven'
 
 import sys
-
 version = sys.version.split()[0]
 
 if version <= "3" :

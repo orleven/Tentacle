@@ -3,17 +3,17 @@
 # @author: 'orleven'
 
 from base64 import b64encode
-from script import Script, SERVER_PORT_MAP
+from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
     def __init__(self, target=None):
-        self.server_type = SERVER_PORT_MAP.RABBITMQ
+        self.service_type = SERVICE_PORT_MAP.RABBITMQ
         self.name = 'rabbitmq burst'
         self.keyword = ['rabbitmq', 'burst']
         self.info = 'rabbitmq burst'
         self.type = 'weakpass'
         self.level = 'high'
-        Script.__init__(self, target=target, server_type=self.server_type)
+        Script.__init__(self, target=target, service_type=self.service_type)
 
     def prove(self):
         self.get_url()

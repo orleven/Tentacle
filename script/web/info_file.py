@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-from script import Script, SERVER_PORT_MAP
+from script import Script, SERVICE_PORT_MAP
 
 _file_dic = {
     "crossdomain.xml": 'allow-access-from domain="*"',
@@ -18,6 +18,7 @@ _file_dic = {
     "README.md": None,
     "README": None,
     ".DS_store": None,
+    "trace": None,
     "WEB-INF/database.propertie": '.driver',
     ".htaccess": 'rewrite',
     "phpinfo.php": 'php.ini',
@@ -31,13 +32,13 @@ _file_dic = {
 
 class POC(Script):
     def __init__(self, target=None):
-        self.server_type = SERVER_PORT_MAP.WEB
+        self.service_type = SERVICE_PORT_MAP.WEB
         self.name = 'info file'
         self.keyword = ['web']
         self.info = 'info file'
         self.type = 'info'
         self.level = 'low'
-        Script.__init__(self, target=target, server_type=self.server_type)
+        Script.__init__(self, target=target, service_type=self.service_type)
 
     def prove(self):
         self.get_url()

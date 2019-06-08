@@ -3,17 +3,17 @@
 # @author: 'orleven'
 
 import socket
-from script import Script, SERVER_PORT_MAP
+from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
     def __init__(self, target=None):
-        self.server_type = SERVER_PORT_MAP.MECACHE
+        self.service_type = SERVICE_PORT_MAP.MECACHE
         self.name = 'memcache unauth'
         self.keyword = ['memcache', 'unauth']
         self.info = 'Memcache unauth.'
         self.type = 'unauth'
         self.level = 'high'
-        Script.__init__(self, target=target, server_type=self.server_type)
+        Script.__init__(self, target=target, service_type=self.service_type)
 
 
     def prove(self):

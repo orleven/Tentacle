@@ -1,4 +1,6 @@
 admin
-Admin
 zabbix
 guest
+system
+root
+Admin

@@ -6,3 +6,4 @@ administrator
 test
 SYS
 SYSTEM
+oracle

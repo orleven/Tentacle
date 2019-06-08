@@ -10,7 +10,7 @@ INDEX_DATABASE = 'storage'
 
 GIT_REPOSITORY = "https://github.com/orleven/tentacle.git"
 
-DESCRIPTION = 'Tentacle is a POC vulnerability verification and exploit framework based on Sqlmap and POC-T. It supports free extension of exploits and uses POC scripts. It supports calls to zooeyem, fofa, shodan and other APIs to perform bulk vulnerability verification for multiple targets.'
+DESCRIPTION = 'Tentacle is a POC vulnerability verification and exploit framework based on Sqlmap and POC-T. It supports free extension of exploits and uses POC scripts. It supports calls to zoomeye, fofa, shodan and other APIs to perform bulk vulnerability verification for multiple targets.'
 
 VERSION = "1.0.0"
 

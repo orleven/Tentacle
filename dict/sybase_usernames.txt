@@ -5,7 +5,7 @@ oracle
 user
 test
 admin
-Mon_user
+sybase
 Dba
 entldbdbo
 entldbreader
