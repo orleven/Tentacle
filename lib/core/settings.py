@@ -14,7 +14,7 @@ DESCRIPTION = 'Tentacle is a POC vulnerability verification and exploit framewor
 
 VERSION = "1.0.0"
 
-SITE = "http://www.orleven.com"
+SITE = "http://www.orleven.com/"
 
 TYPE_COLORS = {"dev": 33, "stable": 90, "pip": 34}
 
