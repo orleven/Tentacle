@@ -282,6 +282,8 @@ class Engine():
             # Scan port and match service for port scan model
             if not conf['noportscan'] :
                 module = self._load_module('script.info.port_scan')
+                if module ==None:
+                    logger.error("Invalid POC script, Please check the script: script.info.port_scan")
                 self.total += len(self.targets[host].keys())
                 for port, values in self.targets[host].items():
                     self.total += len(values) - 1
@@ -317,8 +319,9 @@ class Engine():
                     logger.error('Invalid POC script, Please check the script: %s' % module.__name__)
                 else:
                     return module
-            except:
+            except Exception as e:
                 logger.error('Invalid POC script, Please check the script: %s' % module_name)
+                logger.error(get_safe_ex_string(e))
         else:
             logger.error('Can\'t load modual: %s.' % conf.module_path)
 
@@ -335,6 +338,9 @@ class Engine():
         elif len(modules_name) == 1:
             logger.sysinfo('Loading modual: %s' % (modules_name[0]))
             module = self._load_module(modules_name[0])
+            if module == None:
+                logger.error("Invalid POC script, Please check the script: %s" %modules_name[0])
+                sys.exit()
 
             if func_name.lower() in ['show','help'] and module:
                 poc = module.POC()
@@ -359,6 +365,9 @@ class Engine():
             logger.sysinfo('Loading moduals...')
             for module_name in conf['modules_name']:
                 module = self._load_module(module_name)
+                if module == None:
+                    logger.error("Invalid POC script, Please check the script: %s" % module_name)
+                    continue
                 modules.append(module)
                 if len(self.modules) > 1 and func_name.lower() in  ['show','help']:
                     sys.exit(logger.error('Can\'t show so many modules.'))
