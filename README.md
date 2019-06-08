@@ -17,50 +17,56 @@ Tentacle is a POC vulnerability verification and exploit framework. It supports 
 
 ![show](show/test.png)
 
+### Install
+
+```
+pip3 install -r requestment.txt
+```
+
 ### Usage
 
 ```
 # Show help for tentacle.
-py -3 tentacle.py --help
+python3 tentacle.py --help
 
 # Show all modual, and you can see it in `script` path.
-py -3 tentacle.py --show
+python3 tentacle.py --show
 
 # Load modual by -m (e.g. script/info/web_status,@web)
-py -3 tentacle.py -m script/info/web_status               # Load web_status module
-py -3 tentacle.py -m @web                                 # Load all module of web path
-py -3 tentacle.py -m script/info/web_status,@web          # Load all module of web path and web_status module
-py -3 tentacle.py -m *                                    # Load all module of script path
+python3 tentacle.py -m script/info/web_status               # Load web_status module
+python3 tentacle.py -m @web                                 # Load all module of web path
+python3 tentacle.py -m script/info/web_status,@web          # Load all module of web path and web_status module
+python3 tentacle.py -m "*"                                    # Load all module of script path
 
 # Load target by iS/iN/iF/iT/iX/iE/gg/sd/ze/ff.
 # If you don't enter the target port, then it will try the default port number by server_type.
-py -3 tentacle.py -m script/info/web_status -iS www.examples.com             # Load target by url or host 
-py -3 tentacle.py -m script/info/web_status -iN 192.168.111.0/24             # Load target by network
-py -3 tentacle.py -m script/info/web_status -iF target.txt                   # Load target by file
-py -3 tentacle.py -m script/info/web_status -iT dcc54c3e1cc2c2e1             # Load target by recode's target
-py -3 tentacle.py -m script/info/web_status -iX nmap_xml.xml                 # Load target by nmap.xml
-py -3 tentacle.py -m script/info/web_status -iE "powered by discuz"          # Load target by baidu/bing/360so
-py -3 tentacle.py -m script/info/web_status -gg 'intext:powered by discuz'   # Load target by google api
-py -3 tentacle.py -m script/info/web_status -sd 'apache'                     # Load target by shodan api
-py -3 tentacle.py -m script/info/web_status -ze 'app:weblogic'               # Load target by zoomeye api
-py -3 tentacle.py -m script/info/web_status -ff 'domain="example.com"'       # Load target by fofa api
-py -3 tentacle.py -m script/info/web_status -fft                             # Load target by fofa today api
+python3 tentacle.py -m script/info/web_status -iS www.examples.com             # Load target by url or host 
+python3 tentacle.py -m script/info/web_status -iN 192.168.111.0/24             # Load target by network
+python3 tentacle.py -m script/info/web_status -iF target.txt                   # Load target by file
+python3 tentacle.py -m script/info/web_status -iT dcc54c3e1cc2c2e1             # Load target by recode's target
+python3 tentacle.py -m script/info/web_status -iX nmap_xml.xml                 # Load target by nmap.xml
+python3 tentacle.py -m script/info/web_status -iE "powered by discuz"          # Load target by baidu/bing/360so
+python3 tentacle.py -m script/info/web_status -gg 'intext:powered by discuz'   # Load target by google api
+python3 tentacle.py -m script/info/web_status -sd 'apache'                     # Load target by shodan api
+python3 tentacle.py -m script/info/web_status -ze 'app:weblogic'               # Load target by zoomeye api
+python3 tentacle.py -m script/info/web_status -ff 'domain="example.com"'       # Load target by fofa api
+python3 tentacle.py -m script/info/web_status -fft                             # Load target by fofa today api
 
 # Show all function of module by -f show or -f help
-py -3 tentacle.py -m script/info/web_status -f show
-py -3 tentacle.py -m script/info/web_status -f help
+python3 tentacle.py -m script/info/web_status -f show
+python3 tentacle.py -m script/info/web_status -f help
 
 # Use function of modual by -m and -f  (e.g. -m web_status -f prove), and you should make sure the function of module is exist.
-py -3 tentacle.py -m script/info/web_status -f prove
+python3 tentacle.py -m script/info/web_status -f prove
 
 # Show task's result by -tS 
-py -3 tentacle.py -tS 8d4b37597aaec25e
+python3 tentacle.py -tS 8d4b37597aaec25e
 
 # Export task's result by -tS to test.xlsx
-py -3 tentacle.py -tS 8d4b37597aaec25e  -o test
+python3 tentacle.py -tS 8d4b37597aaec25e  -o test
 
 # Update by git
-py -3 tentacle.py --update
+python3 tentacle.py --update
 ```
 
 ### Update
