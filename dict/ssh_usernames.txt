@@ -1,7 +1,7 @@
-itsm
 root
+itsm
+it
 mysql
 oracle
 user
 test
-it

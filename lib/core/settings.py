@@ -38,7 +38,6 @@ BANNER = re.sub(r"\[.\]", lambda _: "[\033[01;41m%s\033[01;49m]" % random.sample
 
 IS_WIN = True if sys.platform == 'win32' else False
 
-
 OUTPUT_PATH = "output"
 SCRIPT_PATH = "script"
 SPECIAL_SCRIPT_PATH = "special"

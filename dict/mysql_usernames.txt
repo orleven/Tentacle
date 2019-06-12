@@ -1,7 +1,5 @@
-sa
 admin
 guest
-test
 root
 administrator
 test

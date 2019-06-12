@@ -21,11 +21,11 @@ class POC(Script):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         message = None
         try:
-            msg = "GET / HTTP/1.1\r\n\r\n"
+            msg = "stats\r\n"
             s.connect((self.target_host, self.target_port))
             s.sendall(bytes(msg, 'utf-8'))
-            message = str(s.recv(100))
             self.flag = 2
+            message = str(s.recv(100))
         except Exception as e:
             message = str(e)
             flag = True
@@ -48,4 +48,16 @@ class POC(Script):
         if self.url:
             self.service_type = (SERVICE_PORT_MAP.WEB[0], self.target_port)
         elif message != None:
-            pass
+            message = str(message).lower()
+            if 'smtp' in message and '220' in message:
+                self.service_type = (SERVICE_PORT_MAP.SMTP[0], self.target_port)
+            elif 'ssh' in message:
+                self.service_type = (SERVICE_PORT_MAP.SSH[0], self.target_port)
+            elif 'mysql' in message:
+                self.service_type = (SERVICE_PORT_MAP.MYSQL[0], self.target_port)
+            elif 'redis' in message or 'err wrong number of arguments for' in message:
+                self.service_type = (SERVICE_PORT_MAP.REDIS[0], self.target_port)
+            elif "filezilla" in message or 'ftp' in message :
+                self.service_type = (SERVICE_PORT_MAP.FTP[0], self.target_port)
+            elif "400 bad request" in message and "proxy" in message:
+                self.flag = -1

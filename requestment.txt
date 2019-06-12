@@ -15,6 +15,7 @@ pycryptodome
 lxml
 sslscan
 pymssql
+pymysql
 impacket
 pyopenssl==19.0
 

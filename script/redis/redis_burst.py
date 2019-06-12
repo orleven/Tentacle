@@ -26,7 +26,7 @@ class POC(Script):
                 try:
                     password = password.strip('\r').strip('\n')
                     # ,socket_connect_timeout=data['timeout'],socket_timeout=data['timeout']
-                    pool = redis.ConnectionPool(host=self.target_host, password=password, port=self.target_port)
+                    pool = redis.ConnectionPool(host=self.target_host, password=password, port=self.target_port,timeout =3 )
                     r = redis.Redis(connection_pool=pool)
                     info = r.info()
                     self.flag = 1

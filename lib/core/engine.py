@@ -54,7 +54,7 @@ class Engine():
         self.queue = queue.Queue()
         self.pools = []
         self.queue_pool_total = 1024
-        self.queue_pool_cache = 16
+        self.queue_pool_cache = 64
         self.target_pool_total = 65535 * 10
         self.scanning_count = self.scan_count = self.found_count = self.error_count = self.total = self.exclude = 0
         self.thread_count = self.thread_num  = conf['thread_num']
@@ -67,14 +67,11 @@ class Engine():
 
     def run(self):
         logger.sysinfo('Task running: %s', self.name)
-
         pool = self.put_queue()
         next(pool)
         self.pools.append(pool)
         self.print_progress()
-
         logger.debug("Wait for thread...")
-
         for i in range(0, self.thread_num):
             t = threading.Thread(target=self.worker, name=str(i))
             self.set_thread_daemon(t)
@@ -87,7 +84,7 @@ class Engine():
                     self.current_time = now_time
                     self.print_progress()
 
-                if len(self.pools) > 0 and self.queue.qsize() < self.queue_pool_cache:
+                if len(self.pools) > 0 and self.queue.qsize() < (self.queue_pool_cache / 2):
                     for pool in self.pools:
                         try:
                             if self.queue_pool_cache < self.queue_pool_total:
@@ -123,14 +120,10 @@ class Engine():
                 if not self.is_continue:
                     break
 
-                # Wait for pool
-                if self.total > self.queue_pool_cache :
-                    time.sleep(3)
-
-                if self.queue.qsize() <= 0 and self.scan_count == self.total :
+                if self.queue.qsize() <= 0 and self.scan_count == self.total and self.scanning_count == 0 and len(self.pools) == 0:
                     break
                 else:
-                    continue
+                    time.sleep(1)
 
         self.change_thread_count(-1)
 
@@ -142,6 +135,8 @@ class Engine():
             func = getattr(poc, self.func_name)
             logger.debug("Running %s:%s for %s:%s" % (module.__name__, self.func_name, poc.target_host, poc.target_port))
             func()
+            logger.debug(
+                "Ending  %s:%s for %s:%s" % (module.__name__, self.func_name, poc.target_host, poc.target_port))
             if conf.VERBOSE or poc.flag >=0 :
                 if poc.flag >= 1:
                     self.change_found_count(1)
@@ -180,8 +175,7 @@ class Engine():
                 logger.error("%s %s:%s for %s:%d" % (e, module.__name__, self.func_name, host, port ))
             self.change_error_count(1)
         except KeyError as e:
-            logger.error("Missing parameters: %s, please load parameters by -p. For example. -p %s=value" % (
-            e, str(e).replace('\'', '')))
+            logger.error("Missing parameters: %s, please load parameters by -p. For example. -p %s=value" % (e, str(e).replace('\'', '')))
         except Exception as e:
             self.errmsg = traceback.format_exc()
             self.is_continue = False
@@ -231,21 +225,22 @@ class Engine():
         for host in self.targets.keys():
             id += 1
             for module in self.modules:
-                if len(self.targets[host].keys()) == 1:
+                if len(self.targets[host].keys()) == 1 and conf['noportscan']:
                     '''
                     Set the port for no port scan model, e.g.
                         -iS http://www.baidu.com/aaaa
                         -iS www.baidu.com:80
                     '''
-                    if conf['noportscan']:
-                        for port, values in self.targets[host].items():
-                            for service, url in values:
+                    # if conf['noportscan']:
+                    for port, values in self.targets[host].items():
+                        for service, url in values:
+                            if self.filter(module, service):
+                                continue
 
-                                if self.filter(module,service):
-                                    continue
-
-                                self.total += 1
-                                self.queue.put([id, module, (host, port, service, url)])
+                            self.total += 1
+                            self.queue.put([id, module, (host, port, service, url)])
+                            if self.queue.qsize() >= self.queue_pool_cache:
+                                yield self.queue
 
                 else:
 
@@ -269,6 +264,8 @@ class Engine():
                             else:
                                 self.total += 1
                                 self.queue.put([id, module, (host, port, service, None)])
+                                if self.queue.qsize() >= self.queue_pool_cache:
+                                    yield self.queue
 
 
                     elif isinstance(ports, int):
@@ -278,6 +275,8 @@ class Engine():
                         else:
                             self.total += 1
                             self.queue.put([id, module, (host, ports, service, None)])
+                            if self.queue.qsize() >= self.queue_pool_cache:
+                                yield self.queue
 
             # Scan port and match service for port scan model
             if not conf['noportscan'] :
@@ -296,7 +295,7 @@ class Engine():
 
     def put_queue_by_res(self,id, ex_module, host, port, service, url):
         for module in self.modules:
-            # Bypass itself
+            # Skip itself
             if module.__name__ == ex_module.__name__:
                 continue
 
@@ -435,7 +434,10 @@ class Engine():
             self.targets[host] = {}
         if port:
             if port in self.targets[host].keys():
-                self.targets[host][port].append(_)
+                if _ not in self.targets[host][port]:
+                    if _[1] == None:
+                        self.targets[host][port].remove((None,None))
+                    self.targets[host][port].append(_)
             else:
                 self.targets[host][port] = [_]
         else:
@@ -443,6 +445,7 @@ class Engine():
         if len(self.targets) > self.target_pool_total:
             msg = 'Too many targets! Please control the target\'s numbers under the %d.' % self.target_pool_total
             sys.exit(logger.error(msg))
+
 
     def _load_target(self,target, service=None):
 
