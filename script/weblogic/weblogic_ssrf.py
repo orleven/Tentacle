@@ -6,7 +6,7 @@ from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
     def __init__(self, target=None):
-        self.service_type = SERVICE_PORT_MAP.WEB
+        self.service_type = SERVICE_PORT_MAP.WEBLOGIC
         self.name = 'weblogic ssrf'
         self.keyword = ['weblogic']
         self.info = 'weblogic ssrf'
@@ -27,3 +27,4 @@ class POC(Script):
                     self.res.append({"info": url, "key": "/uddiexplorer/SearchPublicRegistries.jsp"})
             except:
                 pass
+

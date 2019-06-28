@@ -49,15 +49,15 @@ def curl(method, url, **kwargs):
         kwargs.setdefault('timeout',  timeout)
     kwargs.setdefault('verify', False)
 
-    # if True:
-    #     try:
-    #         _proxies = {
-    #             'http': 'http://127.0.0.1:8080/',
-    #             'https': 'https://127.0.0.1:8080/'
-    #         }
-    #         kwargs.setdefault('proxies', _proxies)
-    #     except:
-    #         logger.error("Error http(s) proxy: %s or %s." % (conf['config']['proxy']['http_proxy'],conf['config']['proxy']['https_proxy']))
+    if True:
+        try:
+            _proxies = {
+                'http': 'http://127.0.0.1:8080/',
+                'https': 'https://127.0.0.1:8080/'
+            }
+            kwargs.setdefault('proxies', _proxies)
+        except:
+            logger.error("Error http(s) proxy: %s or %s." % (conf['config']['proxy']['http_proxy'],conf['config']['proxy']['https_proxy']))
     try:
         with requests.sessions.Session() as session:
             session.mount('http://', HTTPAdapter(max_retries=max_retries))

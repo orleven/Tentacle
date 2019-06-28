@@ -314,6 +314,7 @@ class Engine():
         if module_spec:
             try:
                 module = importlib.import_module(module_name)
+
                 if 'POC' not in dir(module):
                     logger.error('Invalid POC script, Please check the script: %s' % module.__name__)
                 else:
@@ -364,9 +365,11 @@ class Engine():
             logger.sysinfo('Loading moduals...')
             for module_name in conf['modules_name']:
                 module = self._load_module(module_name)
+
                 if module == None:
                     logger.error("Invalid POC script, Please check the script: %s" % module_name)
                     continue
+
                 modules.append(module)
                 if len(self.modules) > 1 and func_name.lower() in  ['show','help']:
                     sys.exit(logger.error('Can\'t show so many modules.'))

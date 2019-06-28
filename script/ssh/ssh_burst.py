@@ -38,5 +38,6 @@ class POC(Script):
                     self.flag = 1
                     self.res.append({"info": username + "/" + password, "key": "ssh burst"})
                     return
-                except SSHException as e:
-                    if "Errno 10061" in str(e) or "timed out" in str(e): return
+                except Exception as e:
+                    if "Errno 10061" in str(e) or "timed out" in str(e) or 'NoValidConnectionsError' in str(e):
+                        return

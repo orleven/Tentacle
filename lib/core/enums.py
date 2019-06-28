@@ -31,6 +31,7 @@ class SERVICE_PORT_MAP:
     TELNET = ('TELNET', 23)
     SMTP = ('SMTP', 25)
     DNS = ('DNS', 53)
+    COREMAIL = ('COREMAIL', [80,443])
     WEB = ('WEB', [80, 81, 88, 443, 7001, 8000, 8001, 8080, 8081, 8090, 8443])
     HTTP = ('HTTP', [80, 81, 88, 7001, 8000, 8001, 8080, 8081])
     POP3 = ('POP3', 110)

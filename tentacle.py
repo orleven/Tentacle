@@ -60,7 +60,7 @@ def arg_set(parser):
     other.add_argument("--help", help="Show help", default=False, action='store_true')
     return parser
 
-def handle(parser):
+def handle(parser, a= None):
     banner()
     args = parser.parse_args()
     paths.ROOT_PATH  = os.path.dirname(os.path.realpath(__file__))
@@ -74,4 +74,5 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser(description=DESCRIPTION,formatter_class=argparse.RawTextHelpFormatter, add_help=False)
     parser = arg_set(parser)
     handle(parser)
+
 

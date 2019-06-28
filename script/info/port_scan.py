@@ -29,7 +29,7 @@ class POC(Script):
         except Exception as e:
             message = str(e)
             flag = True
-            for _ in ['WinError 10049', 'WinError 10061', 'timed out','getaddrinfo failed']:
+            for _ in ['WinError 10049', 'WinError 10061', 'WinError 10013', 'timed out','getaddrinfo failed']:
                 if _ in message:
                     flag = False
             if flag:
@@ -42,6 +42,14 @@ class POC(Script):
                 self.service_match(message)
                 self.res.append({"info": self.service_type[0], "key": "port scan"})
 
+    def exec(self):
+        self.prove()
+
+    def upload(self):
+        self.prove()
+
+    def rebound(self):
+        self.prove()
 
     def service_match(self,message = None):
         self.get_url()

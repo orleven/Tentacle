@@ -23,57 +23,45 @@ def md5(message):
     obj.update(message.encode(encoding='utf-8'))
     return obj.hexdigest()
 
-def base64decode(message, altchars=b'+/'):
-    # data = re.sub(rb'[^a-zA-Z0-9%s]+' % altchars, b'', message)  # normalize
-    # missing_padding = len(data) % 4
-    # if missing_padding:
-    #     data += b'=' * (4 - missing_padding)
-    return b64decode(message, altchars)
+def base64decode(value,table=None):
+    b64_table = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
+    if table:
+        return b64decode(str.translate(value,str.maketrans(table,b64_table)))
+    else:
+        value = bytes(value, 'utf-8')
+        return b64decode(value)
 
-def base64encode(message):
-    return b64encode(message)
+def base64encode(value,table=None):
+    b64_table = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
+    value = bytes(value,'utf-8')
+    if table:
+        return str(str.translate(str(b64encode(value)),str.maketrans(b64_table,table)))[2:-1]
+    else:
+        return b64encode(value)
 
 def base64pickle(value):
     retVal = None
     try:
-        retVal = base64encode(pickle.dumps(value, pickle.HIGHEST_PROTOCOL))
+        retVal = b64encode(pickle.dumps(value, pickle.HIGHEST_PROTOCOL))
     except:
         warnMsg = "problem occurred while serializing "
         warnMsg += "instance of a type '%s'" % type(value)
         single_time_warn_message(warnMsg)
         try:
-            retVal = base64encode(pickle.dumps(value))
+            retVal = b64encode(pickle.dumps(value))
         except:
-            retVal = base64encode(pickle.dumps(str(value), pickle.HIGHEST_PROTOCOL))
+            retVal = b64encode(pickle.dumps(str(value), pickle.HIGHEST_PROTOCOL))
     return retVal
 
 def base64unpickle(value, unsafe=False):
 
-    def _(self):
-        if len(self.stack) > 1:
-            func = self.stack[-2]
-            # if func not in PICKLE_REDUCE_WHITELIST:
-            #     raise (Exception, "abusing reduce() is bad, Mkay!")
-        self.load_reduce()
-
     def loads(str):
-
-
-        # f = io.StringIO(str(str))
-
-        # if unsafe:
-        #     unpickler = picklePy.Unpickler(f)
-        #     unpickler.dispatch[picklePy.REDUCE] = _
-        # else:
-        #     unpickler = pickle.Unpickler(f)
-        # return unpickler.load()
         return pickle.loads(str)
 
-
     try:
-        retVal = loads(base64decode(value))
+        retVal = loads(b64decode(value))
     except TypeError:
-        retVal = loads(base64decode(bytes(value)))
+        retVal = loads(b64decode(bytes(value)))
 
     return retVal
 

