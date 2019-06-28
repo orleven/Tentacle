@@ -34,7 +34,6 @@ class POC(Script):
                 self.curl('post', url, data = data)
                 time.sleep(5)
                 url1 = self.base_url +  'seeyon/' + test_file
-
                 res = self.curl('get', url1)
                 if res!=None and 'this is a test for me' in res.text:
                     self.flag = 1
