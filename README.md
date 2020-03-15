@@ -34,11 +34,9 @@ python3 tentacle.py --help
 # Show all modual, and you can see it in `script` path.
 python3 tentacle.py --show
 
-# Load modual by -m (e.g. script/info/web_status,@web)
-python3 tentacle.py -m script/web/web_status               # Load web_status module
-python3 tentacle.py -m @web                                 # Load all module of web path
-python3 tentacle.py -m script/web/web_status,@web          # Load all module of web path and web_status module
-python3 tentacle.py -m "*"                                    # Load all module of script path
+# Show all function of module by -f show or -f help
+python3 tentacle.py -m script/web/web_status -f show
+python3 tentacle.py -m script/web/web_status -f help
 
 # Load target by iS/iN/iF/iT/iX/iE/gg/sd/ze/ff.
 # Scan port and then it will try to send the poc.
@@ -53,13 +51,16 @@ python3 tentacle.py -m script/web/web_status -sd 'apache'                     # 
 python3 tentacle.py -m script/web/web_status -ze 'app:weblogic'               # Load target by zoomeye api
 python3 tentacle.py -m script/web/web_status -ff 'domain="example.com"'       # Load target by fofa api
 
-# Show all function of module by -f show or -f help
-python3 tentacle.py -m script/web/web_status -f show
-python3 tentacle.py -m script/web/web_status -f help
+# Load modual by -m (e.g. script/info/web_status,@web)
+python3 tentacle.py -iS 127.0.0.1 -m script/web/web_status                    # Load web_status module
+python3 tentacle.py -iS 127.0.0.1 -m @web                                     # Load all module of web path
+python3 tentacle.py -iS 127.0.0.1 -m script/web/web_status,@web               # Load all module of web path and web_status module
+python3 tentacle.py -iS 127.0.0.1 -m "*"                                      # Load all module of script path
 
-# Skil the port scan, and then it will try the default port number by server_type.
-# If you don't enter the target port, then it will try the default port number by server_type.
-python3 tentacle.py -m script/web/web_status -iS www.examples.com -n  
+# Set port scan scope
+python3 tentacle.py -iS 127.0.0.1 -m script/web/web_status                    # Scan top 150 ports and then perform bulk vulnerability verification for multiple targets.
+python3 tentacle.py -iS 127.0.0.1 -m script/web/web_status -sP                # Skip port scan and then it will try the default port number server
+python3 tentacle.py -iS 127.0.0.1 -m script/web/web_status -lP 80-90,443      # Scan 80-90 ports and 443 port and then perform bulk vulnerability verification for multiple targets.
 
 # Use function of modual by -m and -f  (e.g. -m web_status -f prove), and you should make sure the function of module is exist.
 python3 tentacle.py -m script/web/web_status -f prove
