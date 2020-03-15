@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # @author = 'orleven'
 
+from lib.utils.connect import ClientSession
 from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
@@ -14,11 +15,14 @@ class POC(Script):
         self.level = 'high'
         Script.__init__(self, target=target, service_type=self.service_type)
 
-    def prove(self):
-        self.get_url()
+    async def prove(self):
+        await self.get_url()
         if self.base_url:
             url = self.base_url + 'containers/json'
-            res = self.curl('get', url)
-            if res and 'docker' in res.text:
-                self.flag = 1
-                self.res.append({"info": url, "key": 'docker unauth'})
+            async with ClientSession() as session:
+                async with session.get(url=url) as res:
+                    if res!=None:
+                        text = await res.text()
+                        if 'docker' in text:
+                            self.flag = 1
+                            self.res.append({"info": url, "key": 'docker unauth'})

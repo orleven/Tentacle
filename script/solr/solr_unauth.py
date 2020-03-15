@@ -2,27 +2,28 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-from script import Script, SERVICE_PORT_MAP
+from lib.utils.connect import ClientSession
+from script import Script, SERVICE_PORT_MAP, VUL_TYPE, VUL_LEVEL
 
 class POC(Script):
     def __init__(self, target=None):
-        self.service_type = SERVICE_PORT_MAP.WEB
+        self.service_type = SERVICE_PORT_MAP.SOLR
         self.name = 'solr unauth'
         self.keyword = ['unauth', 'solr']
         self.info = 'solr unauth'
-        self.type = 'unauth'
-        self.level = 'high'
+        self.type = VUL_TYPE.UNAUTH
+        self.level = VUL_LEVEL.MEDIUM
         Script.__init__(self, target=target, service_type=self.service_type)
 
-    def prove(self):
-        self.get_url()
+    async def prove(self):
+        await self.get_url()
         if self.base_url:
-            for url in [self.base_url , self.base_url+"solr/"]:
-                try:
-                    res = self.curl('get',url)
-                    if res and res.status_code is 200 and 'Solr Admin' in res.text and 'Dashboard' in res.text:
-                        self.flag = 1
-                        self.req.append({"page": '/solr/'})
-                        self.res.append({"info": url, "key": "/solr/"})
-                except Exception:
-                    pass
+            async with ClientSession() as session:
+                for url in [self.base_url , self.base_url+"solr/"]:
+                    async with session.get(url=url) as res:
+                        if res and res.status == 200:
+                            text = await res.text()
+                            if 'Solr Admin' in text and 'Dashboard' in text:
+                                self.flag = 1
+                                self.res.append({"info": url, "key": "solr unauth"})
+                                break

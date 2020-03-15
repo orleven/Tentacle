@@ -1,6 +1,7 @@
-admin
-guest
 root
+admin
+user
+guest
 administrator
 test
 mysql

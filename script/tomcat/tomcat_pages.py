@@ -2,35 +2,45 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-from script import Script, SERVICE_PORT_MAP
+from lib.utils.connect import ClientSession
+from script import Script, SERVICE_PORT_MAP, VUL_TYPE, VUL_LEVEL
 
 class POC(Script):
     def __init__(self, target=None):
         self.service_type = SERVICE_PORT_MAP.WEB
         self.name = 'tomcat pages'
-        self.keyword = ['tomcat', 'web']
+        self.keyword = ['web', 'tomcat']
         self.info = 'tomcat pages'
-        self.type = 'info'
-        self.level = 'low'
+        self.type = VUL_TYPE.INFO
+        self.level = VUL_LEVEL.INFO
+        self.repair = ''
+        self.refer = ''
         Script.__init__(self, target=target, service_type=self.service_type)
 
-    def prove(self):
-        self.get_url()
-        if self.base_url:
-            for url in [self.base_url, self.base_url + "docs/", self.base_url + "manager/", self.base_url + "examples/",
-                        self.base_url + "host-manager/"]:
-                try:
-                    flag = -1
-                    res = self.curl('get', url)
-                    if res.status_code is 200 and 'Apache Tomcat Examples' in res.text:
-                        flag = 1
-                    elif res.status_code == 401 and '401 Unauthorized' in res.text and 'tomcat' in res.text:
-                        flag = 1
-                    elif res.status_code is 200 and 'Documentation' in res.text and 'Apache Software Foundation' in res.text:
-                        flag = 1
-                    if flag == 1:
-                        self.flag = 1
-                        self.req.append({"page": 'tomcat page'})
-                        self.res.append({"info": url, "key": "tomcat page"})
-                except Exception:
-                    pass
+
+    async def prove(self):
+        await self.get_url()
+        if self.base_url != None:
+            async with ClientSession() as session:
+                for url in [self.base_url, self.base_url + "docs/", self.base_url + "manager/",
+                            self.base_url + "examples/",
+                            self.base_url + "host-manager/"]:
+                    async with session.get(url=url) as res:
+                        if res:
+                            text = await res.text()
+                            if res.status is 200 and 'Apache Tomcat Examples' in text:
+                                self.flag = 1
+                                self.req.append({"page": 'tomcat page'})
+                                self.res.append({"info": url, "key": "tomcat page"})
+                            elif res.status == 401 and '401 Unauthorized' in text and 'tomcat' in text:
+                                self.flag = 1
+                                self.req.append({"page": 'tomcat page'})
+                                self.res.append({"info": url, "key": "tomcat page"})
+                            elif res.status == 403 and '403 Access Denied' in text and 'tomcat-users' in text:
+                                self.flag = 1
+                                self.req.append({"page": 'tomcat page'})
+                                self.res.append({"info": url, "key": "tomcat page"})
+                            elif res.status is 200 and 'Documentation' in text and 'Apache Software Foundation' in text and 'tomcat' in text:
+                                self.flag = 1
+                                self.req.append({"page": 'tomcat page'})
+                                self.res.append({"info": url, "key": "tomcat page"})

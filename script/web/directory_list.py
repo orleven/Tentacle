@@ -3,7 +3,8 @@
 # @author = 'orleven'
 
 import re
-from script import Script, SERVICE_PORT_MAP
+from lib.utils.connect import ClientSession
+from script import Script, SERVICE_PORT_MAP, VUL_TYPE, VUL_LEVEL
 
 class POC(Script):
     def __init__(self, target=None):
@@ -11,13 +12,13 @@ class POC(Script):
         self.name = 'directory list'
         self.keyword = ['web']
         self.info = 'directory list'
-        self.type = 'info'
-        self.level = 'medium'
+        self.type = VUL_TYPE.INFO
+        self.level = VUL_LEVEL.LOW
         self.refer = 'https://github.com/WyAtu/Perun/blob/master/vuln/web/directory_listing.py'
         Script.__init__(self, target=target, service_type=self.service_type)
 
-    def prove(self):
-        self.get_url()
+    async def prove(self):
+        await self.get_url()
         if self.base_url:
             PAYLOADS = (
                 re.compile(r'<title>Index of /', re.I),
@@ -31,17 +32,20 @@ class POC(Script):
                 re.compile(r'&lt;dir&gt; <A HREF="/', re.I),
                 re.compile(r'''<pre><A HREF="/">\[''', re.I),
             )
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.url, './'),
-            ]))
-            for path in path_list:
-                url = path
-                res = self.curl('get', url)
-                if res and res==200:
-                    for payload in PAYLOADS:
-                        r = payload.findall(res.text)
-                        if r:
-                            self.flag = 1
-                            self.res.append({"info": url, "key": "directory_list"})
-                            return
+            async with ClientSession() as session:
+                path_list = list(set([
+                    self.url_normpath(self.base_url, '/'),
+                    self.url_normpath(self.url, './'),
+                    self.url_normpath(self.url, '../'),
+                ]))
+                for path in path_list:
+                    url = path
+                    async with session.get(url=url) as response:
+                        if response and response.status==200:
+                            text = str(await response.read())
+                            for payload in PAYLOADS:
+                                r = payload.findall(text)
+                                if r:
+                                    self.flag = 1
+                                    self.res.append({"info": url, "key": "directory_list"})
+                                    return

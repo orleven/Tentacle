@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import sqlite3
 import os
 import time
 import queue
@@ -10,9 +9,6 @@ import sqlite3
 import threading
 from lib.core.data import logger
 from lib.core.common import serialize_object
-from lib.core.common import unserialize_object
-from lib.core.data import conf
-from lib.core.data import paths
 from lib.core.common import get_safe_ex_string
 
 class Database(object):
@@ -123,8 +119,8 @@ class TaskDataDB(Database):
                          serialize_object(data['req']), serialize_object(data['res']),
                          serialize_object(data['other'])))
                 except sqlite3.DatabaseError as ex:
-                    if not os.path.exists(self.filepath):
-                        debugMsg = "session file '%s' does not exist" % self.filepath
+                    if not os.path.exists(self.database):
+                        debugMsg = "session file '%s' does not exist" % self.database
                         logger.debug(debugMsg)
                         break
 

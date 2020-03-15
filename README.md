@@ -13,7 +13,7 @@
 
 Tentacle is a POC vulnerability verification and exploit framework. It supports free extension of exploits and uses POC scripts. It supports calls to zoomeye, fofa, shodan and other APIs to perform bulk vulnerability verification for multiple targets. (Still in DEV...)
 
-[![Python 3.6](https://img.shields.io/badge/python-3.6-yellow.svg)](https://www.python.org/)
+[![Python 3.7](https://img.shields.io/badge/python-3.7-yellow.svg)](https://www.python.org/)
 
 ![show](show/test.png)
 
@@ -50,7 +50,6 @@ python3 tentacle.py -m script/web/web_status -gg 'intext:powered by discuz'   # 
 python3 tentacle.py -m script/web/web_status -sd 'apache'                     # Load target by shodan api
 python3 tentacle.py -m script/web/web_status -ze 'app:weblogic'               # Load target by zoomeye api
 python3 tentacle.py -m script/web/web_status -ff 'domain="example.com"'       # Load target by fofa api
-python3 tentacle.py -m script/web/web_status -fft                             # Load target by fofa today api
 
 # Show all function of module by -f show or -f help
 python3 tentacle.py -m script/web/web_status -f show
@@ -76,8 +75,8 @@ python3 tentacle.py --update
 ### Update
 
 * [2018-11-15] Code refactoring and fix bug.
-* [2019-04-24] Fix bug and add script.
 * [2019-06-08] Code refactoring and add port scan.
+* [2020-03-15] Code refactoring and add script.
 
 ### Thanks
 

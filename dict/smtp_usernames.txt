@@ -1,10 +1,8 @@
 root
 admin
-vpn@%host%
-it@%host%
-admin@%host%
-dev@%host%
-test@%host%
+vpn
+it
+dev
 system
 administrator
 test

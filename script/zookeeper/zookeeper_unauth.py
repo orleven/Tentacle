@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import socket
+from lib.utils.connect import open_connection
 from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
@@ -15,18 +15,13 @@ class POC(Script):
         self.level = 'medium'
         Script.__init__(self, target=target, service_type=self.service_type)
 
-    def prove(self):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            s.connect((self.target_host, self.target_port))
-            s.sendall(bytes('envi\r\n','utf-8'))
-            message = str(s.recv(1024))
-            s.close()
-            if 'zookeeper.version' in message:
-                self.flag = 1
-                self.req.append({"info": "envi"})
-                self.res.append({"info": "zookeeper unauth", 'key':'envi',"envi": message})
-        except socket.timeout:
-            pass
-        except Exception as err:
-            pass
+    async def prove(self):
+        reader, writer = await open_connection(self.target_host, self.target_port)
+        message = 'envi\r\n'
+        writer.write(message.encode())
+        data = await reader.read(1024)
+        writer.close()
+        if 'zookeeper.version' in str(data):
+            self.flag = 1
+            self.req.append({"info": "info"})
+            self.res.append({"info": "zookeeper unauth", 'key': 'envi', "envi": message})

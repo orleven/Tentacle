@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 # @author = 'orleven'
 
-import sys
-from bs4 import BeautifulSoup
-from script import Script, SERVICE_PORT_MAP
-type=sys.getfilesystemencoding()
+import re
+from lib.utils.connect import ClientSession
+from script import Script, SERVICE_PORT_MAP, VUL_TYPE, VUL_LEVEL
 
 class POC(Script):
     def __init__(self, target=None):
@@ -13,51 +12,31 @@ class POC(Script):
         self.name = 'web status'
         self.keyword = ['web', 'title', 'status']
         self.info = 'Get the web application status and title'
-        self.type = 'info'
-        self.level = 'info'
+        self.type = VUL_TYPE.INFO
+        self.level = VUL_LEVEL.INFO
         Script.__init__(self, target=target, service_type=self.service_type)
-        # super(POC, self).__init__(target=target,service_type=self.service_type)
 
-
-    def prove(self):
-        self.get_url()
-        if self.url:
-            codes = ['utf-8','gbk']
-            status = str(0)
-            title= ''
-            result = self.curl('get', self.url)
-            if result!=None:
-                status = str(result.status_code)
-                soup = BeautifulSoup(result.text, "html5lib")
-                if soup!=None:
-                    title = soup.title
-                    if title == None or title.string == '':
-                        title = "[None Title]".encode('utf-8')
-                    else:
-                        if result.encoding != None:
-                            try:
-                                title = title.string.encode(result.encoding)
-                                codes.append(result.encoding)
-                            except:
-                                title = "[Error Code]".encode('utf-8')
-                        else:
-                            title = title.string
-                    codes.append(type)
-                    for j in range(0, len(codes)):
+    async def prove(self):
+        await self.get_url()
+        if self.url :
+            async with ClientSession() as session:
+                async with session.get(url=self.url) as response:
+                    if response is not None :
+                        res = await response.read()
+                        status = response.status
                         try:
-                            title = title.decode(codes[j]).strip().replace("\r", "").replace("\n", "")
-                            break
+                            res = str(res, 'utf-8')
+                        except UnicodeDecodeError:
+                            try:
+                               res = str(res, 'gbk')
+                            except:
+                                res = "[Error Code]"
                         except:
-                            continue
-                        finally:
-                            if j + 1 == len(codes):
-                                title = '[Error Code]'
-                else:
-                    title = '[None Title]'
-
-            if  status !='0':
-                self.flag = 1
-                self.res.append({"info": title , "key": status, "status": status})
-
-if __name__=='__main__':
-    print(POC('http://www.baidu.com').prove())
+                            res = "[Error Code]"
+                        m = re.search('<title>(.*)<\/title>', res.lower())
+                        if m != None and m.group(1):
+                            title = m.group(1)
+                        else:
+                            title = '[None Title]'
+                        self.flag = 1
+                        self.res.append({"info": title , "key": status, "status": status})

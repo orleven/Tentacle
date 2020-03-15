@@ -20,9 +20,9 @@ def banner():
 def output_excal(datalines,file,taskname = None):
     filename = os.path.join(paths.OUTPUT_PATH,file + '.xlsx')
     if taskname:
-        logger.info('Task export to %s: %s' % (filename,taskname))
+        logger.sysinfo('Task export to %s: %s' % (filename,taskname))
     else:
-        logger.info('Export to %s...' % (filename))
+        logger.sysinfo('Export to %s...' % (filename))
     book = Workbook()
     ws = book.active
     i = 1
@@ -40,14 +40,12 @@ def output_excal(datalines,file,taskname = None):
                     ws.cell(row=i, column=titleList.index(key) + 1).value = line[key]
                 elif isinstance(line[key], bytes) :
                     ws.cell(row=i, column=titleList.index(key) + 1).value = str(line[key],'utf-8')
-                elif isinstance(line[key], list):
-                    ws.cell(row=i, column=titleList.index(key) + 1).value = str(line[key])
-                elif isinstance(line[key], dict):
+                elif isinstance(line[key], list) or isinstance(line[key], dict):
                     ws.cell(row=i, column=titleList.index(key) + 1).value = str(line[key])
                 else:
                     ws.cell(row=i, column=titleList.index(key) + 1).value = "Types of printing are not supported."
             except:
-                ws.cell(row=i, column=titleList.index(key) + 1).value = "Some error."
+                ws.cell(row=i, column=titleList.index(key) + 1).value = "Some error"
     book.save(filename)
     if taskname:
         logger.sysinfo('Task exported to %s successful: %s' % (filename,taskname))
@@ -86,12 +84,6 @@ def print_all(data):
     from pprint import pprint
     pprint(vars(data))
 
-def single_time_warn_message(message):  # Cross-linked function
-    sys.stdout.write(message)
-    sys.stdout.write("\n")
-    sys.stdout.flush()
-
-
 def data_to_stdout(data, bold=False):
     sys.stdout.write(set_color(data, bold))
     try:
@@ -99,10 +91,14 @@ def data_to_stdout(data, bold=False):
     except IOError:
         pass
 
-
 def set_color(message, bold=False):
     retVal = message
     if message and getattr(logger.console_handler, "is_tty", False):  # colorizing handler
         if bold:
             retVal = colored(message, color=None, on_color=None, attrs=("bold",))
     return retVal
+
+def single_time_warn_message(message):  # Cross-linked function
+    sys.stdout.write(message)
+    sys.stdout.write("\n")
+    sys.stdout.flush()

@@ -1,4 +1,1 @@
 weblogic
-system
-portaladmin
-guest

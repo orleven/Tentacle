@@ -6,7 +6,7 @@ import random
 import re
 import sys
 
-INDEX_DATABASE = 'storage'
+INDEX_DATABASE = 'index'
 
 GIT_REPOSITORY = "https://github.com/orleven/tentacle.git"
 
@@ -16,7 +16,7 @@ VERSION = "1.0.0"
 
 SITE = "http://www.orleven.com/"
 
-TYPE_COLORS = {"dev": 33, "stable": 90, "pip": 34}
+TYPE_COLORS = {"dev": 33, "stable": 90}
 
 TYPE = "dev" if VERSION.count('.') > 2 and VERSION.split('.')[-1] != '0' else "stable"
 
@@ -30,7 +30,7 @@ BANNER = """\033[01;33m\
     |  |     |  |____ |  |\   |     |  |     /  _____  \ |  `----.|  `----.|  |____
     |__|     |_______||__| \__|     |__|    /__/     \__\ \______||_______||_______| \033[0m\033[4;37m%s\033[0m\n
 
-""" % (TYPE_COLORS.get(TYPE, 31), VERSION_STRING.split('/')[-1], SITE)
+""" % (TYPE_COLORS.get(TYPE), VERSION_STRING.split('/')[-1], SITE)
 
 HEURISTIC_CHECK_ALPHABET = ('"', '\'', ')', '(', ',', '.')
 

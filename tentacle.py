@@ -3,22 +3,13 @@
 # @author: 'orleven'
 
 import os
-import sys
 import argparse
+from lib.utils.version import *
+from lib.core.core import start
 from lib.core.data import paths
-from lib.core.core import normal
 from lib.utils.output import banner
 from lib.core.init import initialize
 from lib.core.settings import DESCRIPTION
-
-# Don't write pyc
-sys.dont_write_bytecode = True
-
-# Python version check
-try:
-    __import__("lib.utils.version")
-except ImportError:
-    exit("[-] Wrong installation detected (missing modules)!")
 
 def arg_set(parser):
     base = parser.add_argument_group('Base')
@@ -40,16 +31,14 @@ def arg_set(parser):
                                    help='Load targets from zoomeye  (e.g. powered by discuz)')
     base_target_group.add_argument('-ff', "--target_fofa", metavar='key', type=str, default=None,
                                    help='Load targets from fofa  (e.g. app:weblogic)')
-    base_target_group.add_argument('-fft', "--target_fofa_today_poc", action='store_true',default=False,
-                                   help='Load targets from fofa today poc ')
 
     module = parser.add_argument_group('Module')
     module.add_argument("-m", "--module", help="Load script module", default=False, action='store')
-    module.add_argument("-f", "--function", help="Load function of script module, e.g show,prove", default=False, action='store')
+    module.add_argument("-f", "--function", help="Load function of script module, e.g show,prove", default='prove', action='store')
     module.add_argument("-p", "--parameter", help="Load data for function of module, e.g. -p \"U=username.txt&P=password.txt\"", default=False, action='store')
     module.add_argument("--show", action='store_true', help="Show all poc scripts module", default=False)
     module.add_argument("-t", "--thread", type=int, help="Thread Num e.g. 100", default=100 ,action='store')
-    module.add_argument("-n", "--noportscan", action='store_true', help="Skip the port scan model", default=False)
+    module.add_argument("-sP", "--skip_port_scan", action='store_true', help="Skip port scan", default=False)
 
     other = parser.add_argument_group('Other')
     other.add_argument('-tS', "--task_show",  metavar='TaskID', type=str, default=None,help= 'Show task (e.g. all,c81fc4f8f9ab1902)')
@@ -60,7 +49,7 @@ def arg_set(parser):
     other.add_argument("--help", help="Show help", default=False, action='store_true')
     return parser
 
-def handle(parser, a= None):
+def handle(parser):
     banner()
     args = parser.parse_args()
     paths.ROOT_PATH  = os.path.dirname(os.path.realpath(__file__))
@@ -68,11 +57,12 @@ def handle(parser, a= None):
     if args.help:
         parser.print_help()
     else:
-        normal(args)
+        start(args)
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description=DESCRIPTION,formatter_class=argparse.RawTextHelpFormatter, add_help=False)
     parser = arg_set(parser)
     handle(parser)
+
 
 

