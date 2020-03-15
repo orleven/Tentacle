@@ -25,6 +25,8 @@ pip3 install -r requestment.txt
 
 ### Usage
 
+When you run it for the first time, the configuration `conf/tentacle.conf` file will be generated automatically.
+
 ```
 # Show help for tentacle.
 python3 tentacle.py --help
