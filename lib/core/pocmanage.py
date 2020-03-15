@@ -18,6 +18,8 @@ class POCManager:
         self.modules_name = None
         self.func_name = None
         self.parameter = None
+        if conf['show']:
+            self.show()
         self._module_register(input_module)
         self._function_register(input_func)
         self._parameter_register(input_parameter)

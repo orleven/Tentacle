@@ -17,13 +17,13 @@ def init_options(args):
 
     conf.VERBOSE = args.verbose
     conf.OUT = args.out
-
     show_task(args)
 
     if  not 0 < args.thread < 501:
         msg = 'Invalid input in [-t] for thread num, range: 1 to 500.'
         sys.exit(logger.error(msg))
 
+    conf['show'] = args.show
     conf['skip_port_scan'] = args.skip_port_scan
     conf['limit_port_scan'] = args.limit_port_scan
     conf['thread_num'] = args.thread
