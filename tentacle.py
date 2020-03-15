@@ -34,7 +34,7 @@ def arg_set(parser):
 
     port = parser.add_argument_group('Port')
     port.add_argument("-sP", "--skip_port_scan", action='store_true', help="Skip port scan", default=False)
-    port.add_argument("-lP", "--limit_port_scan", action='store', help="Limit port scope scan, e.g 80-100,8080,top100,*", default=False)
+    port.add_argument("-lP", "--limit_port_scan", action='store', help="Limit port scope scan, e.g 80-100,8080,top100,*", default=None)
 
     module = parser.add_argument_group('Module')
     module.add_argument("-m", "--module", help="Load script module", default=False, action='store')
