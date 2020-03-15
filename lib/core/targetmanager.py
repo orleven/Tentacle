@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # @author = 'orleven'
 
+import re
 import os
 import sys
 import urllib.parse
@@ -31,8 +32,58 @@ class TargetManager:
         self.target_google = None
         self.target_pool_total = 65535 * 10
 
+        self.limit_port = None
+        self._port_register(input_target)
         self._target_register(input_target)
         # self.targets = {}
+
+    def _port_register(self, input_target):
+        if input_target.limit_port_scan:
+            self.limit_port = []
+            logger.sysinfo("Set port: %s" % (input_target.limit_port_scan))
+            for _port_scope in input_target.limit_port_scan.lower().split(','):
+                if '-' in _port_scope:
+                    try:
+                        pattern = re.compile(r'(\d+)-(\d+)')
+                        match = pattern.match(_port_scope)
+                        if match:
+                            start_port = int(match.group(1))
+                            end_port = int(match.group(2))
+                            if start_port > 0 and start_port < 65536 and end_port > 0 and end_port < 65536:
+                                self.limit_port += [x for x in range(start_port, end_port + 1)]
+                            else:
+                                sys.exit(logger.error("Illegal input: %s" % _port_scope))
+                        else:
+                            sys.exit(logger.error("Illegal input: %s" % _port_scope))
+                    except Exception as err:
+                        sys.exit(logger.error("Illegal input: %s" % _port_scope))
+                elif 'top' in _port_scope or 'all' == _port_scope or '*' == _port_scope:
+                    if 'top10' == _port_scope:
+                        self.limit_port += [x for x in SERVICE_PORT_MAP.TOP10[1]]
+                    if 'top50' == _port_scope:
+                        self.limit_port += [x for x in SERVICE_PORT_MAP.TOP50[1]]
+                    if 'top100' ==_port_scope:
+                        self.limit_port += [x for x in SERVICE_PORT_MAP.TOP100[1]]
+                    if 'top150' == _port_scope:
+                        self.limit_port += [x for x in SERVICE_PORT_MAP.TOP150[1]]
+                    if 'top1000' == _port_scope:
+                        self.limit_port += [x for x in SERVICE_PORT_MAP.TOP100[1]]
+                    if 'all' == _port_scope or '*' == _port_scope:
+                        self.limit_port += [x for x in range(1, 65536)]
+                    else:
+                        sys.exit(logger.error("Illegal input: %s" % _port_scope))
+                else:
+                    try:
+                        start_port = int(_port_scope)
+                        if start_port > 0 and start_port < 65536:
+                            self.limit_port.append(start_port)
+                        else:
+                            sys.exit(logger.error("Illegal input: %s" % _port_scope))
+                    except:
+                        sys.exit(logger.error("Illegal input: %s" % _port_scope))
+
+            self.limit_port = list(set(self.limit_port))
+
 
     def _target_register(self, input_target):
 
@@ -130,10 +181,9 @@ class TargetManager:
                 # resDic = {"host": host_id, "info": infoLit}
                 # resLit.append(resDic)
 
-
         if self.target_network != None:
             logger.sysinfo("Loading target: %s" % (self.target_network))
-            for target in self._load_target(no+1, self.target_network,):
+            for target in self._load_target(no+1, self.target_network):
                 yield target
 
 
@@ -210,45 +260,60 @@ class TargetManager:
             yield target
 
     def _load_target(self,no, target, service=None):
+        targets = []
 
         # http://localhost
-        if target.startswith('http://') or target.startswith('https://'):
-            return [self.deal_target(no,target,service)]
-        else:
-
-            # 192.168.111.1/24
-            if '/' in target and check_ippool(target):
-                return [self.deal_target(no, each, service) for each in build(target)]
-
-
-            # 192.168.111.1-192.168.111.3
-            elif '-' in target and check_ippool(target):
-                _v = target.split('-')
-                return [self.deal_target(no,each, service) for each in build(_v[0], _v[1])]
-
-            # 192.168.111.1
-            else:
-                target = target[:-1] if target[-1] == '/' else target
-                return [self.deal_target(no,target, service)]
-
-    def deal_target(self, no, target, service=None):
-        '''
-        :param target: host:port or url
-        :param service:
-        :return:
-        '''
         if target.startswith('http://') or target.startswith('https://'):
             protocol, s1 = urllib.parse.splittype(target)
             host, s2 = urllib.parse.splithost(s1)
             host, port = urllib.parse.splitport(host)
             port = int(port) if port != None and port != 0 else 443 if protocol == 'https' else 80
-            _ = {'id':no, 'host': host, 'port':port , 'service': SERVICE_PORT_MAP.WEB[0], 'protocol':'tcp','banner':None, 'fingerprint':None,  'url': target, 'status': 3}
-        elif ":" in target:
+            targets.append(self.deal_target(no, ':'.join([host, str(port)]), SERVICE_PORT_MAP.WEB[0], target))
+            if self.limit_port:
+                targets += [self.deal_target(no, ':'.join([host, str(x)]), service, None) for x in self.limit_port if x != port]
+
+        else:
+
+            # 192.168.111.1/24
+            if '/' in target and check_ippool(target):
+                if self.limit_port:
+                    for each in build(target):
+                        targets += [self.deal_target(no, ':'.join([each, str(x)]), service, None) for x in self.limit_port]
+                else:
+                    targets += [self.deal_target(no, each, service, None) for each in build(target)]
+
+
+            # 192.168.111.1-192.168.111.3
+            elif '-' in target and check_ippool(target):
+                _v = target.split('-')
+                if self.limit_port:
+                    for each in build(_v[0], _v[1]):
+                        targets += [self.deal_target(no, ':'.join([each, str(x)]), service, None) for x in self.limit_port]
+                else:
+                    targets += [self.deal_target(no,each, service, None) for each in build(_v[0], _v[1])]
+
+            # 192.168.111.1
+            else:
+                target = target[:-1] if target[-1] == '/' else target
+                if self.limit_port:
+                    targets += [self.deal_target(no, ':'.join([target, str(x)]), service, None) for x in self.limit_port]
+                else:
+                    targets.append(self.deal_target(no,target, service, None))
+
+        return targets
+
+    def deal_target(self, no, target, service=None, url=None):
+        '''
+        :param target: host:port or url
+        :param service:
+        :return:
+        '''
+        if ":" in target:
             _v = target.split(':')
             host, port = _v[0], int(_v[1])
             _ = {'id':no, 'host': host, 'port': port, 'service': service, 'protocol': None, 'banner': None,
-                 'fingerprint': None, 'url': None, 'status': 3}
+                 'fingerprint': None, 'url': url, 'status': 3}
         else:
             _ = {'id':no, 'host': target, 'port': None, 'service': service, 'protocol': None, 'banner': None,
-                 'fingerprint': None,  'url': None, 'status': 3}
+                 'fingerprint': None,  'url': url, 'status': 3}
         return _

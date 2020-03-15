@@ -25,6 +25,7 @@ def init_options(args):
         sys.exit(logger.error(msg))
 
     conf['skip_port_scan'] = args.skip_port_scan
+    conf['limit_port_scan'] = args.limit_port_scan
     conf['thread_num'] = args.thread
     logger.sysinfo("Set timeout: %s" % (conf['basic']['timeout']))
     logger.sysinfo("Set thread: %s" % str(conf['thread_num']))
