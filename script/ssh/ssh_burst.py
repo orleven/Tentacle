@@ -7,18 +7,6 @@ import os
 import asyncssh
 from script import Script, SERVICE_PORT_MAP
 
-class MySSHClientSession(asyncssh.SSHClientSession):
-    def data_received(self, data, datatype):
-        if datatype == asyncssh.EXTENDED_DATA_STDERR:
-            print(data, end='', file=sys.stderr)
-        else:
-            print(data, end='')
-
-    def connection_lost(self, exc):
-        if exc:
-            print('SSH session error: ' + str(exc), file=sys.stderr)
-
-
 class POC(Script):
     def __init__(self, target=None):
         self.service_type = SERVICE_PORT_MAP.SSH
