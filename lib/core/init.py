@@ -63,6 +63,6 @@ def config_parser():
     path = os.path.join(paths.CONFIG_PATH, CONFIG_FILE)
     if not os.path.exists(path):
         init_conf(path)
-        sys.exit(logger.error("Please set the tentacle config in %s..." % CONFIG_FILE))
+        sys.exit(logger.sysinfo("Please set the tentacle config in %s..." % CONFIG_FILE))
     load_conf(path)
 

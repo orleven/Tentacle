@@ -30,7 +30,6 @@ class Engine(object):
         self.interval_time = 60
         self.start_time = time.time()
         self.is_continue = True
-        logger.sysinfo("Created task: %s"% name)
         self.hashdb = TaskDataDB(os.path.join(paths.DATA_PATH, name))
         self.hashdb.connect()
         self.hashdb.init()

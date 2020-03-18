@@ -33,5 +33,7 @@ class POC(Script):
                     self.flag = 1
                     self.res.append({"info": username + "/" + password, "key": "ssh burst"})
                     return
+            except asyncssh.misc.ConnectionLost:
+                pass
             except:
                 pass

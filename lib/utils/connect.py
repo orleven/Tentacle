@@ -15,7 +15,6 @@ from aiohttp.client_exceptions import ClientConnectorError
 from aiohttp.client_exceptions import ClientResponseError
 from aiohttp.client_exceptions import ClientOSError
 from aiohttp.client_exceptions import TooManyRedirects
-from aiohttp_socks.errors import InvalidServerVersion
 from aiohttp.client import _BaseRequestContextManager
 from aiohttp.client import TCPConnector
 from aiohttp.typedefs import StrOrURL
@@ -126,10 +125,8 @@ class ClientSession(aiohttp.ClientSession):
                 return None
         except (ClientOSError, ClientResponseError, ClientConnectorError, ServerDisconnectedError):
             return None
-        except InvalidServerVersion:
-            pass
         except Exception as e:
-            if get_safe_ex_string(e).strip() != '':
+            if get_safe_ex_string(e).strip() != '' and 'InvalidServerVersion' not in get_safe_ex_string(e):
                 # errmsg = traceback.format_exc()
                 # logger.error(errmsg)
                 logger.error("Curl error: %s for %s" % (get_safe_ex_string(e), url))

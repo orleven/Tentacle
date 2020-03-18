@@ -211,6 +211,7 @@ class VulScanEngine(Engine):
 
 
     async def enum(self):
+        logger.sysinfo("Running task: %s"% self.name)
         async with PoolCollector.create(num_workers=conf['thread_num']) as manager:
             asyncio.ensure_future(self._progress_daemon(manager))
             if conf['skip_port_scan']:

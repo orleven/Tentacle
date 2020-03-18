@@ -29,6 +29,7 @@ else:
 
 def start(args):
     name = random_MD5()[8:-8]
+    logger.sysinfo("Created task: %s" % name)
     init_options(args)
     database = TaskDB(paths.DATABASE_PATH)
     database.connect()
