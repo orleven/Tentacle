@@ -41,7 +41,7 @@ def arg_set(parser):
     module.add_argument("-f", "--function", help="Load function of script module, e.g show,prove", default='prove', action='store')
     module.add_argument("-p", "--parameter", help="Load data for function of module, e.g. -p \"U=username.txt&P=password.txt\"", default=False, action='store')
     module.add_argument("--show", action='store_true', help="Show all poc scripts module", default=False)
-    module.add_argument("-t", "--thread", type=int, help="Thread Num e.g. 100", default=200, action='store')
+    module.add_argument("-t", "--thread", type=int, help="Thread Num e.g. 100", default=100, action='store')
 
     other = parser.add_argument_group('Other')
     other.add_argument('-tS', "--task_show",  metavar='TaskID', type=str, default=None,help= 'Show task (e.g. all,c81fc4f8f9ab1902)')

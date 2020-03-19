@@ -126,7 +126,7 @@ class ClientSession(aiohttp.ClientSession):
         except (ClientOSError, ClientResponseError, ClientConnectorError, ServerDisconnectedError):
             return None
         except Exception as e:
-            if get_safe_ex_string(e).strip() != '' and 'InvalidServerVersion' not in get_safe_ex_string(e):
+            if get_safe_ex_string(e).strip() != '' and 'InvalidServerVersion' not in get_safe_ex_string(e) and 'Unexpected SOCKS' not in get_safe_ex_string(e):
                 # errmsg = traceback.format_exc()
                 # logger.error(errmsg)
                 logger.error("Curl error: %s for %s" % (get_safe_ex_string(e), url))
