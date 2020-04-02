@@ -75,9 +75,9 @@ class ClientSession(aiohttp.ClientSession):
             headers["Accept-Encoding"] = 'gzip, deflate, sdch'
 
         headers['Referer'] = url
+
         if 'User-Agent' not in headers.keys() or 'aiohttp' in headers["User-Agent"] :
             headers["User-Agent"] = random.choice(USER_AGENTS)
-
         # random_ip = random_IP()
         # if 'Client_IP' not in headers.keys():
         #     headers['Client_IP'] = random_ip

@@ -109,11 +109,11 @@ class Script(object):
                     try:
                         async with session.head(url) as response:
                             if response != None:
-                                resp = str(await response.read())
-                                if response.status == 400 and 'The plain HTTP request was sent to HTTPS port' in resp:
-                                    continue
+                                self.base_url = self.url = url
+                                # if response.status == 400 and 'the plain http request was sent to https port' in resp:
+                                if response.status == 400:
+                                    pass
                                 else:
-                                    self.base_url = self.url = url
                                     return
                     except aiohttp.ClientConnectorSSLError:
                         pass
