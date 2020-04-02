@@ -103,8 +103,8 @@ class Script(object):
         if self.url == None :
             async with ClientSession() as session:
                 for pro in ['http://', "https://"]:
-                    _port = self.target_port if self.target_port != None and self.target_port != 0 else 443 if pro == 'https' else 80
-                    _pro = 'https://' if self.target_host == 443 else pro
+                    _port = self.target_port if self.target_port != None and self.target_port != 0 else 443 if pro == 'https://' else 80
+                    _pro = 'https://' if _port == 443 else pro
                     url = _pro + self.target_host + ":" + str(_port) + '/'
                     try:
                         async with session.head(url) as response:
