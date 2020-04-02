@@ -67,7 +67,7 @@ class POCManager:
                     logger.error(msg)
 
                 for each in filenames:
-                    if '__init__' in each:
+                    if '__init__' in each or each.startswith('.'):
                         continue
                     file_path = os.path.join(parent, each)
                     modules.append('.'.join(re.split('[\\\\/]', file_path[_len:-3])))
@@ -189,22 +189,25 @@ class POCManager:
         return self.func_name
 
     def _load_module(self,module_name):
-        module_spec = importlib.util.find_spec(module_name)
-
-        if module_spec:
-            try:
-                module = importlib.import_module(module_name)
-
-                if 'POC' not in dir(module):
-                    logger.error('Invalid POC script, Please check the script: %s' % module.__name__)
-                else:
-                    return module
-            except Exception as e:
-                logger.error('Invalid POC script, Please check the script: %s' % module_name)
-                logger.error(get_safe_ex_string(e))
+        try:
+            module_spec = importlib.util.find_spec(module_name)
+        except:
+            return None
         else:
-            logger.error('Can\'t load modual: %s.' % conf.module_path)
-        return None
+            if module_spec:
+                try:
+                    module = importlib.import_module(module_name)
+
+                    if 'POC' not in dir(module):
+                        logger.error('Invalid POC script, Please check the script: %s' % module.__name__)
+                    else:
+                        return module
+                except Exception as e:
+                    logger.error('Invalid POC script, Please check the script: %s' % module_name)
+                    logger.error(get_safe_ex_string(e))
+            else:
+                logger.error('Can\'t load modual: %s.' % conf.module_path)
+            return None
 
     def _parameter_register(self, input_parameter):
         if input_parameter:

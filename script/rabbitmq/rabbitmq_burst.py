@@ -30,7 +30,7 @@ class POC(Script):
                             headers = {"Authorization": 'Basic %s' % key}
                             async with session.get(url=url, headers=headers) as res1:
                                 if res1 and res1.status != 401:
-                                    text1 = res1.text()
+                                    text1 = await res1.text()
                                     if 'Console' in text1:
                                         self.flag = 1
                                         self.req.append({"username": username, "password": password})

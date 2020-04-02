@@ -89,6 +89,6 @@ class POC(Script):
                     return
             except aiosmtplib.SMTPException as e:
                 pass
-            await asyncio.sleep(10)
+            await asyncio.sleep(1)
             n -= 1
 

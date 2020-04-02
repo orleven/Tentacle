@@ -144,13 +144,13 @@ class Script(object):
         logger.error("File is not exist: %s" %filename)
         return None
 
-    def ceye_dns_api(self, t='url'):
+    def ceye_dns_api(self, k='test', t='url'):
         '''
         curl ssrf
         :param t:
         :return:
         '''
-        return _ceye_dns_api(t=t)
+        return _ceye_dns_api(k=k, t=t)
 
     def ceye_verify_api(self, filter, t='dns'):
         '''

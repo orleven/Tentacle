@@ -310,7 +310,7 @@ async def _ceye_verify_api(filter, t = 'dns'):
                     return True
     return False
 
-def _ceye_dns_api(t = 'url'):
+def _ceye_dns_api(k='test', t = 'url'):
     '''
 
     :return:  identifier
@@ -320,8 +320,8 @@ def _ceye_dns_api(t = 'url'):
     except KeyError:
         logger.error("Load tentacle config error: ceye_api, please check the config in tentacle.conf.")
         return None
-    target = random_string() + '.'+identifier
-    if t == 'url':
+    target = random_string() + '.' + k + '.'  +identifier
+    if t == 'url' or t =='http':
         return "http://" + target
     else:
         return target

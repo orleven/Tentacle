@@ -23,7 +23,8 @@ class POC(Script):
         # socks proxy
         proxy = 'socks5://{}:{}'.format(self.target_host, str(self.target_port))
         connector = SocksConnector.from_url(proxy)
-        url = self.ceye_dns_api(t='url')
+        url = self.ceye_dns_api(k='proxyunauth',t='url')
+
         async with ClientSession(connector=connector) as session:
             async with session.options(url=url) as res1:
                 if res1:
