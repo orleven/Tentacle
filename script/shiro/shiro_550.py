@@ -129,7 +129,7 @@ class POC(Script):
                 #             break
                 if await self.ceye_verify_api(dns, 'dns'):
                     self.flag = 1
-                    self.res.append({"info": url, "key": keylist[i]})
+                    self.res.append({"info": url, "key": dns})
 
 
 

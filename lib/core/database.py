@@ -127,7 +127,7 @@ class TaskDataDB(Database):
                     if retries == 0:
                         warnMsg = "there has been a problem while writing to "
                         warnMsg += "the session file ('%s')" % get_safe_ex_string(ex)
-                        logger.warn(warnMsg)
+                        logger.warning(warnMsg)
 
                     if retries >= 3:
                         return

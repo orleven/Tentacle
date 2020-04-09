@@ -160,6 +160,7 @@ _file_dic = {
     "error.log": None,
     "debug.log": None,
     "sql.log": None,
+    "grafana": None,
 }
 
 class POC(Script):
