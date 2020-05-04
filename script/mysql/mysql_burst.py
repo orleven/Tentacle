@@ -3,7 +3,10 @@
 # @author = 'orleven'
 
 import aiomysql
-from script import Script, SERVICE_PORT_MAP
+from lib.core.enums import VUL_LEVEL
+from lib.core.enums import VUL_TYPE
+from lib.core.enums import SERVICE_PORT_MAP
+from script import Script
 
 class POC(Script):
     def __init__(self, target=None):
@@ -11,8 +14,8 @@ class POC(Script):
         self.name = 'mysql burst'
         self.keyword = ['mysql', 'burst']
         self.info = 'Burst mysql weakpass.'
-        self.type = 'weakpass'
-        self.level = 'high'
+        self.type = VUL_TYPE.WEAKPASS
+        self.level = VUL_LEVEL.HIGH
         Script.__init__(self, target=target, service_type=self.service_type)
 
 

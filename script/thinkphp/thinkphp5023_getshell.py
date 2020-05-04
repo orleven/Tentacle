@@ -4,7 +4,10 @@
 
 from urllib import parse
 from lib.utils.connect import ClientSession
-from script import Script, SERVICE_PORT_MAP
+from lib.core.enums import VUL_LEVEL
+from lib.core.enums import VUL_TYPE
+from lib.core.enums import SERVICE_PORT_MAP
+from script import Script
 
 class POC(Script):
     '''
@@ -17,8 +20,8 @@ class POC(Script):
         self.name = 'thinkphp 5.0.23 getshell'
         self.keyword = ['thinkphp']
         self.info = 'thinkphp 5.0.23 getshell'
-        self.type = 'rce'
-        self.level = 'high'
+        self.type = VUL_TYPE.RCE
+        self.level = VUL_LEVEL.HIGH
         Script.__init__(self, target=target, service_type=self.service_type)
 
     async def prove(self):

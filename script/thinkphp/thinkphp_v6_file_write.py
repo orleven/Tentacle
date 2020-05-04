@@ -1,7 +1,10 @@
 
 import random
 from lib.utils.connect import ClientSession
-from script import Script, SERVICE_PORT_MAP
+from lib.core.enums import VUL_LEVEL
+from lib.core.enums import VUL_TYPE
+from lib.core.enums import SERVICE_PORT_MAP
+from script import Script
 
 class POC(Script):
 
@@ -11,7 +14,7 @@ class POC(Script):
         self.keyword = ['thinkphp']
         self.info = 'thinkphp v6 file write'
         self.type = 'other'
-        self.level = 'high'
+        self.level = VUL_LEVEL.HIGH
         self.refer = ''
         Script.__init__(self, target=target, service_type=self.service_type)
 

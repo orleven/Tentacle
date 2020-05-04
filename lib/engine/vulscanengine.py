@@ -104,6 +104,8 @@ class VulScanEngine(Engine):
                     'target_port': poc.target_port,
                     'url': poc.url,
                     'base_url': poc.base_url,
+                    'level': poc.level,
+                    'type': poc.type,
                     "req": poc.req,
                     "res": poc.res,
                     "other": poc.other,

@@ -3,7 +3,10 @@
 # @author: 'orleven'
 
 from lib.utils.connect import ClientSession
-from script import Script, SERVICE_PORT_MAP, VUL_TYPE, VUL_LEVEL
+from lib.core.enums import VUL_LEVEL
+from lib.core.enums import VUL_TYPE
+from lib.core.enums import SERVICE_PORT_MAP
+from script import Script, VUL_TYPE, VUL_LEVEL
 
 class POC(Script):
     def __init__(self, target=None):
@@ -12,7 +15,7 @@ class POC(Script):
         self.keyword = ['web']
         self.info = 'Cross Site Tracing (XST)'
         self.type = VUL_TYPE.CST
-        self.level = VUL_LEVEL.LOW
+        self.level = VUL_LEVEL.LOWER
         Script.__init__(self, target=target, service_type=self.service_type)
 
     async def prove(self):

@@ -3,7 +3,10 @@
 # @author = 'orleven'
 
 from lib.utils.connect import ClientSession
-from script import Script, SERVICE_PORT_MAP, VUL_LEVEL, VUL_TYPE
+from lib.core.enums import VUL_LEVEL
+from lib.core.enums import VUL_TYPE
+from lib.core.enums import SERVICE_PORT_MAP
+from script import Script, VUL_LEVEL, VUL_TYPE
 
 class POC(Script):
     def __init__(self, target=None):

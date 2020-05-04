@@ -65,9 +65,11 @@ def show_task(args):
                             'target_port': _row[4],
                             'url': _row[5],
                             'module_name': _row[6],
-                            "req": unserialize_object(_row[7]),
-                            "res": unserialize_object(_row[8]),
-                            "other": unserialize_object(_row[9])
+                            'level': _row[7],
+                            'type': _row[8],
+                            "req": unserialize_object(_row[9]),
+                            "res": unserialize_object(_row[10]),
+                            "other": unserialize_object(_row[11])
                         }
 
                         if conf.OUT != None:

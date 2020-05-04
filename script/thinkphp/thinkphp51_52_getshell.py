@@ -4,7 +4,10 @@
 
 from lib.utils.connect import ClientSession
 from urllib import parse
-from script import Script, SERVICE_PORT_MAP
+from lib.core.enums import VUL_LEVEL
+from lib.core.enums import VUL_TYPE
+from lib.core.enums import SERVICE_PORT_MAP
+from script import Script
 
 class POC(Script):
     '''
@@ -16,8 +19,8 @@ class POC(Script):
         self.name = 'thinkphp 51~52_getshell'
         self.keyword = ['thinkphp']
         self.info = 'thinkphp 51~52_getshell'
-        self.type = 'rce'
-        self.level = 'high'
+        self.type = VUL_TYPE.RCE
+        self.level = VUL_LEVEL.HIGH
         self.refer = 'http://115.198.56.141:19300/wordpress/index.php/2019/01/15/thinkphp5-1-5-2-rec/'
         Script.__init__(self, target=target, service_type=self.service_type)
 

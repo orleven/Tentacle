@@ -5,7 +5,10 @@
 import json
 from aiohttp import FormData
 from lib.utils.connect import ClientSession
-from script import Script, SERVICE_PORT_MAP
+from lib.core.enums import VUL_LEVEL
+from lib.core.enums import VUL_TYPE
+from lib.core.enums import SERVICE_PORT_MAP
+from script import Script
 
 class POC(Script):
     def __init__(self, target=None):
@@ -14,7 +17,7 @@ class POC(Script):
         self.keyword = ['web', 'kindeditor', 'upload', 'json']
         self.info = 'Kindeditor <= 4.1.12 upload'
         self.type = 'upload'
-        self.level = 'medium'
+        self.level = VUL_LEVEL.MEDIUM
         self.refer = 'https://github.com/kindsoft/kindeditor/issues/249'
         Script.__init__(self, target=target, service_type=self.service_type)
 

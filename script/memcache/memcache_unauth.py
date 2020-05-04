@@ -3,7 +3,10 @@
 # @author: 'orleven'
 
 from lib.utils.connect import open_connection
-from script import Script, SERVICE_PORT_MAP
+from lib.core.enums import VUL_LEVEL
+from lib.core.enums import VUL_TYPE
+from lib.core.enums import SERVICE_PORT_MAP
+from script import Script
 
 class POC(Script):
     def __init__(self, target=None):
@@ -11,8 +14,8 @@ class POC(Script):
         self.name = 'memcache unauth'
         self.keyword = ['memcache', 'unauth']
         self.info = 'Memcache unauth.'
-        self.type = 'unauth'
-        self.level = 'high'
+        self.type = VUL_TYPE.UNAUTH
+        self.level = VUL_LEVEL.HIGH
         Script.__init__(self, target=target, service_type=self.service_type)
 
     async def prove(self):

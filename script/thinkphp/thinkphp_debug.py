@@ -1,6 +1,9 @@
 
 from lib.utils.connect import ClientSession
-from script import Script, SERVICE_PORT_MAP
+from lib.core.enums import VUL_LEVEL
+from lib.core.enums import VUL_TYPE
+from lib.core.enums import SERVICE_PORT_MAP
+from script import Script
 
 class POC(Script):
 
@@ -9,8 +12,8 @@ class POC(Script):
         self.name = 'thinkphp debug'
         self.keyword = ['thinkphp']
         self.info = 'thinkphp debug'
-        self.type = 'info'
-        self.level = 'info'
+        self.type = VUL_TYPE.INFO
+        self.level = VUL_LEVEL.INFO
         self.refer = ''
         Script.__init__(self, target=target, service_type=self.service_type)
 

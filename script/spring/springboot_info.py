@@ -3,7 +3,10 @@
 # @author: 'orleven'
 
 from lib.utils.connect import ClientSession
-from script import Script, SERVICE_PORT_MAP
+from lib.core.enums import VUL_LEVEL
+from lib.core.enums import VUL_TYPE
+from lib.core.enums import SERVICE_PORT_MAP
+from script import Script
 
 _file_dic = {
     "overview": None,
@@ -56,8 +59,8 @@ class POC(Script):
         self.name = 'spring info'
         self.keyword = ['web']
         self.info = 'spring info'
-        self.type = 'info'
-        self.level = 'low'
+        self.type = VUL_TYPE.INFO
+        self.level = VUL_LEVEL.LOWER
         Script.__init__(self, target=target, service_type=self.service_type)
 
     async def prove(self):

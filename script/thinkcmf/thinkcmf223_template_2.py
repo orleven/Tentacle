@@ -3,7 +3,10 @@
 # @author: 'orleven'
 
 from lib.utils.connect import ClientSession
-from script import Script, SERVICE_PORT_MAP
+from lib.core.enums import VUL_LEVEL
+from lib.core.enums import VUL_TYPE
+from lib.core.enums import SERVICE_PORT_MAP
+from script import Script
 
 class POC(Script):
     def __init__(self, target=None):
@@ -11,8 +14,8 @@ class POC(Script):
         self.name = 'thinkcmf 2.2.3 template inject'
         self.keyword = ['thinkcmf', 'php']
         self.info = 'thinkcmf 2.2.3 template inject'
-        self.type = 'rce'
-        self.level = 'high'
+        self.type = VUL_TYPE.RCE
+        self.level = VUL_LEVEL.HIGH
         self.refer = 'https://xz.aliyun.com/t/3529'
         Script.__init__(self, target=target, service_type=self.service_type)
 

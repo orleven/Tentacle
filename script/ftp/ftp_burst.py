@@ -3,7 +3,10 @@
 # @author: 'orleven'
 
 import aioftp
-from script import Script, SERVICE_PORT_MAP
+from lib.core.enums import VUL_LEVEL
+from lib.core.enums import VUL_TYPE
+from lib.core.enums import SERVICE_PORT_MAP
+from script import Script
 
 class POC(Script):
     def __init__(self, target=None):
@@ -11,8 +14,8 @@ class POC(Script):
         self.name = 'ftp burst'
         self.keyword = ['FTP','weakpasss']
         self.info = 'FTP burst'
-        self.type = 'rce'
-        self.level = 'high'
+        self.type = VUL_TYPE.RCE
+        self.level = VUL_LEVEL.HIGH
         Script.__init__(self, target=target, service_type=self.service_type)
 
     async def prove(self):

@@ -41,11 +41,11 @@ class PROTOCOL:
 class SEARCH_ERROR:
     END = 10000
     UNKNOWN = 100001
-    TIMEOUT =   100002
+    TIMEOUT = 100002
 
 class VUL_LEVEL:
     INFO = 'Info'
-    LOW = 'Lower'
+    LOWER= 'Lower'
     MEDIUM = 'Medium'
     HIGH = 'High'
     CRITICAL = 'Critical'
@@ -60,6 +60,9 @@ class VUL_TYPE:
     BYPASS = 'Bypass'
     LFI = 'LFI'
     XXE = 'XXE'
+    SQL = 'SQL'
+    URL = "URL"
+
 
 class SERVICE_PORT_MAP:
     FTP = ('FTP', 21)

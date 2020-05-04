@@ -4,7 +4,10 @@
 
 import itertools
 from lib.utils.connect import ClientSession
-from script import Script, SERVICE_PORT_MAP
+from lib.core.enums import VUL_LEVEL
+from lib.core.enums import VUL_TYPE
+from lib.core.enums import SERVICE_PORT_MAP
+from script import Script
 
 class POC(Script):
     def __init__(self, target=None):
@@ -12,8 +15,8 @@ class POC(Script):
         self.name = 'dedecms win manager'
         self.keyword = ['dedecms', 'win', 'manager']
         self.info = 'Find manager for dedecms'
-        self.type = 'burst'
-        self.level = 'medium'
+        self.type = VUL_LEVEL.MEDIUM
+        self.level = VUL_LEVEL.INFO
         self.refer = 'https://xz.aliyun.com/t/2064'
         Script.__init__(self, target=target, service_type=self.service_type)
 

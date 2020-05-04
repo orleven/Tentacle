@@ -3,7 +3,10 @@
 # @author: 'orleven'
 
 from lib.utils.connect import ClientSession
-from script import Script, SERVICE_PORT_MAP
+from lib.core.enums import VUL_LEVEL
+from lib.core.enums import VUL_TYPE
+from lib.core.enums import SERVICE_PORT_MAP
+from script import Script
 
 _file_dic = {
     ".babelrc": None,
@@ -161,6 +164,8 @@ _file_dic = {
     "debug.log": None,
     "sql.log": None,
     "grafana": None,
+    "axis2/services/AdminService?wsdl": None,
+    "services/AdminService?wsdl": None,
 }
 
 class POC(Script):
@@ -169,8 +174,8 @@ class POC(Script):
         self.name = 'info file'
         self.keyword = ['web']
         self.info = 'info file'
-        self.type = 'info'
-        self.level = 'low'
+        self.type = VUL_TYPE.INFO
+        self.level = VUL_LEVEL.LOWER
         Script.__init__(self, target=target, service_type=self.service_type)
 
     async def prove(self):

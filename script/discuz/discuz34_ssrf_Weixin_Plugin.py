@@ -6,7 +6,10 @@ import random
 import asyncio
 from string import ascii_lowercase
 from lib.utils.connect import ClientSession
-from script import Script, SERVICE_PORT_MAP
+from lib.core.enums import VUL_LEVEL
+from lib.core.enums import VUL_TYPE
+from lib.core.enums import SERVICE_PORT_MAP
+from script import Script
 
 class POC(Script):
     def __init__(self, target=None):
@@ -14,8 +17,8 @@ class POC(Script):
         self.name = 'discuz x3.4 ssrf'
         self.keyword = ['discuz']
         self.info = 'discuz x3.4 ssrf'
-        self.type = 'ssrf'
-        self.level = 'high'
+        self.type = VUL_TYPE.SSRF
+        self.level = VUL_LEVEL.HIGH
         self.refer = 'https://zhuanlan.zhihu.com/p/51907363, https://www.seebug.org/vuldb/ssvid-97709'
         Script.__init__(self, target=target, service_type=self.service_type)
 
