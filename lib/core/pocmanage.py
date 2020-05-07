@@ -14,13 +14,13 @@ from lib.core.common import get_safe_ex_string
 
 class POCManager:
 
-    def __init__(self, input_module, input_func, input_parameter):
+    def __init__(self, input_module, input_func, input_parameter, input_exclude_module):
         self.modules_name = None
         self.func_name = None
         self.parameter = None
         if conf['show']:
             self.show()
-        self._module_register(input_module)
+        self._module_register(input_module, input_exclude_module)
         self._function_register(input_func)
         self._parameter_register(input_parameter)
         self.modules = []
@@ -50,7 +50,7 @@ class POCManager:
         msg += '-----------------------------------------------------------\r\n'
         sys.exit(logger.sysinfo(msg))
 
-    def _module_register(self, input_module):
+    def _module_register(self, input_module, input_exclude_module):
         _len = len(paths.ROOT_PATH) + 1
 
         if not input_module:
@@ -111,9 +111,58 @@ class POCManager:
                         msg = 'Module is\'t exist: %s (%s)' % (_module, _path)
                         logger.error(msg)
 
+
         self.modules_name = modules
         logger.debug("Set module: %s" % input_module)
+
+        if input_exclude_module:
+            self._exclude_module_register(input_exclude_module)
+            logger.debug("Set Exclude module: %s" % input_module)
+
         return self.modules_name
+
+    def _exclude_module_register(self, input_exclude_module):
+        _len = len(paths.ROOT_PATH) + 1
+
+        # -m test,./script/test.py,@www
+        for _module in input_exclude_module.split(','):
+
+            # @www
+            if _module.startswith("@"):
+                if _module[1:] == 'special':
+                    _path = os.path.join(paths.SPECIAL_SCRIPT_PATH, _module[1:], '*.py')
+                else:
+                    _path = os.path.join(paths.SCRIPT_PATH, _module[1:], '*.py')
+
+                module_name_list = glob.glob(_path)
+
+                if len(module_name_list) == 0:
+                    msg = 'Module is not exist: %s (%s)' % (_module, _path)
+                    logger.error(msg)
+                else:
+                    for each in module_name_list:
+                        if '__init__' in each:
+                            continue
+                        self.modules_name.remove('.'.join(re.split('[\\\\/]', each[_len:-3])))
+
+            else:
+                if not _module.endswith('.py'):
+                    _module += '.py'
+
+                # handle input: "-m ./script/test.py"
+                if os.path.split(_module)[0]:
+                    _path = os.path.abspath(os.path.join(paths.ROOT_PATH, _module))
+
+                # handle input: "-m test"  "-m test.py"
+                else:
+                    _path = os.path.abspath(os.path.join(paths.SCRIPT_PATH, _module))
+
+                if os.path.isfile(_path):
+                    self.modules_name.remove('.'.join(re.split('[\\\\/]', _path[_len:-3])))
+                else:
+                    msg = 'Module is\'t exist: %s (%s)' % (_module, _path)
+                    logger.error(msg)
+
 
     def load(self):
 

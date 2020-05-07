@@ -100,6 +100,7 @@ class VulScanEngine(Engine):
                     "flag": poc.flag,
                     'module_name': module.__name__,
                     'func_name': func_name,
+                    "name": poc.name,
                     'target_host': poc.target_host,
                     'target_port': poc.target_port,
                     'url': poc.url,

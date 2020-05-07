@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
+import os
+from lib.core.data import paths
 from base64 import b64encode
 from lib.utils.connect import ClientSession
 from lib.core.enums import VUL_LEVEL
@@ -24,8 +26,8 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file('dict/tomcat_usernames.txt')
-            passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file('dict/tomcat_passwords.txt')
+            usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file(os.path.join(paths.DICT_PATH, 'tomcat_usernames.txt'))
+            passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file(os.path.join(paths.DICT_PATH, 'tomcat_passwords.txt'))
             async with ClientSession() as session:
                 for url in [
                     self.base_url + 'manager/html',

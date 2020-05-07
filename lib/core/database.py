@@ -90,7 +90,8 @@ class TaskDataDB(Database):
             "id INTEGER PRIMARY KEY, "
             "tid INTEGER, "
             "flag INTEGER, "
-            "target_host TEXT, target_port TEXT,url TEXT, module_name TEXT, level TEXT, type TEXT,"
+            "module_name TEXT, name TEXT, "
+            "target_host TEXT, target_port TEXT,url TEXT, level TEXT, type TEXT,"
             "data TEXT, res TEXT, other TEXT"
             ")")
 
@@ -114,8 +115,9 @@ class TaskDataDB(Database):
                 try:
                     self._cache_lock.acquire()
                     self.execute(
-                        "INSERT INTO storage (tid,flag,target_host,target_port,url,module_name,level,type,data,res,other) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                        (data['id'], data['flag'], data['target_host'], data['target_port'], data['url'], data['module_name'], data['level'], data['type'],
+                        "INSERT INTO storage (tid,flag,module_name, name, target_host,target_port,url,level,type,data,res,other) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        (data['id'], data['flag'], data['module_name'], data['name'],
+                         data['target_host'], data['target_port'], data['url'], data['level'], data['type'],
                          serialize_object(data['req']), serialize_object(data['res']),
                          serialize_object(data['other'])))
                 except sqlite3.DatabaseError as ex:

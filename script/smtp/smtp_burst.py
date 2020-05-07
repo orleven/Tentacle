@@ -5,6 +5,8 @@
 import os
 import asyncio
 import aiosmtplib
+import os
+from lib.core.data import paths
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
@@ -30,9 +32,9 @@ class POC(Script):
 
     async def prove(self):
         usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file(
-            'dict/smtp_usernames.txt')
+            os.path.join(paths.DICT_PATH, 'smtp_usernames.txt'))
         passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file(
-            'dict/smtp_passwords.txt')
+            os.path.join(paths.DICT_PATH, 'smtp_passwords.txt'))
         async for (username, password) in self.generate_dict(usernamedic, passworddic):
             if self.target_port == 465:
                 use_tls = True

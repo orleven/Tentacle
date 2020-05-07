@@ -36,7 +36,7 @@ def start(args):
     database.init()
     database.insert_task(name, args, TASK_STATUS.TASK_INIT_STATUS, get_time())
     tm = TargetManager(args)
-    pm = POCManager(args.module, args.function, args.parameter)
+    pm = POCManager(args.module, args.function, args.parameter, args.exclude_module)
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     ignore_aiohttp_ssl_eror(loop)

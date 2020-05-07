@@ -3,6 +3,8 @@
 # @author: 'orleven'
 
 import aioftp
+import os
+from lib.core.data import paths
 from lib.core.enums import VUL_LEVEL
 from lib.core.enums import VUL_TYPE
 from lib.core.enums import SERVICE_PORT_MAP
@@ -21,8 +23,8 @@ class POC(Script):
     async def prove(self):
         anonymous = False
         flag = 3
-        usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file('dict/ftp_usernames.txt')
-        passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file('dict/ftp_passwords.txt')
+        usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file(os.path.join(paths.DICT_PATH, 'ftp_usernames.txt'))
+        passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file(os.path.join(paths.DICT_PATH, 'ftp_passwords.txt'))
         async for (username, password) in self.generate_dict(usernamedic, passworddic):
             try:
                 if username == 'anonymous':

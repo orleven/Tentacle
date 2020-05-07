@@ -6,6 +6,8 @@ import asyncio
 import struct
 import hashlib
 import base64
+import os
+from lib.core.data import paths
 from lib.utils.connect import open_connection
 from lib.core.enums import VUL_LEVEL
 from lib.core.enums import VUL_TYPE
@@ -75,9 +77,9 @@ class POC(Script):
         payload1 = struct.pack("!8s5ss", bytes("@RSYNCD:", 'utf-8'),bytes(" 30.0", 'utf-8'), bytes("\r\n", 'utf-8'))
         payload2 = (cmd + '\r\n').encode('utf-8')
         usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file(
-            'dict/rsync_usernames.txt')
+            os.path.join(paths.DICT_PATH, 'rsync_usernames.txt'))
         passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file(
-            'dict/rsync_passwords.txt')
+            os.path.join(paths.DICT_PATH, 'rsync_passwords.txt'))
         async for (username, password) in self.generate_dict(usernamedic, passworddic):
             try:
                 reader1, writer1 = await open_connection(self.target_host, self.target_port)

@@ -18,14 +18,6 @@ class Script(object):
 
     def __init__(self, target=None, service_type=SERVICE_PORT_MAP.WEB, priority=5):
         self.service_type = service_type
-        self.name = 'Basic script'
-        self.keyword = ['Basic script']
-        self.info = 'Basic script'
-        self.refer = 'Basic script'
-        self.repair = 'Basic script'
-        self.vul_type = VUL_TYPE.INFO
-        self.vul_level = VUL_LEVEL.INFO
-
         self.target = target
         self.priority = priority
         self.parameter = {}

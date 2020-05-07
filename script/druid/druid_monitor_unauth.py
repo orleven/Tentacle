@@ -34,7 +34,8 @@ class POC(Script):
                 for path in path_list:
                     async with session.get(url=path, allow_redirects=False) as res:
                         if res and res.status == 200:
-                            text = await res.text().lower()
+                            text = await res.text()
+                            text = text.lower()
                             if 'druid stat index' in text or "druidversion" in text or 'druid indexer' in text:
                                 self.flag = 1
                                 self.res.append({"info": path, "key": "druid-monitor-unauth"})

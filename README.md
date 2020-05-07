@@ -56,6 +56,7 @@ python3 tentacle.py -iS 127.0.0.1 -m script/web/web_status                    # 
 python3 tentacle.py -iS 127.0.0.1 -m @web                                     # Load all module of web path
 python3 tentacle.py -iS 127.0.0.1 -m script/web/web_status,@web               # Load all module of web path and web_status module
 python3 tentacle.py -iS 127.0.0.1 -m "*"                                      # Load all module of script path
+python3 tentacle.py -iS 127.0.0.1 -m "*" -e "@web                             # Load all module of script path, exclude all module of web path
 
 # Set port scan scope
 python3 tentacle.py -iS 127.0.0.1 -m script/web/web_status                    # Scan top 150 ports and then perform bulk vulnerability verification for multiple targets.

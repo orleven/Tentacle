@@ -3,6 +3,8 @@
 # @author: 'orleven'
 
 from base64 import b64encode
+import os
+from lib.core.data import paths
 from lib.utils.connect import ClientSession
 from lib.core.enums import VUL_LEVEL
 from lib.core.enums import VUL_TYPE
@@ -22,8 +24,8 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file('dict/rabbitmq_usernames.txt')
-            passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file('dict/rabbitmq_passwords.txt')
+            usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file(os.path.join(paths.DICT_PATH, 'rabbitmq_usernames.txt'))
+            passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file(os.path.join(paths.DICT_PATH, 'rabbitmq_passwords.txt'))
             url = self.base_url + 'api/whoami'
             async with ClientSession() as session:
                 async with session.get(url=url) as res:

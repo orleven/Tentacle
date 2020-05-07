@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import aioredis
+import os
+from lib.core.data import paths
 from lib.utils.connect import open_connection
 from lib.core.enums import VUL_LEVEL
 from lib.core.enums import VUL_TYPE
@@ -26,7 +27,7 @@ class POC(Script):
         data = str(await reader.read(1024))
         if 'Authentication' in data:
             passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file(
-                'dict/redis_passwords.txt')
+                os.path.join(paths.DICT_PATH, 'redis_passwords.txt'))
             for password in passworddic:
                 password = password.replace('\r', '').replace('\n', '')
                 message = 'AUTH {}\r\n'.format(password)

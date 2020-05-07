@@ -37,7 +37,8 @@ def arg_set(parser):
     port.add_argument("-lP", "--limit_port_scan", action='store', help="Limit port scope scan, e.g 80-100,8080,top100,*", default=None)
 
     module = parser.add_argument_group('Module')
-    module.add_argument("-m", "--module", help="Load script module", default=False, action='store')
+    module.add_argument("-m", "--module", help="Load script module", default=None, action='store')
+    module.add_argument("-e", "--exclude_module", help="Exclude script module ", default=None, action='store')
     module.add_argument("-f", "--function", help="Load function of script module, e.g show,prove", default='prove', action='store')
     module.add_argument("-p", "--parameter", help="Load data for function of module, e.g. -p \"U=username.txt&P=password.txt\"", default=False, action='store')
     module.add_argument("--show", action='store_true', help="Show all poc scripts module", default=False)
@@ -55,7 +56,7 @@ def arg_set(parser):
 def handle(parser):
     banner()
     args = parser.parse_args()
-    paths.ROOT_PATH  = os.path.dirname(os.path.realpath(__file__))
+    paths.ROOT_PATH = os.path.dirname(os.path.realpath(__file__))
     initialize(args)
     if args.help:
         parser.print_help()

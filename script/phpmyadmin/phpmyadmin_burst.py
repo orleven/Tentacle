@@ -4,6 +4,8 @@
 
 import re
 import urllib.request
+import os
+from lib.core.data import paths
 from lib.utils.connect import ClientSession
 from lib.core.enums import VUL_LEVEL
 from lib.core.enums import VUL_TYPE
@@ -25,8 +27,8 @@ class POC(Script):
         await self.get_url()
         if self.base_url:
             flag_list = ['src="navigation.php', 'frameborder="0" id="frame_content"', 'id="li_service_type">','class="disableAjax" title=']
-            usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file('dict/phpmyadmin_usernames.txt')
-            passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file('dict/phpmyadmin_passwords.txt')
+            usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file(os.path.join(paths.DICT_PATH, 'phpmyadmin_usernames.txt'))
+            passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file(os.path.join(paths.DICT_PATH, 'phpmyadmin_passwords.txt'))
             path_list = list(set([
                 self.url_normpath(self.base_url, '/'),
                 self.url_normpath(self.url, './phpmyadmin/'),

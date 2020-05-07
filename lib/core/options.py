@@ -61,15 +61,16 @@ def show_task(args):
                             "id": _row[0],
                             "tid": _row[1],
                             "flag": _row[2],
-                            'target_host': _row[3],
-                            'target_port': _row[4],
-                            'url': _row[5],
-                            'module_name': _row[6],
-                            'level': _row[7],
-                            'type': _row[8],
-                            "req": unserialize_object(_row[9]),
-                            "res": unserialize_object(_row[10]),
-                            "other": unserialize_object(_row[11])
+                            'module_name': _row[3],
+                            'name': _row[4],
+                            'target_host': _row[5],
+                            'target_port': _row[6],
+                            'url': _row[7],
+                            'level': _row[8],
+                            'type': _row[9],
+                            "req": unserialize_object(_row[10]),
+                            "res": unserialize_object(_row[11]),
+                            "other": unserialize_object(_row[12])
                         }
 
                         if conf.OUT != None:
