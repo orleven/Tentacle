@@ -179,9 +179,10 @@ class Script(object):
                 yield username, password
 
                 # 首位大写也爆破下
-                password2 = password[0].upper() + password[1:]
-                if password2 != password:
-                    yield username, password2
+                if len(password) > 2:
+                    password2 = password[0].upper() + password[1:]
+                    if password2 != password:
+                        yield username, password2
 
 
 
