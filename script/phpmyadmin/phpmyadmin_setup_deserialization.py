@@ -25,9 +25,11 @@ class POC(Script):
                 self.url_normpath(self.base_url, '/'),
                 self.url_normpath(self.url, './phpmyadmin/'),
                 self.url_normpath(self.base_url, '/phpmyadmin/'),
-                self.url_normpath(self.url, './pmd/'),
-                self.url_normpath(self.base_url, '/pmd/'),
+                self.url_normpath(self.url, './pma/'),
+                self.url_normpath(self.base_url, '/pma/'),
                 self.url_normpath(self.url, './'),
+                self.url_normpath(self.url, './phpMyAdmin/'),
+                self.url_normpath(self.base_url, '/phpMyAdmin/'),
             ]))
             headers = {"Content-Type": "application/x-www-form-urlencoded"}
             async with ClientSession() as session:

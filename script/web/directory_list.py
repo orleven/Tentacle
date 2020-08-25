@@ -40,6 +40,12 @@ class POC(Script):
                     self.url_normpath(self.base_url, '/'),
                     self.url_normpath(self.url, './'),
                     self.url_normpath(self.url, '../'),
+                    self.url_normpath(self.base_url, '/css/'),
+                    self.url_normpath(self.url, './css/'),
+                    self.url_normpath(self.url, '../css/'),
+                    self.url_normpath(self.base_url, '/js/'),
+                    self.url_normpath(self.url, './js/'),
+                    self.url_normpath(self.url, '../js/'),
                 ]))
                 for path in path_list:
                     url = path
