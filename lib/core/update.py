@@ -4,6 +4,7 @@
 
 import os
 import re
+import sys
 import subprocess
 from lib.core.data import paths
 from lib.core.data import logger

@@ -12,7 +12,7 @@ class POC(Script):
     def __init__(self, target=None):
         self.service_type = SERVICE_PORT_MAP.DUBBO
         self.name = 'git info'
-        self.keyword = ['dubbo']
+        self.keyword = ['git']
         self.info = 'git info'
         self.type = VUL_TYPE.INFO
         self.level = VUL_LEVEL.INFO
