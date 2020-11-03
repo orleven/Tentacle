@@ -11,9 +11,9 @@ from script import Script
 class POC(Script):
     def __init__(self, target=None):
         self.service_type = SERVICE_PORT_MAP.WEB
-        self.name = 'ecology bsh'
-        self.keyword = ['ecology', 'bsh']
-        self.info = 'ecology bsh'
+        self.name = 'weaver bsh'
+        self.keyword = ['weaver', 'bsh']
+        self.info = 'weaver bsh'
         self.type = VUL_TYPE.RCE
         self.level = VUL_LEVEL.HIGH
         Script.__init__(self, target=target, service_type=self.service_type)
@@ -39,5 +39,5 @@ class POC(Script):
                             if 'beanshell' in text:
                                 self.flag = 1
                                 self.req.append({"url": url})
-                                self.res.append({"info": url, "key": "ecology bsh"})
+                                self.res.append({"info": url, "key": "weaver bsh"})
                                 return

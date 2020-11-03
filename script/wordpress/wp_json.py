@@ -11,9 +11,9 @@ from script import Script, VUL_TYPE, VUL_LEVEL
 class POC(Script):
     def __init__(self, target=None):
         self.service_type = SERVICE_PORT_MAP.WEB
-        self.name = 'druid-monitor-unauth'
-        self.keyword = ['web', 'druid']
-        self.info = 'druid-monitor-unauth'
+        self.name = 'wp-json unauth'
+        self.keyword = ['web', 'wordpress']
+        self.info = 'wp-json-unauth'
         self.type = VUL_TYPE.UNAUTH
         self.level = VUL_LEVEL.HIGH
         self.repair = ''
@@ -26,25 +26,18 @@ class POC(Script):
         if self.base_url != None:
             async with ClientSession() as session:
                 path_list = list(set([
-                    self.url_normpath(self.base_url, 'druid/'),
                     self.url_normpath(self.base_url, './'),
-                    self.url_normpath(self.base_url, 'server/druid/'),
-                    self.url_normpath(self.base_url, 'api/saas/apisvr/'),
                     self.url_normpath(self.url, './'),
-                    self.url_normpath(self.url, 'druid/'),
-                    self.url_normpath(self.url, 'server/druid/'),
-                    self.url_normpath(self.url, 'api/saas/apisvr/'),
 
                 ]))
-                file_list = ['console.html', 'sql.html', 'index.html']
+                file_list = ['wp-json', 'wp-json/wp/v2/users']
                 for path in path_list:
                     for file in file_list:
                         url = path+file
-                        async with session.get(url=path+file, allow_redirects=False) as res:
+                        async with session.get(url=url, allow_redirects=False, timeout=30) as res:
                             if res and res.status == 200:
                                 text = await res.text()
                                 text = text.lower()
-                                if 'druid stat index' in text or "druidversion" in text or 'druid indexer' in text or 'druid sql stat' in text or 'druid monitor' in text:
+                                if 'wp-json' in text and "description" in text and ('avatar_urls' in text or 'namespace' in text):
                                     self.flag = 1
-                                    self.res.append({"info": url, "key": "druid-monitor-unauth"})
-                                    return
+                                    self.res.append({"info": url, "key": "wp-json-unauth"})

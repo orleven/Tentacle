@@ -47,8 +47,7 @@ class POC(Script):
                                             if res1.status != 401:
                                                 self.flag = 1
                                                 self.res.append({"info": username + "/" + password,
-                                                                 "key": "Authorization: " + ":".join(
-                                                                     [username, password])})
+                                                                 "key": "Authorization: Basic " + key})
                                                 return
                                                 # text1 = await res1.text()
                                                 # if 'Applications' in text1 or 'Dubbo' in text1 or 'Tomcat' in text1:

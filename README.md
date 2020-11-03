@@ -31,10 +31,10 @@ When you run it for the first time, the configuration file `conf/tentacle.conf` 
 # Show help for tentacle.
 python3 tentacle.py --help
 
-# Show all modual, and you can see it in `script` path.
+# Show all modules, and you can see it in `script` path.
 python3 tentacle.py --show
 
-# Show all function of module by -f show or -f help
+# Show all function of modules by -f show or -f help
 python3 tentacle.py -m script/web/web_status -f show
 python3 tentacle.py -m script/web/web_status -f help
 
@@ -51,7 +51,7 @@ python3 tentacle.py -m script/web/web_status -sd 'apache'                     # 
 python3 tentacle.py -m script/web/web_status -ze 'app:weblogic'               # Load target by zoomeye api
 python3 tentacle.py -m script/web/web_status -ff 'domain="example.com"'       # Load target by fofa api
 
-# Load modual by -m (e.g. script/info/web_status,@web)
+# Load modules by -m (e.g. script/info/web_status,@web)
 python3 tentacle.py -iS 127.0.0.1 -m script/web/web_status                    # Load web_status module
 python3 tentacle.py -iS 127.0.0.1 -m @web                                     # Load all module of web path
 python3 tentacle.py -iS 127.0.0.1 -m script/web/web_status,@web               # Load all module of web path and web_status module
@@ -63,7 +63,7 @@ python3 tentacle.py -iS 127.0.0.1 -m script/web/web_status                    # 
 python3 tentacle.py -iS 127.0.0.1 -m script/web/web_status -sP                # Skip port scan and then it will try the default port number server
 python3 tentacle.py -iS 127.0.0.1 -m script/web/web_status -lP 80-90,443      # Scan 80-90 ports and 443 port and then perform bulk vulnerability verification for multiple targets.
 
-# Use function of modual by -m and -f  (e.g. -m web_status -f prove), and you should make sure the function of module is exist.
+# Use function of modules by -m and -f  (e.g. -m web_status -f prove), and you should make sure the function of module is exist.
 python3 tentacle.py -m script/web/web_status -f prove
 
 # Show task's result by -tS 

@@ -31,7 +31,7 @@ class POC(Script):
                     async with session.get(url=url) as res:
                         if res:
                             text = await res.text()
-                            if res.status is 200 and 'Apache Tomcat Examples' in text:
+                            if res.status == 200 and 'Apache Tomcat Examples' in text:
                                 self.flag = 1
                                 self.req.append({"page": 'tomcat page'})
                                 self.res.append({"info": url, "key": "tomcat page"})
@@ -43,7 +43,7 @@ class POC(Script):
                                 self.flag = 1
                                 self.req.append({"page": 'tomcat page'})
                                 self.res.append({"info": url, "key": "tomcat page"})
-                            elif res.status is 200 and 'Documentation' in text and 'Apache Software Foundation' in text and 'tomcat' in text:
+                            elif res.status == 200 and 'Documentation' in text and 'Apache Software Foundation' in text and 'tomcat' in text:
                                 self.flag = 1
                                 self.req.append({"page": 'tomcat page'})
                                 self.res.append({"info": url, "key": "tomcat page"})

@@ -36,7 +36,7 @@ class POC(Script):
                             async with session.get(url=url, headers=headers) as res1:
                                 if res1 and res1.status != 401:
                                     text1 = await res1.text()
-                                    if 'Console' in text1:
+                                    if 'Console' in text1 or (username in text1 and 'name' in text1) or 'auth_backend' in text1:
                                         self.flag = 1
                                         self.req.append({"username": username, "password": password})
                                         self.res.append({"info": username + "/" + password,

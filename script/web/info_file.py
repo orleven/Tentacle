@@ -205,20 +205,23 @@ class POC(Script):
                     for key in _file_dic.keys():
                         url = path + key
                         async with session.get(url=url, allow_redirects=False) as response:
-                            if response != None:
-                                if response.status == 200:
-                                    # Replace the main factors affecting 404 pages to reduce false positives
-                                    text = await response.text()
-                                    text = text.replace(key, '')
-                                    # text = await response.content.read(read_length)
+                            try:
+                                if response != None:
+                                    if response.status == 200:
+                                        # Replace the main factors affecting 404 pages to reduce false positives
+                                        text = await response.text()
+                                        text = text.replace(key, '')
+                                        # text = await response.content.read(read_length)
 
-                                    if _file_dic[key] == None:
-                                        length = len(text)
-                                        if abs(length-length1) > fix_length and abs(length-length2) > fix_length:
-                                            self.flag = 1
-                                            self.res.append({"info": url, "key": 'info file'})
-                                    else:
-                                        text = str(text)
-                                        if _file_dic[key] in text.lower():
-                                            self.flag = 1
-                                            self.res.append({"info": url, "key": 'info file'})
+                                        if _file_dic[key] == None:
+                                            length = len(text)
+                                            if abs(length-length1) > fix_length and abs(length-length2) > fix_length:
+                                                self.flag = 1
+                                                self.res.append({"info": url, "key": 'info file'})
+                                        else:
+                                            text = str(text)
+                                            if _file_dic[key] in text.lower():
+                                                self.flag = 1
+                                                self.res.append({"info": url, "key": 'info file'})
+                            except:
+                                pass
