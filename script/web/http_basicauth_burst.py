@@ -29,13 +29,11 @@ class POC(Script):
             usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file(os.path.join(paths.DICT_PATH, 'tomcat_usernames.txt'))
             passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file(os.path.join(paths.DICT_PATH, 'tomcat_passwords.txt'))
             async with ClientSession() as session:
-                for url in [
-                    self.base_url + 'manager/html',
-                    self.base_url + 'host-manager/html',
-                    self.url_normpath(self.base_url, '/'),
-                    self.url_normpath(self.url, './'),
-                    self.url_normpath(self.url, '../'),
-                ]:
+                for url in self.url_normpath(self.url, [
+                    './manager/html',
+                    './host-manager/html',
+                    './',
+                ]):
                     async with session.get(url=url) as res:
                         if res !=None:
                             if res.status == 401 and 'WWW-Authenticate' in res.headers.keys():

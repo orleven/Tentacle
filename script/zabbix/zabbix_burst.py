@@ -25,17 +25,11 @@ class POC(Script):
         if self.base_url:
             usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file(os.path.join(paths.DICT_PATH, 'zabbix_usernames.txt'))
             passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file(os.path.join(paths.DICT_PATH, 'zabbix_passwords.txt'))
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.url, './zabbix/'),
-                self.url_normpath(self.base_url, '/zabbix/'),
-                self.url_normpath(self.url, './'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, ['./zabbix/', './']):
                     url = path + "index.php"
                     async with session.get(url=url) as res:
-                        if res!=None:
+                        if res!=None and res.status == 200:
                             text = await res.text()
                             if 'zabbix' in text:
                                 async for (username, password) in self.generate_dict(usernamedic, passworddic):

@@ -21,15 +21,12 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url != None:
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.url, './'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
-                    async with session.options(url=path+"testbyme") as response:
+                for url in self.url_normpath(self.url, "./testbyme"):
+                    async with session.options(url=url) as response:
                         if response!=None and 'Allow' in response.headers:
                             allow = response.headers['Allow']
                             self.flag = 1
                             self.req.append({"method": "options"})
                             self.res.append({"info": allow,"key":"OPTIONS"})
+                            return

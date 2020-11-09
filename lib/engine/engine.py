@@ -60,38 +60,3 @@ class Engine(object):
 
     async def enum(self):
         """subclass should override this function for enum"""
-
-  # async def brute_service_password(self, service_record: ServiceRecord):
-    #     #
-    #     # Web-WeakPassword
-    #     #
-    #     async with ClientSession() as session:
-    #         if is_ipv6_address(service_record.host):
-    #             host = f"[{service_record.host}]"
-    #         else:
-    #             host = service_record.host
-    #         url_http = f"http://{host}:{service_record.port}/"
-    #         url_https = f"https://{host}:{service_record.port}/"
-    #         context = WebScanContext()
-    #
-    #         for _url in (url_http, url_https):
-    #             req = HTTPRequest.from_url(_url)
-    #             try:
-    #                 async with req.send(session) as response:
-    #                     await response.text()
-    #                     http_flow = HTTPFlow(
-    #                         request=req, response=HTTPResponse.from_aiohttp_response(response)
-    #                     )
-    #                     scanner: FormBrute = await self._pm.create('formbrute', session=session)
-    #
-    #                     async for record in scanner.handle(http_flow, context):
-    #                         if record and isinstance(record, VulnRecord):
-    #                             return [record]
-    #             except Exception as e:
-    #                 logger.warning(
-    #                     "an error event happened when requesting the url:{}, exception:{}".format(
-    #                         _url, e
-    #                     )
-    #                 )
-    #                 continue
-    #     return []

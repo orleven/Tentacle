@@ -95,12 +95,7 @@ class POC(Script):
         await self.get_url()
         if self.base_url:
             async with ClientSession() as session:
-                path_list = list(set([
-                    self.url_normpath(self.base_url, '/'),
-                    self.url_normpath(self.url, './'),
-                    self.url_normpath(self.url, '../'),
-                ]))
-                for path in path_list:
+                for path in self.url_normpath(self.url, './'):
                     # 404 page
                     # Replace the main factors affecting 404 pages to reduce false positives
                     length1 = length2 = 0

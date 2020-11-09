@@ -58,20 +58,6 @@ async def scan(name, tm, pm):
     if conf.OUT:
         output_excal(results, conf.OUT, name)
 
-
-    # if True:
-    #     results = []
-    #     port_pm = POCManager(os.path.join('script', 'info', 'port_scan'), args.function, args.parameter)
-    #     port_pm.load()
-    #     engine = ServiceScanEngine(name, targets, port_pm)
-    #     async for result in engine.enum():
-    #         results.append(result)
-    #     targets = tm.load_from_list(results)
-    #
-    # engine = ServiceVulnEngine(name, targets, pm)
-    # async for result in engine.enum():
-    #     pass
-
 def ignore_aiohttp_ssl_eror(loop):
     if sys.version_info >= (3, 7, 4):
         return

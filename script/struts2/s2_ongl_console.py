@@ -22,11 +22,7 @@ class POC(Script):
         await self.get_url()
         if self.url != None:
             async with ClientSession() as session:
-                path_list = list(set([
-                    self.url_normpath(self.base_url, '/'),
-                    self.url_normpath(self.url, './'),
-                ]))
-                for path in path_list:
+                for path in  self.url_normpath(self.url, './'):
                     url = path + 'struts/webconsole.html'
                     async with session.get(url=url, allow_redirects=False) as res:
                         if res and res.status == 200 :

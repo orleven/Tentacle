@@ -3,7 +3,6 @@
 # @author = 'orleven'
 
 import copy
-import socket
 import asyncio
 import traceback
 import async_timeout
@@ -72,7 +71,7 @@ class VulScanEngine(Engine):
             logger.error("Missing parameters: %s, please load parameters by -p. For example. -p %s=value" % (
                 e, str(e).replace('\'', '')))
             self._error_task_count += 1
-        except (ConnectionResetError, ConnectionAbortedError, TimeoutError, socket.gaierror):
+        except (ConnectionResetError, ConnectionAbortedError, TimeoutError):
             flag = poc.flag
         except (CancelledError, ConnectionRefusedError, OSError):
             if target['status'] != None:

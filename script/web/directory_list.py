@@ -36,18 +36,11 @@ class POC(Script):
                 re.compile(r'''<pre><A HREF="/">\[''', re.I),
             )
             async with ClientSession() as session:
-                path_list = list(set([
-                    self.url_normpath(self.base_url, '/'),
-                    self.url_normpath(self.url, './'),
-                    self.url_normpath(self.url, '../'),
-                    self.url_normpath(self.base_url, '/css/'),
-                    self.url_normpath(self.url, './css/'),
-                    self.url_normpath(self.url, '../css/'),
-                    self.url_normpath(self.base_url, '/js/'),
-                    self.url_normpath(self.url, './js/'),
-                    self.url_normpath(self.url, '../js/'),
-                ]))
-                for path in path_list:
+                for path in self.url_normpath(self.url, [
+                    './',
+                    './css/',
+                    './js/',
+                ]):
                     url = path
                     async with session.get(url=url) as response:
                         if response and response.status==200:

