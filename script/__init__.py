@@ -4,7 +4,9 @@
 
 import os
 import aiohttp
-import urllib.parse
+from urllib.parse import urljoin
+from urllib.parse import urlparse
+from urllib.parse import urlunparse
 from lib.api.api import _ceye_dns_api
 from lib.api.api import _ceye_verify_api
 from lib.core.data import logger
@@ -153,17 +155,40 @@ class Script(object):
         '''
         return _ceye_verify_api(filter=filter, t=t)
 
-    def url_normpath(self, base, url):
-        from urllib.parse import urljoin
-        from urllib.parse import urlparse
-        from urllib.parse import urlunparse
-        from posixpath import normpath
-        url1 = urljoin(base, url)
-        arr = urlparse(url1)
-        path = normpath(arr[2])
-        if path[-1]!='/':
-            path+='/'
-        return urlunparse((arr.scheme, arr.netloc, path, arr.params, arr.query, arr.fragment))
+    def url_normpath(self, base, fix=None):
+        '''
+        返回拼接后的URL数组
+        :param base: 原来路径
+        :param url: 拼接各级目录
+        :return: list数组
+        '''
+
+        url_list = []
+        if fix != None:
+            fixes = []
+            if isinstance(fix, str):
+                fixes.append(fix)
+            elif isinstance(fix, list):
+                fixes = fix
+            else:
+                fixes = ['']
+            for _fix in fixes:
+                url = base
+                arr = urlparse(url)
+                url_list.append(urlunparse((arr.scheme, arr.netloc, arr.path, None, None, None)))
+                url_list.append(url)
+                url = urljoin(url, './')
+                url_list.append(urljoin(url, _fix))
+                while True:
+                    arr = urlparse(url)
+                    if arr.path == '/':
+                        break
+                    url = urlunparse(arr)
+                    url = urljoin(url, '../')
+                    url_list.append(urljoin(url, _fix))
+        else:
+            url_list.append(base)
+        return list(set(url_list))
 
     async def generate_dict(self, usernamedic, passworddic):
         usernamedic = list(set(usernamedic))
