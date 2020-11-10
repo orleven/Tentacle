@@ -34,6 +34,7 @@ class POC(Script):
                 re.compile(r'">[To Parent Directory]</a><br><br>', re.I),
                 re.compile(r'&lt;dir&gt; <A HREF="/', re.I),
                 re.compile(r'''<pre><A HREF="/">\[''', re.I),
+                re.compile(r'''<title>Directory listing''', re.I),
             )
             async with ClientSession() as session:
                 for path in self.url_normpath(self.url, [

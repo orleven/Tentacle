@@ -1,3 +1,50 @@
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
@@ -38,9 +85,8 @@ class POC(Script):
                     async with session.post(url=url, data=data, headers=headers, allow_redirects=False) as res:
                         if res != None and res.status == 302:
                             location = res.headers.get('Location', '')
-                            if '/console' in location and '/login/LoginForm.jsp' not in location:
+                            if '/console' in location and '/login/LoginForm.jsp' not in location and '/console/j_security_check' not in location:
                             # if ('Home Page' in text or 'WebLogic Server Console' in text and 'console.portal' in text):
                                 self.flag = 1
                                 self.res.append({"info": username + "/" + password, "key": "weblogic burst"})
                                 return
-

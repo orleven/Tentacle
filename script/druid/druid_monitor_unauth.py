@@ -1,3 +1,51 @@
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
@@ -30,7 +78,10 @@ class POC(Script):
                     './',
                     './druid/',
                     './server/druid/',
-                    './api/saas/apisvr/',
+                    './api/druid/',
+                    './app/druid/',
+                    './api/app/druid/',
+                    './api/saas/apisvr/druid/',
                 ]):
                     for file in file_list:
                         url = path+file
@@ -38,7 +89,7 @@ class POC(Script):
                             if res and res.status == 200:
                                 text = await res.text()
                                 text = text.lower()
-                                if 'druid stat index' in text or "druidversion" in text or 'druid indexer' in text or 'druid sql stat' in text or 'druid monitor' in text:
+                                if 'druid stat index' in text or "druid version" in text or 'druid indexer' in text or 'druid sql stat' in text or 'druid monitor' in text:
                                     self.flag = 1
                                     self.res.append({"info": url, "key": "druid-monitor-unauth"})
                                     return
