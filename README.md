@@ -20,7 +20,7 @@ Tentacle is a POC vulnerability verification and exploit framework. It supports 
 ### Install
 
 ```
-pip3 install -r requestment.txt
+pip3 install -r requirement.txt
 ```
 
 ### Usage
