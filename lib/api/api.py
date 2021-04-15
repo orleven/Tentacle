@@ -263,6 +263,10 @@ async def _fofa_api(search, page, flag = True):
                                 for item in res_json.get('results'):
                                     logger.debug("Fofa Found: %s" % item[0])
                                     yield item[0]
+                            elif 'errmsg' in res_json:
+                                if 'FOFA coin is not enough!' in res_json["errmsg"]:
+	                                logger.sysinfo(res_json["errmsg"])
+	                                break
 
 # async def _fofa_api_today_poc(page):
 #     url = "https://fofa.so/about_client"
