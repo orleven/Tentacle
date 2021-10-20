@@ -15,7 +15,7 @@ bs4==0.0.1
 cffi==1.14.0
 chardet==3.0.4
 configparser==4.0.2
-cryptography==2.8
+cryptography==3.3.2
 et-xmlfile==1.0.1
 hiredis==1.0.1
 html5lib==1.0.1
