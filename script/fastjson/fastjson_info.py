@@ -2,13 +2,6 @@
 # @Time    : 20-5-4 23:43
 # @Author  : orleven
 
-import asyncio
-import uuid
-import subprocess
-from Crypto.Cipher import AES
-from lib.core.data import logger
-from lib.utils.cipher import base64encode
-from lib.utils.cipher import base64decode
 from lib.utils.connect import ClientSession
 from lib.core.enums import VUL_LEVEL
 from lib.core.enums import VUL_TYPE

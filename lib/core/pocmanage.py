@@ -33,8 +33,11 @@ class POCManager:
         msg += '| {: <55} |\r\n'.format('and you can see module\' description for -f show')
         msg += '-----------------------------------------------------------\r\n'
         for parent, dirnames, filenames in os.walk(paths.SCRIPT_PATH, followlinks=True):
+            if '.git' in parent:
+                continue
+
             for each in filenames:
-                if '__init__' in each:
+                if '__init__' in each or each.startswith('.') or 'README' in each:
                     continue
                 file_path = os.path.join(parent, each)
                 msg += '| {: <55} |\r\n'.format(file_path[_len:-3])
@@ -62,12 +65,15 @@ class POCManager:
         # -m *
         if input_module == '*':
             for parent, dirnames, filenames in os.walk(paths.SCRIPT_PATH, followlinks=True):
+                if '.git' in parent:
+                    continue
+
                 if len(filenames) == 0:
                     msg = 'Module [%s] is null.' % paths.SCRIPT_PATH
                     logger.error(msg)
 
                 for each in filenames:
-                    if '__init__' in each or each.startswith('.'):
+                    if '__init__' in each or each.startswith('.') or 'README' in each:
                         continue
                     file_path = os.path.join(parent, each)
                     modules.append('.'.join(re.split('[\\\\/]', file_path[_len:-3])))
@@ -89,7 +95,7 @@ class POCManager:
                         logger.error(msg)
                     else:
                         for each in module_name_list:
-                            if '__init__' in each:
+                            if '__init__' in each or each.startswith('.') or 'README' in each:
                                 continue
                             modules.append('.'.join(re.split('[\\\\/]', each[_len:-3])))
 
@@ -141,7 +147,7 @@ class POCManager:
                     logger.error(msg)
                 else:
                     for each in module_name_list:
-                        if '__init__' in each:
+                        if '__init__' in each or each.startswith('.') or 'README' in each:
                             continue
                         self.modules_name.remove('.'.join(re.split('[\\\\/]', each[_len:-3])))
 
@@ -255,7 +261,7 @@ class POCManager:
                     logger.error('Invalid POC script, Please check the script: %s' % module_name)
                     logger.error(get_safe_ex_string(e))
             else:
-                logger.error('Can\'t load modual: %s.' % conf.module_path)
+                logger.error('Can\'t load modual: %s.' % module_name)
             return None
 
     def _parameter_register(self, input_parameter):

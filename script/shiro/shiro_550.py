@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 # @author: 'orleven'
 
-import os
-from lib.core.data import paths
+
 import uuid
-from Crypto.Cipher import AES
+from Cryptodome.Cipher import AES
 from lib.utils.cipher import base64encode
 from lib.utils.cipher import base64decode
 from lib.utils.connect import ClientSession
