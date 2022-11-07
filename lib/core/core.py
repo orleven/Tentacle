@@ -1,62 +1,27 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @author = 'orleven'
+# @author: orleven
 
 import ssl
-import sys
 import asyncio
-from lib.core.common import random_MD5
-from lib.core.options import init_options
-from lib.core.data import paths
-from lib.core.data import conf
-from lib.core.data import logger
-from lib.core.database import TaskDB
-from lib.core.enums import TASK_STATUS
-from lib.core.common import get_time
-from lib.utils.output import output_excal
-from lib.core.pocmanage import POCManager
-from lib.core.targetmanager import TargetManager
-from lib.engine.vulscanengine import VulScanEngine
+from lib.core.env import *
+from lib.core.g import log
+from lib.core.g import conf
+from attribdict import AttribDict
+from lib.core.enums import CustomLogging
+from lib.engine.vulengine import VulEngine
+from lib.register.scriptregister import ScriptRegister
+from lib.register.targetregister import TargetRegister
+from lib.util.updateutil import update_program
+from lib.util.util import serialize_object
 
-SSL_PROTOCOLS = (asyncio.sslproto.SSLProtocol,)
+SSL_PROTOCOLS = (asyncio.sslproto.SSLProtocol, )
 try:
     import uvloop.loop
 except ImportError:
     pass
 else:
     SSL_PROTOCOLS = (*SSL_PROTOCOLS, uvloop.loop.SSLProtocol)
-
-
-def start(args):
-    name = random_MD5()[8:-8]
-    logger.sysinfo("Created task: %s" % name)
-    init_options(args)
-    database = TaskDB(paths.DATABASE_PATH)
-    database.connect()
-    database.init()
-    database.insert_task(name, args, TASK_STATUS.TASK_INIT_STATUS, get_time())
-    tm = TargetManager(args)
-    pm = POCManager(args.module, args.function, args.parameter, args.exclude_module)
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    ignore_aiohttp_ssl_eror(loop)
-    database.update_task_status(name, TASK_STATUS.TASK_RUN_STATUS, get_time())
-    try:
-        loop.run_until_complete(scan(name, tm, pm))
-    except KeyboardInterrupt:
-        pass
-    database.update_task_status(name, TASK_STATUS.TASK_COMPLETE_STATUS, get_time())
-
-async def scan(name, tm, pm):
-    pm.load()
-    targets = tm.load()
-    engine = VulScanEngine(name, targets, pm)
-    results = []
-    async for result in engine.enum():
-        results.append(result)
-
-    if conf.OUT:
-        output_excal(results, conf.OUT, name)
 
 def ignore_aiohttp_ssl_eror(loop):
     if sys.version_info >= (3, 7, 4):
@@ -76,7 +41,7 @@ def ignore_aiohttp_ssl_eror(loop):
             protocol = context.get('protocol')
             if isinstance(exception, ssl.SSLError) and isinstance(protocol, SSL_PROTOCOLS):
                 if exception.reason == 'WRONG_VERSION_NUMBER':
-                    logger.debug('Ignoring asyncio SSL WRONG_VERSION_NUMBER error')
+                    log.debug('Ignoring asyncio SSL WRONG_VERSION_NUMBER error')
                 elif exception.reason == 'KRB5_S_INIT':
                     """Ignore aiohttp #3535 / cpython #13548 issue with SSL data after close
 
@@ -93,7 +58,7 @@ def ignore_aiohttp_ssl_eror(loop):
                         Checks for fixed Python versions, disabling itself when running on 3.7.4+
                         or 3.8.
                         """
-                    logger.debug('Ignoring asyncio SSL KRB5_S_INIT error')
+                    log.debug('Ignoring asyncio SSL KRB5_S_INIT error')
                 return
 
         if orig_handler is not None:
@@ -102,3 +67,104 @@ def ignore_aiohttp_ssl_eror(loop):
             loop.default_exception_handler(context)
 
     loop.set_exception_handler(ignore_ssl_error)
+
+def load_dict():
+    ad = AttribDict()
+    for parent, dirnames, filenames in os.walk(conf.scan.scan_dict_path, followlinks=True):
+        for each in filenames:
+            if '.txt' in each:
+                file_path = os.path.join(parent, each)
+                name = each
+                if os.path.isfile(file_path):
+                    with open(file_path, 'r') as f:
+                        ad[name] = [line.replace('\r', '').replace('\n', '').strip().rstrip() for line in f.readlines()]
+                else:
+                    log.error("File is not exist: %s" % file_path)
+    return ad
+
+def handle_options(args):
+    """参数解析与配置"""
+
+    if hasattr(args, "test") and args.test:
+        conf.basic.test = True
+    else:
+        conf.basic.test = False
+
+    if hasattr(args, "thread") and args.thread:
+        conf.scan.max_task_num = args.thread
+
+    # target
+    conf.scan.simple = args.target_simple
+    conf.scan.file = args.target_file
+    conf.scan.nmap_xml = args.target_nmap_xml
+    conf.scan.task = args.target_task
+    conf.scan.search_engine = args.target_search_engine
+    conf.scan.zoomeye = args.target_zoomeye
+    conf.scan.shodan = args.target_shodan
+    conf.scan.fofa = args.target_fofa
+    conf.scan.google = args.target_google
+
+    # port
+    conf.scan.skip_basic_scan = args.skip_basic_scan
+    conf.scan.limit_port_scan = args.limit_port_scan
+
+    # module
+    conf.scan.module = args.module
+    conf.scan.exclude_module = args.exclude_module
+    conf.scan.parameter = args.parameter
+    conf.scan.function = args.function
+
+    conf.scan.scan_dict = load_dict()
+
+    conf.basic.out = args.out
+    if conf.basic.out:
+        filename = conf.basic.out if '.xlsx' in conf.basic.out else conf.basic.out + '.xlsx'
+        conf.basic.out = os.path.join(OUTPUT_PATH, filename)
+
+    conf.basic.debug = args.debug
+    if conf.basic.debug:
+        log_level = CustomLogging.DEBUG
+        log.set_level(log_level)
+        log.debug(f"Setting {PROJECT_NAME} debug mode...")
+
+    if args.show:
+        sr = ScriptRegister()
+        sr.show()
+        sys.exit(0)
+
+    if args.task_show:
+        tr = TargetRegister()
+        tr.start_print(args.task_show)
+        sys.exit(0)
+
+    if args.update:
+        update_program()
+        sys.exit(0)
+
+    conf.args = serialize_object(args)
+
+def initialize():
+    log.debug(f"Initialize {PROJECT_NAME} path...")
+    path_list = [LOG_PATH, DATA_PATH, TOOL_PATH, CONFIG_PATH, OUTPUT_PATH, SCRIPT_PATH, DICT_PATH]
+    for path in path_list:
+        if not os.path.exists(path):
+            os.mkdir(path)
+
+    log.debug(f"Initialize {PROJECT_NAME} db...")
+
+
+def start(args):
+    """开启agent端"""
+
+    initialize()
+    handle_options(args)
+    log.info(f"Created task ...")
+    ms = VulEngine()
+
+    try:
+        log.info(f"Starting task...")
+        ms.start()
+    except KeyboardInterrupt:
+        log.info(f"Ctrl C - stopping task!")
+    except Exception as e:
+        log.critical(f"Error run task, error: {str(e)}")

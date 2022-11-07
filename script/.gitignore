@@ -1,0 +1,11 @@
+# project
+.idea
+.git
+.DS_Store
+
+# python project
+*.pyc
+__pycache__
+
+# tentacle project
+test/
