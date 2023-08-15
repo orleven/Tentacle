@@ -63,7 +63,9 @@ async def sql_save(async_session, model, data_list: list, key_update=None):
     try:
         async with async_session.begin() as session:
             # sqlite3 低版本不支持 on_conflict_do_update
-            if sqlite3.sqlite_version >= "3.35":
+            sqlite_version_nums = [int(num) for num in sqlite3.sqlite_version.split('.')]
+            required_version_nums = [3, 24, 0]
+            if sqlite_version_nums >= required_version_nums:
                 stmt = insert(model).values(data_list)
                 stmt = stmt.on_conflict_do_update(set_=key_update)
                 await session.execute(stmt)
