@@ -1,0 +1,11 @@
+admin
+guest
+rabbitmq
+rabbit
+administrator
+manager
+test
+web
+root
+user
+system

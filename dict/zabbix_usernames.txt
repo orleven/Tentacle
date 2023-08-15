@@ -1,0 +1,6 @@
+admin
+zabbix
+guest
+system
+root
+Admin

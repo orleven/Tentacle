@@ -1,0 +1,12 @@
+administrator
+test
+admin
+web
+root
+mysql
+www
+bbs
+wwwroot
+bak
+backup
+system

@@ -1,0 +1,9 @@
+administrator
+db2inst1
+db2admin
+db2
+root
+admin
+test
+guest
+user

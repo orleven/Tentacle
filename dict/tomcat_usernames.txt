@@ -1,0 +1,10 @@
+admin
+tomcat
+both
+role1
+administrator
+super
+root
+web
+test
+guest
