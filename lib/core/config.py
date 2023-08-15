@@ -56,7 +56,7 @@ def init_conf(path):
         },
         ("scan", f"This is a scan config for {PROJECT_NAME}"): {
             ("scan_timeout", "Connection timeout"): 5,
-            ("scan_headers", ""): {"User-Agent": f"This is a Test UA."},
+            ("scan_headers", '{"User-Agent": f"This is a Test UA."}'): '',
             ("max_task_num", ""): 100,
             ("scan_max_retries", ""): 0,
             ("scan_dict_path", ""): DICT,

@@ -181,7 +181,7 @@ class ClientSession(aiohttp.ClientSession):
                 kwargs.setdefault('max_redirects', self.__max_fail_redirects)
                 return await self._request(method, url, **kwargs)
             except (TimeoutError, ClientOSError, ClientResponseError, IncompleteReadError,
-                    ClientConnectorError, ServerDisconnectedError, ConnectionResetError,
+                    ClientConnectorError, ServerDisconnectedError, ConnectionResetError, AttributeError,
                     ProxyConnectionError, RuntimeError, OSError, BrokenPipeError, ProxyError):
                 pass
             except Exception as e:

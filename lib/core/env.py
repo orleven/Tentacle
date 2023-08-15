@@ -64,7 +64,7 @@ CONFIG = 'conf'
 CONFIG_PATH = os.path.join(ROOT_PATH, CONFIG)
 
 # 配置文件路径
-CONFIG_FILE = f"{PROJECT_NAME}.conf"
+CONFIG_FILE = f"{PROJECT_NAME.lower()}.conf"
 CONFIG_FILE_PATH = os.path.join(CONFIG_PATH, CONFIG_FILE)
 
 # 相关Addon路径
