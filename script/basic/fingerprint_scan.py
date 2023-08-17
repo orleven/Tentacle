@@ -61,7 +61,10 @@ class Script(BaseScript):
                 return ServicePortMap.RSYNC[0]
             elif b'HTTP' in message or b'http' in message:
                 return ServicePortMap.WEB[0]
+            elif b'\xff\x00\x00\x00\x00\x00\x00\x00\x01\x7f' in message:
+                return ServicePortMap.ZMTP[0]
             else:
-                print(self.host, self.port, message)
+                if b'' != message:
+                    print(self.host, self.port, message)
 
         return ServicePortMap.UNKNOWN[0]

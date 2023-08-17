@@ -66,9 +66,11 @@ def init_conf(path):
             ("proxy_url", ""): "socks5://127.0.0.1:1080",
         },
         ("dnslog", f"This is a dnslog config for {PROJECT_NAME}"): {
-            ("dnslog_top_domain", ""): "dnslog.com",
-            ("dnslog_api_url", ""): "https://api.dnslog.com/dnslog/list",
-            ("dnslog_api_key", ""): "dnslog_api_key",
+            ("dnslog_top_domain", ""): "",
+            ("dnslog_api_url", ""): "",
+            ("dnslog_api_key", ""): "",
+            ("dnslog_async_time", ""): "10",
+            ("dnslog_api_func", "Dnslog api function, default/celestion/ceye, and you should nano func in lib/core/api.py"): "default",
         },
         ("fofa", f"This is a fofa config for {PROJECT_NAME}"): {
             ("email", ""): "email",
@@ -85,12 +87,12 @@ def init_conf(path):
             ("developer_key", ""): "developer_key",
             ("search_enging", ""): "search_enging",
         },
-        ("github", f"This is a github config for {PROJECT_NAME}"): {
-            ("token1", ""): "token1",
-            ("token2", ""): "token2",
-            ("token3", ""): "token3",
-            ("token4", ""): "token4",
-        },
+        # ("github", f"This is a github config for {PROJECT_NAME}"): {
+        #     ("token1", ""): "token1",
+        #     ("token2", ""): "token2",
+        #     ("token3", ""): "token3",
+        #     ("token4", ""): "token4",
+        # },
     }
 
     cf = configparser.ConfigParser(allow_no_value=True)

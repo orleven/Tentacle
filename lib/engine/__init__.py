@@ -2,6 +2,7 @@
 # -*- encoding: utf-8 -*-
 # @author: orleven
 
+
 from lib.core.env import *
 import asyncio
 from lib.core.g import task_name
@@ -60,6 +61,7 @@ class BaseEngine(object):
 
     def do_scan(self, flow_hash, flow, addon):
         """虚函数，子类实现"""
+
 
     async def heartbeat(self, manager: PoolCollector):
         """注册引擎、心跳"""

@@ -11,7 +11,7 @@ from lib.core.g import log
 from lib.core.enums import ScriptType
 from lib.util.aiohttputil import ClientSession
 from lib.util.util import random_lowercase_digits
-from lib.api.dnslog import get_dnslog_recode
+# from lib.api.dnslog import get_dnslog_recode
 
 class BaseScript(object):
     """
@@ -33,7 +33,7 @@ class BaseScript(object):
 
         # 脚本扫描配置
         self.dnslog_top_domain = conf.dnslog.dnslog_top_domain
-
+        self.dnslog = None
 
 
     def info(self):
@@ -256,6 +256,9 @@ class BaseScript(object):
             target_arr = urlparse(domain)
             host = target_arr.hostname
             domain = host
-        dnslog_list = await get_dnslog_recode(domain)
-        if len(dnslog_list) > 0:
-            return True
+
+        self.dnslog = domain
+        return True
+        # dnslog_list = await get_dnslog_recode(domain)
+        # if len(dnslog_list) > 0:
+        #     return True

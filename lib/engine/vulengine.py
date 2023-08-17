@@ -7,6 +7,7 @@ from lib.core.env import *
 import asyncio
 import async_timeout
 import asyncssh
+from lib.api.dnslog import dnslog_hander
 from copy import deepcopy
 from lib.core.g import task_name
 from lib.core.model import Vul
@@ -22,6 +23,7 @@ from aiohttp.client_exceptions import ClientPayloadError
 from lib.register.targetregister import TargetRegister
 from lib.register.scriptregister import ScriptRegister
 from lib.core.asyncpool import PoolCollector
+from lib.util.interactshutil import Interactsh
 
 class VulEngine(BaseEngine):
 
@@ -36,6 +38,17 @@ class VulEngine(BaseEngine):
         self.vul_queue = asyncio.Queue()
         # self.fingerprint_queue = asyncio.Queue()
         self.data_queue = asyncio.Queue()
+        self.vul_dnslog_recode_map = {}
+        self.dnslog_recode_list = []
+        self.interactsh_client = Interactsh()
+
+    async def dnslog_center(self, manager: PoolCollector):
+        async for dnslog_recode in dnslog_hander(self.interactsh_client):
+            (target, data) = self.vul_dnslog_recode_map.get(dnslog_recode, None)
+            if data:
+                if dnslog_recode not in self.dnslog_recode_list:
+                    self.dnslog_recode_list.append(dnslog_recode)
+                    await self.data_queue.put((target, data))
 
     async def do_scan(self, queue: asyncio.Queue, target, module: BaseScript, func_name, parameter):
         host = target.get("host", None)
@@ -50,7 +63,7 @@ class VulEngine(BaseEngine):
                     script.load_dict()
                     host = script.host
                     port = script.port
-                    # log.debug(f"Started running {name}:{func_name} for {host}:{port}...")
+                    log.debug(f"Started running {name}:{func_name} for {host}:{port}...")
                     function = getattr(script, func_name)
                     async with async_timeout.timeout(delay=conf.scan.scan_timeout):
                         async for result in function():
@@ -63,19 +76,17 @@ class VulEngine(BaseEngine):
                                 )
                             else:
                                 data = None
-                            if name == "script.basic.port_scan":
-                                await queue.put((target, data))
-                            # elif name == "script.basic.fingerprint_scan":
-                            #     await queue.put((target, data))
+
+                            if script.dnslog:
+                                self.vul_dnslog_recode_map[script.dnslog] = (target, data)
                             else:
                                 await queue.put((target, data))
-
-                            if data:
-                                return data
+                                if data:
+                                    return data
                     # log.debug(f"Stoped running {name}:{func_name} for {host}:{port}")
                 else:
                     log.error(f"Error, module: {name}:{func_name} address: {host}:{port}, error: function is exist")
-        except (ConnectionRefusedError, ConnectionResetError, ConnectionAbortedError,
+        except (ConnectionRefusedError, ConnectionResetError, ConnectionAbortedError, BrokenPipeError,
                 TimeoutError, ClientPayloadError, RuntimeError, BrokenPipeError, OSError,
                 asyncssh.Error):
             self.error_count += 1
@@ -140,6 +151,7 @@ class VulEngine(BaseEngine):
 
             while True:
                 if self.get_data_queue_size() == 0 and manager.scanning_task_count == 0 and manager.remain_task_count == 0:
+                    await asyncio.sleep(conf.dnslog.dnslog_async_time + 5)
                     self.remaining_count = 0
                     self.scanning_count = 0
                     self.print_status()
@@ -207,6 +219,7 @@ class VulEngine(BaseEngine):
             # asyncio.ensure_future(self.fingerprint_scan_submit_task(manager))
             asyncio.ensure_future(self.data_deal(manager))
             asyncio.ensure_future(self.heartbeat(manager))
+            asyncio.ensure_future(self.dnslog_center(manager))
 
             data_list = []
             async for result in manager.iter():

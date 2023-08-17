@@ -156,10 +156,10 @@ class ClientSession(aiohttp.ClientSession):
         data = b''
         total = self.__max_retries + 1
         for count in range(total):
-            # if count > 0:
-            #     log.warning(f'Request to {url} failed, retrying ({count} / {total})...')
-            # else:
-            #     log.debug(f'Request to {url}')
+            if count > 0:
+                log.warning(f'Request to {url} failed, retrying ({count} / {total})...')
+            else:
+                log.debug(f'Request to {url}')
 
             try:
                 resp = await super()._request(method, url, **kwargs)
