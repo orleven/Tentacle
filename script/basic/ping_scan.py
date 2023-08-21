@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 # @author: orleven
 
-import ping3
-from lib.util.aiohttputil import open_connection
+import aioping
 from lib.core.enums import ServicePortMap
 from script import BaseScript
 
@@ -17,8 +16,8 @@ class Script(BaseScript):
 
     async def prove(self):
         try:
-            response_time = ping3.ping(self.host)
-            if response_time is not None:
+            delay = await aioping.ping(self.host)
+            if delay is not None:
                 yield "Ping"
         except:
             pass
