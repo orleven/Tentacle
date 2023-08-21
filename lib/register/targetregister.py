@@ -249,12 +249,14 @@ class TargetRegister(BaseRegister):
         if (conf.scan.skip_port_scan and conf.scan.limit_port_scan) or \
                 (not conf.scan.skip_port_scan and conf.scan.limit_port_scan):
             if conf.scan.limit_port_scan:
-                if len(self.target_port_list) == 0:
+                if target.get("url", None) is None:
                     self.register_port()
-                for port in self.target_port_list:
-                    temp_target = copy(target)
-                    temp_target["port"] = port
-                    yield temp_target
+                    for port in self.target_port_list:
+                        temp_target = copy(target)
+                        temp_target["port"] = port
+                        yield temp_target
+                else:
+                    yield target
             else:
                 yield target
         else:
@@ -291,6 +293,5 @@ class TargetRegister(BaseRegister):
             loop.run_until_complete(self.print_task(task_show))
         except:
             pass
-
 
 

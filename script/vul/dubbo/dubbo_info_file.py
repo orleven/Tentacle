@@ -27,3 +27,4 @@ class Script(BaseScript):
                             if '<beans xmlns' in text:
                                 yield url
 
+

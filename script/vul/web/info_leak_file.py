@@ -29,12 +29,12 @@ class Script(BaseScript):
             "config/database.yml": "password",
             "database.yml": "password",
             "config.json": "\"password\"",
-
+            #
             # other
             "access.log": "\"GET /",
             "error.log": "\"GET /",
             "nohup.out": "[-]",
-
+            #
             "conf/server.xml": "<Server",
         }
 

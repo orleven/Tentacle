@@ -36,5 +36,6 @@ class Script(BaseScript):
                                         text = text_source.lower()
                                         if text and file_keyword.lower() in text.lower():
                                             yield url
+
                             except:
                                 pass

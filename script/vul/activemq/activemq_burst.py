@@ -41,3 +41,5 @@ class Script(BaseScript):
                                     text = await res.text()
                                     if 'Console' in text:
                                         yield username + "/" + password
+
+

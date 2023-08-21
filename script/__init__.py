@@ -36,6 +36,7 @@ class BaseScript(object):
         # 脚本扫描配置
         self.dnslog_top_domain = conf.dnslog.dnslog_top_domain
         self.dnslog = None
+        self.result_list = []
 
 
     def info(self):
@@ -192,7 +193,6 @@ class BaseScript(object):
 
 
     async def get_url(self):
-
         async with ClientSession() as session:
             if self.url is None:
                 for pro in ['http://', "https://"]:
@@ -259,6 +259,7 @@ class BaseScript(object):
         else:
             url_list.append(base)
         return list(set(url_list))
+
 
     async def get_dnslog_recode(self, domain=None):
         """请求dnslog recode"""

@@ -43,6 +43,7 @@ class VulEngine(BaseEngine):
         self.data_queue = asyncio.Queue()
         self.vul_dnslog_recode_map = {}
         self.dnslog_recode_list = []
+        self.data_list = []
         self.interactsh_client = Interactsh()
 
     async def dnslog_center(self, manager: PoolCollector):
@@ -58,7 +59,6 @@ class VulEngine(BaseEngine):
         port = target.get("port", None)
         name = module.__name__ if module else None
         try:
-            name = module.__name__
             if hasattr(module, "Script"):
                 script = module.Script()
                 if hasattr(script, func_name):
@@ -83,8 +83,6 @@ class VulEngine(BaseEngine):
                                 self.vul_dnslog_recode_map[script.dnslog] = (target, data)
                             else:
                                 await queue.put((target, data))
-                                if data:
-                                    return data
                     # log.debug(f"Stoped running {name}:{func_name} for {host}:{port}")
                 else:
                     log.error(f"Error, module: {name}:{func_name} address: {host}:{port}, error: function is exist")
@@ -145,7 +143,6 @@ class VulEngine(BaseEngine):
                     else:
                         # ping 模式，
                         tr = TargetRegister()
-
                         async for target in tr.load_target_by_target(target):
                             if target["port"] and not conf.scan.skip_port_scan:
                                 target["status"] = TargetStatus.PORTSCAN
@@ -212,6 +209,7 @@ class VulEngine(BaseEngine):
                     target, data = await self.data_queue.get()
                     await self.print_data(data)
                     await self.save_data(data, Vul)
+                    self.data_list.append(data)
         except Exception as e:
             log.error(str(e))
         finally:
@@ -238,13 +236,9 @@ class VulEngine(BaseEngine):
             asyncio.ensure_future(self.data_deal(manager))
             asyncio.ensure_future(self.heartbeat(manager))
             asyncio.ensure_future(self.dnslog_center(manager))
-
-            data_list = []
             async for result in manager.iter():
                 self.scanned_count += 1
-                if asyncio.isfuture(result):
-                    if result.result():
-                        data_list.append(result.result())
+
             if conf.basic.out:
                 log.info(f'[{task_name}] Task export to {conf.basic.out}')
-                output_excal(data_list, conf.basic.out)
+                output_excal(self.data_list, conf.basic.out)
