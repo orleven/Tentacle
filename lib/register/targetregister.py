@@ -235,41 +235,42 @@ class TargetRegister(BaseRegister):
                 yield self.standard_target(host=target, service=service)
 
 
-    def standard_target(self, id_no=None, host=None, port=None, service=None, url=None, base_url=None, protocol=None,
+    def standard_target(self, host=None, port=None, service=None, url=None, base_url=None, protocol=None,
             banner=None, fingerprint=None, status=TargetStatus.INIT):
-        target = {'id': id_no, 'host': host, 'port': port, 'service': service, 'protocol': protocol, 'banner': banner,
-         'fingerprint': fingerprint, 'url': url, 'base_url': base_url, 'status': status, 'ping': False}
+        target = {'host': host, 'port': port, 'service': service, 'protocol': protocol, 'banner': banner,
+         'fingerprint': fingerprint, 'url': url, 'base_url': base_url, 'status': status, 'port_connect': None}
         return target
 
+    async def load_target_ping(self):
+        async for target in self.register_target():
+            yield target
 
-    async def load_target(self):
-        num = 0
+    async def load_target_by_target(self, target):
+        if (conf.scan.skip_port_scan and conf.scan.limit_port_scan) or \
+                (not conf.scan.skip_port_scan and conf.scan.limit_port_scan):
+            if conf.scan.limit_port_scan:
+                if len(self.target_port_list) == 0:
+                    self.register_port()
+                for port in self.target_port_list:
+                    temp_target = copy(target)
+                    temp_target["port"] = port
+                    yield temp_target
+            else:
+                yield target
+        else:
+            yield target
+
+    async def load_target_no_ping(self):
         async for target in self.register_target():
             if target.get("url", None):
-                num += 1
-                target['id'] = num
                 yield target
             else:
                 if target.get("port", None):
-                    num += 1
-                    target['id'] = num
                     yield target
                 else:
-                    if (conf.scan.skip_basic_scan and conf.scan.limit_port_scan) or \
-                            (not conf.scan.skip_basic_scan and conf.scan.limit_port_scan):
-                        if conf.scan.limit_port_scan:
-                            if len(self.target_port_list) == 0:
-                                self.register_port()
-                            for port in self.target_port_list:
-                                temp_target = copy(target)
-                                temp_target["port"] = port
-                                num += 1
-                                temp_target['id'] = num
-                                yield temp_target
-                        else:
-                            num += 1
-                            target['id'] = num
-                            yield target
+                    async for temp_target in self.load_target_by_target(target):
+                        yield temp_target
+
 
     async def print_task(self, task_show):
         data_list = await self.get_history_data(task_show)

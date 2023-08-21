@@ -32,16 +32,17 @@ class TaskStatus:
 
 class TargetStatus:
     INIT = "Init"
+    PINGSCAN = "PingScan"
     PORTSCAN = "PortScan"
     FINGERPRINTSCAN = "FingerprintScan"
     VULSCAN = "VulScan"
     COMPLETE = "Complete"
 
-class ScriptType:
-    NONE = "None"
-    PINGSCAN = "PingScan"
-    FINGERPRINTSCAN = "FingerprintScan"
-    VULSCAN = "VulScan"
+# class ScriptType:
+#     NONE = "None"
+#     PINGSCAN = "PingScan"
+#     FINGERPRINTSCAN = "FingerprintScan"
+#     VULSCAN = "VulScan"
 
 class ServicePortMap:
     FTP = ('FTP', [21])

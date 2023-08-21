@@ -21,19 +21,20 @@ class Script(BaseScript):
                 writer.write(bytes(msg, 'utf-8'))
                 await writer.drain()
             except:
-                pass
+                self.service = self.service_type[0]
             else:
-                self.ping = True
+                self.port_connect = True
                 try:
                     message = await reader.read(1024)
-                    self.service_type = await self.service_match(message)
+                    self.service = await self.service_match(message)
                 except Exception as e:
-                    self.service_type = self.service_type[0]
+                    self.service = self.service_type[0]
                 finally:
                     writer.close()
+
         else:
             await self.get_url()
-            self.service_type = ServicePortMap.WEB[0]
+            self.service = ServicePortMap.WEB[0]
 
         if self.url:
             if self.protocol is None:
@@ -41,8 +42,12 @@ class Script(BaseScript):
             if self.base_url is None:
                 self.base_url = f"{self.protocol}://{self.host}:{self.port}/"
 
-        if self.ping:
-            yield self.service_type
+        if self.port_connect:
+            yield self.service
+        else:
+            if self.url is None:
+                self.port_connect = False
+
 
     async def exec(self):
         yield self.prove()

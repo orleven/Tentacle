@@ -11,12 +11,14 @@ from lib.api.dnslog import dnslog_hander
 from copy import deepcopy
 from lib.core.g import task_name
 from lib.core.model import Vul
-from lib.util.util import get_time, output_excal
+from lib.util.util import get_time
+from lib.util.util import output_excal
 from script import BaseScript
 from lib.core.g import log
 from lib.core.g import conf
 from lib.engine import BaseEngine
 from lib.core.enums import EngineType
+from lib.core.enums import ServicePortMap
 from lib.core.enums import TargetStatus
 from asyncio.exceptions import TimeoutError
 from aiohttp.client_exceptions import ClientPayloadError
@@ -35,6 +37,7 @@ class VulEngine(BaseEngine):
 
         # self.target_queue = asyncio.Queue()
         self.port_queue = asyncio.Queue()
+        self.ping_queue = asyncio.Queue()
         self.vul_queue = asyncio.Queue()
         # self.fingerprint_queue = asyncio.Queue()
         self.data_queue = asyncio.Queue()
@@ -76,7 +79,6 @@ class VulEngine(BaseEngine):
                                 )
                             else:
                                 data = None
-
                             if script.dnslog:
                                 self.vul_dnslog_recode_map[script.dnslog] = (target, data)
                             else:
@@ -105,13 +107,17 @@ class VulEngine(BaseEngine):
                     await asyncio.sleep(0.1)
                 else:
                     target, data = await self.vul_queue.get()
-                    if target.get("status") != TargetStatus.INIT and not target.get("ping", False):
+                    if target.get("status") not in [TargetStatus.INIT, TargetStatus.PINGSCAN] and target.get("port_connect", None) is False:
                         continue
                     if data:
                         await self.data_queue.put((target, data))
                     target["status"] = TargetStatus.VULSCAN
                     async for script in sr.load_script():
                         if target["port"]:
+                            service = target.get("service", None)
+                            if service and service != ServicePortMap.UNKNOWN:
+                                if service != script.Script().service_type[0]:
+                                    continue
                             await manager.submit(self.do_scan, self.data_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
                         else:
                             for port in script.Script().service_type[1]:
@@ -132,8 +138,37 @@ class VulEngine(BaseEngine):
                     await asyncio.sleep(0.1)
                 else:
                     target, data = await self.port_queue.get()
-                    target["status"] = TargetStatus.PORTSCAN
-                    await manager.submit(self.do_scan, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
+                    if conf.scan.no_ping:
+                        # no ping 模式， 开启端口扫描
+                        target["status"] = TargetStatus.PORTSCAN
+                        await manager.submit(self.do_scan, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
+                    else:
+                        # ping 模式，
+                        tr = TargetRegister()
+
+                        async for target in tr.load_target_by_target(target):
+                            if target["port"] and not conf.scan.skip_port_scan:
+                                target["status"] = TargetStatus.PORTSCAN
+                                await manager.submit(self.do_scan, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
+                            else:
+                                # 不端口扫描
+                                await self.vul_queue.put((target, None))
+        except Exception as e:
+            log.error(str(e))
+        finally:
+            await manager.shutdown()
+
+    async def ping_scan_submit_task(self, manager: PoolCollector):
+        try:
+            sr = ScriptRegister()
+            script = sr.load_module_by_name("script.basic.ping_scan")
+            while True:
+                if self.ping_queue.empty():
+                    await asyncio.sleep(0.1)
+                else:
+                    target, data = await self.ping_queue.get()
+                    target["status"] = TargetStatus.PINGSCAN
+                    await manager.submit(self.do_scan, self.port_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
         except Exception as e:
             log.error(str(e))
         finally:
@@ -142,13 +177,17 @@ class VulEngine(BaseEngine):
     async def init_scan_submit_task(self, manager: PoolCollector):
         try:
             tr = TargetRegister()
-            async for target in tr.load_target():
-                target["status"] = TargetStatus.INIT
-                if target["port"] and not conf.scan.skip_basic_scan:
-                    await self.port_queue.put((target, None))
-                else:
-                    await self.vul_queue.put((target, None))
-
+            if conf.scan.no_ping:
+                async for target in tr.load_target_no_ping():
+                    target["status"] = TargetStatus.INIT
+                    if target["port"] and not conf.scan.skip_port_scan:
+                        await self.port_queue.put((target, None))
+                    else:
+                        await self.vul_queue.put((target, None))
+            else:
+                async for target in tr.load_target_ping():
+                    target["status"] = TargetStatus.INIT
+                    await self.ping_queue.put((target, None))
             while True:
                 if self.get_data_queue_size() == 0 and manager.scanning_task_count == 0 and manager.remain_task_count == 0:
                     await asyncio.sleep(conf.dnslog.dnslog_async_time + 5)
@@ -162,27 +201,6 @@ class VulEngine(BaseEngine):
         except Exception as e:
             log.error(str(e))
 
-    # async def fingerprint_scan_submit_task(self, manager: PoolCollector):
-    #     try:
-    #         sr = ScriptRegister()
-    #         script = sr.load_module_by_name("script.basic.fingerprint_scan")
-    #         while True:
-    #             if self.fingerprint_queue.empty():
-    #                 await asyncio.sleep(0.1)
-    #             else:
-    #                 target, data = await self.fingerprint_queue.get()
-    #                 await self.data_queue.put((target, data))
-    #                 if target.get("status") != TargetStatus.INIT and not target.get("ping", False):
-    #                     continue
-    #                 target["status"] = TargetStatus.FINGERPRINTSCAN
-    #                 if script:
-    #                     await manager.submit(self.do_scan, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
-    #                 else:
-    #                     await self.vul_queue.put((target, data))
-    #     except Exception as e:
-    #         log.error(str(e))
-    #     finally:
-    #         await manager.shutdown()
 
     async def data_deal(self, manager: PoolCollector):
         try:
@@ -201,8 +219,7 @@ class VulEngine(BaseEngine):
 
     def get_data_queue_size(self):
         """计算所有queue总和"""
-        # queue_num = self.port_queue.qsize() + self.fingerprint_queue.qsize() + self.vul_queue.qsize()
-        queue_num = self.port_queue.qsize() + self.vul_queue.qsize()
+        queue_num = self.port_queue.qsize() + self.vul_queue.qsize() + self.ping_queue.qsize()
         return queue_num
 
     async def print_data(self, result):
@@ -214,6 +231,7 @@ class VulEngine(BaseEngine):
     async def running(self):
         async with PoolCollector.create(num_workers=self.max_task_num) as manager:
             asyncio.ensure_future(self.init_scan_submit_task(manager))
+            asyncio.ensure_future(self.ping_scan_submit_task(manager))
             asyncio.ensure_future(self.vul_scan_submit_task(manager))
             asyncio.ensure_future(self.port_scan_submit_task(manager))
             # asyncio.ensure_future(self.fingerprint_scan_submit_task(manager))

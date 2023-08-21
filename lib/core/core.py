@@ -105,7 +105,7 @@ def handle_options(args):
     conf.scan.google = args.target_google
 
     # port
-    conf.scan.skip_basic_scan = args.skip_basic_scan
+    conf.scan.skip_port_scan = args.skip_port_scan
     conf.scan.limit_port_scan = args.limit_port_scan
 
     # module
@@ -113,6 +113,9 @@ def handle_options(args):
     conf.scan.exclude_module = args.exclude_module
     conf.scan.parameter = args.parameter
     conf.scan.function = args.function
+
+    # ping
+    conf.scan.no_ping = args.no_ping
 
     conf.scan.scan_dict = load_dict()
 

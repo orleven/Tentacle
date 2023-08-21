@@ -20,7 +20,7 @@ def arg_set(parser):
     base_target_group.add_argument('-ff', "--target_fofa", metavar='key', type=str, default=None, help='Load targets from fofa  (e.g. app:weblogic)')
 
     port = parser.add_argument_group('Port')
-    port.add_argument("-sB", "--skip_basic_scan", action='store_true', help="Skip port and finggerprint scan", default=False)
+    port.add_argument("-sP", "--skip_port_scan", action='store_true', help="Skip port", default=False)
     port.add_argument("-lP", "--limit_port_scan", action='store', help="Limit port scope scan, e.g 80-100,8080,top100,*", default='top150')
 
     module = parser.add_argument_group('Module')
@@ -30,6 +30,9 @@ def arg_set(parser):
     module.add_argument("-p", "--parameter", help="Load data for function of module, e.g. -p \"U=username.txt&P=password.txt\"", default=False, action='store')
     module.add_argument("--show", action='store_true', help="Show all poc scripts module", default=False)
     module.add_argument("-t", "--thread", type=int, help="Thread Num e.g. 100", default=100, action='store')
+
+    scan = parser.add_argument_group('Scan')
+    scan.add_argument("-nP", "--no_ping", action='store_true', help="No ping scan", default=False)
 
     other = parser.add_argument_group('Other')
     other.add_argument('-tS', "--task_show",  metavar='TaskID', type=str, default=None, help='Show task (e.g. all,c81fc4f8f9ab1902)')

@@ -15,7 +15,7 @@ class Script(BaseScript):
 
     async def prove(self):
         if self.url:
-            self.service_type = ServicePortMap.WEB[0]
+            self.service = ServicePortMap.WEB[0]
         else:
             try:
                 msg = "stats\r\n\r\n"
@@ -23,16 +23,16 @@ class Script(BaseScript):
                 writer.write(bytes(msg, 'utf-8'))
                 await writer.drain()
             except:
-                self.service_type = self.service_type[0]
+                self.service = self.service_type[0]
             else:
                 try:
                     message = await reader.read(1024)
-                    self.service_type = await self.service_match(message)
+                    self.service = await self.service_match(message)
                 except:
-                    self.service_type = self.service_type[0]
+                    self.service = self.service_type[0]
                 finally:
                     writer.close()
-        yield self.service_type
+        yield self.service
 
     async def exec(self):
         yield self.prove()

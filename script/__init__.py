@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 # @author: orleven
-
+from lib.core.enums import ServicePortMap
 from lib.core.env import *
 from urllib.parse import urljoin
 from urllib.parse import urlparse
 from urllib.parse import urlunparse
 from lib.core.g import conf
 from lib.core.g import log
-from lib.core.enums import ScriptType
+# from lib.core.enums import ScriptType
 from lib.util.aiohttputil import ClientSession
 from lib.util.util import random_lowercase_digits
 # from lib.api.dnslog import get_dnslog_recode
@@ -20,15 +20,17 @@ class BaseScript(object):
 
     def __init__(self):
         # 脚本属性配置
-        self.script_type = ScriptType.NONE
+        # self.script_type = ScriptType.NONE
 
         # 脚本基本配置
+        self.service_type = ServicePortMap.UNKNOWN
+        self.service = self.service_type[0]
         self.script_absolute_path = sys.modules[self.__module__].__file__
         self.script_path = self.script_absolute_path[len(ROOT_PATH) + 1:]
         self.script_file_name = os.path.basename(self.script_path)
         self.timeout = conf.scan.scan_timeout
         self.name = self.script_path
-        self.ping = False
+        self.port_connect = None
         self.log = log
 
         # 脚本扫描配置
@@ -110,12 +112,13 @@ class BaseScript(object):
         self.protocol = target.get("protocol", None)
         self.base_url = target.get("base_url", None)
         self.service = target.get("service", None)
-        self.ping = target.get("ping", False)
-        if not self.ping and self.name != "PortScan":
+        self.port_connect = target.get("port_connect", None)
+
+        if self.port_connect is None and self.name not in ["PingScan", "PortScan"]:
+
             await self.get_url()
 
-
-        if self.url:
+        if self.url and self.name not in ["PingScan"]:
             if self.protocol is None:
                 self.protocol = target["protocol"] = self.url[:self.url.index("://")]
             if self.base_url is None:
@@ -127,7 +130,7 @@ class BaseScript(object):
         self.target["url"] = self.url
         self.target["base_url"] = self.base_url
         self.target["protocol"] = self.protocol
-        self.target["ping"] = self.ping
+        self.target["port_connect"] = self.port_connect
         self.target["service"] = self.service
         return self.target
 
@@ -189,28 +192,36 @@ class BaseScript(object):
 
 
     async def get_url(self):
-        try:
-            async with ClientSession() as session:
-                if self.url is None:
-                    for pro in ['http://', "https://"]:
-                        _port = self.port if self.port != None and self.port != 0 else 443 if pro == 'https://' else 80
-                        _pro = 'https://' if _port in [443, 8443] else pro
-                        url = _pro + self.host + ":" + str(_port) + '/'
+
+        async with ClientSession() as session:
+            if self.url is None:
+                for pro in ['http://', "https://"]:
+                    _port = self.port if self.port != None and self.port != 0 else 443 if pro == 'https://' else 80
+                    _pro = 'https://' if _port in [443, 8443] else pro
+                    url = _pro + self.host + ":" + str(_port) + '/'
+                    try:
                         async with session.head(url, allow_redirects=False) as res:
                             if res:
-                                self.ping = True
+                                self.port_connect = True
                                 self.base_url = self.url = url
-                                # if response.status == 400 and 'the plain http request was sent to https port' in resp:
-                                if res.status == 400:
+                                text = await res.text()
+                                if res.status == 400 and 'https port' in text:
                                     pass
                                 else:
-                                    return
-                else:
+                                    return True
+                    except:
+                        pass
+            else:
+                try:
                     async with session.head(self.url, allow_redirects=False) as res:
                         if res:
-                            self.ping = True
-        except:
-            pass
+                            self.port_connect = True
+                            return True
+                except:
+                    pass
+
+        return False
+
 
     def get_url_normpath_list(self, base, fix="./"):
         """
