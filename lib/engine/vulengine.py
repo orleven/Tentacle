@@ -142,6 +142,7 @@ class VulEngine(BaseEngine):
                         await manager.submit(self.do_scan, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
                     else:
                         # ping 模式，
+                        await self.data_queue.put((target, data))
                         tr = TargetRegister()
                         async for target in tr.load_target_by_target(target):
                             if target["port"] and not conf.scan.skip_port_scan:
@@ -222,7 +223,8 @@ class VulEngine(BaseEngine):
 
     async def print_data(self, result):
         self.found_count += 1
-        address = result["url"] if result.get("url", None) else f'{result["host"]}:{result["port"]}'
+
+        address = result["url"] if result.get("url", None) else f'{result["host"]}:{result["port"]}' if result.get("port", None) else f'{result["host"]}'
         msg = f'[{result["script_path"]}] [{address}]: {result["detail"]}'
         log.success(msg)
 

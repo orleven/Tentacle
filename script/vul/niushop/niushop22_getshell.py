@@ -41,6 +41,6 @@ class Script(BaseScript):
                     # async with session.post(url=url, data=paramsPost, files=paramsMultipart, params=paramsGet, headers=headers, cookies=cookies) as res:
                         if res != None:
                             text = await res.text()
-                            if "themin.php" in text and '?php phpinfo' not in text.replace("&nbsp;"," "):
+                            if "themin.php" in text and '?php phpinfo' not in text.replace("&nbsp;"," ") and "Environment Variables" not in text:
                                 yield url
                                 return
