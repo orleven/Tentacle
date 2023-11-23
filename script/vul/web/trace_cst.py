@@ -27,6 +27,6 @@ class Script(BaseScript):
                         async with session.request('Trace', url=url, headers=headers, allow_redirects=False) as res:
                             if res and 'test_cst' in res.headers.keys():
                                 yield url
-                                return
+                                
                     except:
                         pass

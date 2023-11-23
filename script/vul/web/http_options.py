@@ -22,6 +22,6 @@ class Script(BaseScript):
                                 if res != None and 'Allow' in res.headers:
                                     allow = res.headers['Allow']
                                     yield f"{url}   {allow}"
-                                    return
+                                    
                         except:
                             pass

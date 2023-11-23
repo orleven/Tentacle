@@ -41,5 +41,5 @@ class Script(BaseScript):
                                     text1 = await res1.text()
                                     if 'Console' in text1 or (username in text1 and 'name' in text1) or 'auth_backend' in text1:
                                         yield username + "/" + password
-                                        return
+                                        
 

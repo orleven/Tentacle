@@ -44,4 +44,4 @@ class Script(BaseScript):
                                                                     text4 = await res4.text()
                                                                     if '<?php' in text4:
                                                                         yield url4
-                                                                        return
+                                                                        

@@ -39,6 +39,6 @@ class Script(BaseScript):
                                         if text:
                                             if keyword in text:
                                                 yield url
-                                                return
+                                                
                             except:
                                 pass

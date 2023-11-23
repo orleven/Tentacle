@@ -35,7 +35,7 @@ class Script(BaseScript):
                                     text = await res.text()
                                     if 'PHP Version' in text or 'string(8) "var_dump"' in text:
                                         yield url
-                                        return
+                                        
 
     async def exec(self):
         cmd = self.parameter['cmd']

@@ -44,7 +44,7 @@ class Script(BaseScript):
                 async with session.post(url=url, headers=headers, data=poc, timeout=8) as res:
                     if res and res.status == 202:
                         yield url
-                        return
+                        
 
 
 

@@ -30,4 +30,4 @@ class Script(BaseScript):
                                 text = await res.text()
                                 if '## README' in text or 'name: thinkcmf' in text or 'php.ini' in text:
                                     yield url
-                                    return
+                                    

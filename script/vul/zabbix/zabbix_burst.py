@@ -42,4 +42,4 @@ class Script(BaseScript):
                                             if res and res.status == 301 and 'Set-Cookie' in res.headers.keys() and 'zbx_sessionid' in res.headers['Set-Cookie']:
                                                 detail = username + "/" + password
                                                 yield f"{url}   {detail}"
-                                                return
+                                                

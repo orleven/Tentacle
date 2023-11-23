@@ -33,4 +33,4 @@ class Script(BaseScript):
                                         text2 = await res2.text()
                                         if 'phpinfo' in text2:
                                             yield url2
-                                            return
+                                            

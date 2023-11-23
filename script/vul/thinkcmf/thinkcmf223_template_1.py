@@ -28,4 +28,4 @@ class Script(BaseScript):
                                     text = await res.text()
                                     if 'php.ini' in text:
                                         yield url
-                                        return
+                                        

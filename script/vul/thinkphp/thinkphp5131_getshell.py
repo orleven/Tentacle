@@ -33,4 +33,4 @@ class Script(BaseScript):
                                     text = await res.text()
                                     if 'PHP Version' in text:
                                         yield url
-                                        return
+                                        

@@ -32,7 +32,7 @@ class Script(BaseScript):
                                     text = await res.text()
                                     if keyword in text:
                                         yield url
-                                        return
+                                        
                         except:
                             pass
 

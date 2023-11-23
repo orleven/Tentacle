@@ -29,4 +29,4 @@ class Script(BaseScript):
                                     text = await res.text()
                                     if '"draggable":false' in text:
                                         yield url
-                                        return
+                                        

@@ -37,4 +37,3 @@ class Script(BaseScript):
                                 include_text = await include_res.text()
                                 if random_str in include_text:
                                     yield include_url
-                                    return

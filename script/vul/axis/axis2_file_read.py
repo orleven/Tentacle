@@ -37,4 +37,4 @@ class Script(BaseScript):
                                                 user = re.search('<parameter name="userName">(.*?)</parameter>', text)
                                                 password = re.search('<parameter name="password">(.*?)</parameter>', text)
                                                 yield read_url
-                                                return
+                                                

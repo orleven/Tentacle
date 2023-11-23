@@ -28,4 +28,4 @@ class Script(BaseScript):
                                 # if res != None and 'DriverClasses' in res.text:
                                 if 'xmlns:resin' in text:
                                     yield url
-                                    return
+                        

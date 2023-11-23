@@ -169,7 +169,9 @@ class TargetRegister(BaseRegister):
                     log.error("Illegal input: %s" % port_scope)
                     sys.exit(0)
             elif 'top' in port_scope or 'all' == port_scope or '*' == port_scope:
-                if 'top10' == port_scope:
+                if 'top1' == port_scope:
+                    limit_port += [x for x in ServicePortMap.TOP1[1]]
+                elif 'top10' == port_scope:
                     limit_port += [x for x in ServicePortMap.TOP10[1]]
                 elif 'top50' == port_scope:
                     limit_port += [x for x in ServicePortMap.TOP50[1]]

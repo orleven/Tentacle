@@ -27,4 +27,4 @@ class Script(BaseScript):
                                     text = await res.text()
                                     if 'dede_admin' in text:
                                         yield url
-                                        return
+                                        

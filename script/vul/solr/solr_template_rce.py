@@ -48,4 +48,4 @@ class Script(BaseScript):
                                                 text2 = await res2.text()
                                                 if str(ran1 * ran2) in text2:
                                                     yield url
-                                                    return
+                                                    

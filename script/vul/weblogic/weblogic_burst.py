@@ -42,4 +42,4 @@ class Script(BaseScript):
                             if '/console' in location and '/login/LoginForm.jsp' not in location and '/console/j_security_check' not in location:
                             # if ('Home Page' in text or 'WebLogic Server Console' in text and 'console.portal' in text):
                                 yield username + "/" + password
-                                return
+                                

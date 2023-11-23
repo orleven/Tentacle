@@ -60,4 +60,4 @@ class Script(BaseScript):
                                                         for key,val in cookies.items():
                                                             if 'pmaAuth' in key and val != 'deleted':
                                                                 yield username + '/' + password
-                                                                return
+                                                                

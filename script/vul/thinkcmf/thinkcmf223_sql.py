@@ -27,4 +27,4 @@ class Script(BaseScript):
                             text = await res.text()
                             if ':XPATH' in text:
                                 yield url
-                                return
+                                

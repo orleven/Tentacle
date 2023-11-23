@@ -37,7 +37,7 @@ class Script(BaseScript):
                     try:
                         async with asyncssh.connect(host=self.host, port=self.port, username=username, password=password, known_hosts=None) as conn:
                             yield username + "/" + password
-                            return
+                            
                     except asyncssh.misc.PermissionDenied:
                         pass
             except:

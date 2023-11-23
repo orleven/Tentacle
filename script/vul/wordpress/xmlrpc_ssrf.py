@@ -33,4 +33,4 @@ class Script(BaseScript):
                             await asyncio.sleep(1)
                             if await self.get_dnslog_recode(dns):
                                 yield url
-                                return
+                                

@@ -35,7 +35,7 @@ class Script(BaseScript):
                     async with aiomysql.create_pool(host=self.host, port=self.port, user=username,
                                                     password=password, timeout=self.timeout) as res:
                         yield username + "/" + password
-                        return
+  
                 except Exception:
                     pass
 

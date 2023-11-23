@@ -177,4 +177,4 @@ class Script(BaseScript):
                                             async with session.get(url=url, headers=header, allow_redirects=False) as res:
                                                 if res != None and 'rememberme=deleteme' in res.headers.get("Set-Cookie", "").lower():
                                                     yield f"{url}   {self.keylist[i]}"
-                                                    return
+                                            

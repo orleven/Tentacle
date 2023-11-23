@@ -29,4 +29,4 @@ class Script(BaseScript):
                                 text = await res.text()
                                 if '"status":"0"' in text:
                                     yield url
-                                    return
+                                    

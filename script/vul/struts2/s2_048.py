@@ -30,7 +30,7 @@ class Script(BaseScript):
                             text = await res.text()
                             if poc_key in text:
                                 yield self.url
-                                return
+                                
 
     async def exec(self):
         if self.base_url:

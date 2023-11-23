@@ -32,9 +32,9 @@ class Script(BaseScript):
                         message = 'AUTH {}\r\n'.format(password)
                         writer.write(message.encode())
                         data = str(await reader.read(1024))
-                        if 'OK' in  data:
+                        if 'OK' in data:
                             yield password
-                            return
+                            
                 writer.close()
             except:
                 pass

@@ -83,7 +83,7 @@ class VulEngine(BaseEngine):
                                 self.vul_dnslog_recode_map[script.dnslog] = (target, data)
                             else:
                                 await queue.put((target, data))
-                    # log.debug(f"Stoped running {name}:{func_name} for {host}:{port}")
+                    log.debug(f"Stoped running {name}:{func_name} for {host}:{port}")
                 else:
                     log.error(f"Error, module: {name}:{func_name} address: {host}:{port}, error: function is exist")
         except (ConnectionRefusedError, ConnectionResetError, ConnectionAbortedError, BrokenPipeError,
@@ -136,21 +136,17 @@ class VulEngine(BaseEngine):
                     await asyncio.sleep(0.1)
                 else:
                     target, data = await self.port_queue.get()
-                    if conf.scan.no_ping:
-                        # no ping 模式， 开启端口扫描
-                        target["status"] = TargetStatus.PORTSCAN
-                        await manager.submit(self.do_scan, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
-                    else:
-                        # ping 模式，
+                    target["status"] = TargetStatus.PORTSCAN
+                    if not conf.scan.skip_port_scan:
                         await self.data_queue.put((target, data))
                         tr = TargetRegister()
                         async for target in tr.load_target_by_target(target):
-                            if target["port"] and not conf.scan.skip_port_scan:
+                            if target["port"]:
                                 target["status"] = TargetStatus.PORTSCAN
                                 await manager.submit(self.do_scan, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
-                            else:
-                                # 不端口扫描
-                                await self.vul_queue.put((target, None))
+                    else:
+                        await self.vul_queue.put((target, None))
+
         except Exception as e:
             log.error(str(e))
         finally:
@@ -166,7 +162,10 @@ class VulEngine(BaseEngine):
                 else:
                     target, data = await self.ping_queue.get()
                     target["status"] = TargetStatus.PINGSCAN
-                    await manager.submit(self.do_scan, self.port_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
+                    if not conf.scan.skip_port_scan:
+                        await manager.submit(self.do_scan, self.port_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
+                    else:
+                        await self.vul_queue.put((target, None))
         except Exception as e:
             log.error(str(e))
         finally:
@@ -178,10 +177,11 @@ class VulEngine(BaseEngine):
             if conf.scan.no_ping:
                 async for target in tr.load_target_no_ping():
                     target["status"] = TargetStatus.INIT
-                    if target["port"] and not conf.scan.skip_port_scan:
+                    if not conf.scan.skip_port_scan:
                         await self.port_queue.put((target, None))
                     else:
                         await self.vul_queue.put((target, None))
+
             else:
                 async for target in tr.load_target_ping():
                     target["status"] = TargetStatus.INIT
@@ -208,9 +208,10 @@ class VulEngine(BaseEngine):
                     await asyncio.sleep(0.1)
                 else:
                     target, data = await self.data_queue.get()
-                    await self.print_data(data)
-                    await self.save_data(data, Vul)
-                    self.data_list.append(data)
+                    if data:
+                        await self.print_data(data)
+                        await self.save_data(data, Vul)
+                        self.data_list.append(data)
         except Exception as e:
             log.error(str(e))
         finally:
@@ -232,9 +233,9 @@ class VulEngine(BaseEngine):
         async with PoolCollector.create(num_workers=self.max_task_num) as manager:
             asyncio.ensure_future(self.init_scan_submit_task(manager))
             asyncio.ensure_future(self.ping_scan_submit_task(manager))
-            asyncio.ensure_future(self.vul_scan_submit_task(manager))
             asyncio.ensure_future(self.port_scan_submit_task(manager))
             # asyncio.ensure_future(self.fingerprint_scan_submit_task(manager))
+            asyncio.ensure_future(self.vul_scan_submit_task(manager))
             asyncio.ensure_future(self.data_deal(manager))
             asyncio.ensure_future(self.heartbeat(manager))
             asyncio.ensure_future(self.dnslog_center(manager))

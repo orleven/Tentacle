@@ -25,4 +25,4 @@ class Script(BaseScript):
                                     text = await res.text()
                                     if 'Environment Variables' in text:
                                        yield url
-                                       return
+                                       

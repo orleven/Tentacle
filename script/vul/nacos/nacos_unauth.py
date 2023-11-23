@@ -23,4 +23,4 @@ class Script(BaseScript):
                                 text = await res.text()
                                 if 'password:' in text and 'port:' in text:
                                     yield url
-                                    return
+                         

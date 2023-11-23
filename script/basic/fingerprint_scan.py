@@ -44,20 +44,24 @@ class Script(BaseScript):
         yield self.prove()
 
     async def service_match(self, message=None):
-        if message is not None:
-            if b"AMQP" in message:
+        message = message.lower()
+        if self.url:
+            return ServicePortMap.WEB[0]
+
+        elif message is not None:
+            if b"amqp" in message:
                 return ServicePortMap.RABBITMQ[0]
-            elif b'smtp' in message or b'spam' in message or b'Esmtp' in message:
+            elif b'smtp' in message or b'spam' in message or b'esmtp' in message:
                 return ServicePortMap.SMTP[0]
-            elif b'SSH' in message:
+            elif b'ssh' in message:
                 return ServicePortMap.SSH[0]
-            elif b'mysql' in message or b'caching_sha2_password' in message or b'MariaDB' in message:
+            elif b'mysql' in message or b'caching_sha2_password' in message or b'mariadb' in message:
                 return ServicePortMap.MYSQL[0]
-            elif b'redis' in message or b'Err wrong number of arguments for' in message or b'ERR unknown command' in message:
+            elif b'redis' in message or b'err wrong number of arguments for' in message or b'err unknown command' in message:
                 return ServicePortMap.REDIS[0]
             elif b'FTP' in message or b'ftp' in message:
                 return ServicePortMap.FTP[0]
-            elif b'rsync' in message or b'RSYNC' in message:
+            elif b'rsync' in message or b'rsync' in message:
                 return ServicePortMap.RSYNC[0]
             elif b'HTTP' in message or b'http' in message:
                 return ServicePortMap.WEB[0]

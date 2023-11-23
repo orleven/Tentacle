@@ -35,4 +35,4 @@ class Script(BaseScript):
                                     text = await res.text()
                                     if 'PHP Version' in text or 'string(14) "this_is_a_test"' in text:
                                         yield url
-                                        return
+                                        

@@ -26,4 +26,4 @@ class Script(BaseScript):
                                 text = await res.text()
                                 if '[extensions]' in text:
                                     yield url
-                                    return
+                                    

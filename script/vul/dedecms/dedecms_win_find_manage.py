@@ -76,4 +76,4 @@ class Script(BaseScript):
 
                                 if x < 29 and flag == 1:
                                     yield path + '/' + back_dir
-                                    return
+                                    

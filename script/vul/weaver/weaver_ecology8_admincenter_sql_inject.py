@@ -27,4 +27,4 @@ class Script(BaseScript):
                                 text = await res.text()
                                 if 'false' == text.replace('\r','').replace('\n','').replace(' ',''):
                                     yield url
-                                    return
+                   

@@ -38,4 +38,4 @@ class Script(BaseScript):
                                                     text2 = await res2.text()
                                                     if '[extensions]' in text2 or 'root:x:' in text2:
                                                         yield url
-                                                        return
+                                                        

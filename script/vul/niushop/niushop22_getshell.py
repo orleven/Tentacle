@@ -43,4 +43,3 @@ class Script(BaseScript):
                             text = await res.text()
                             if "themin.php" in text and '?php phpinfo' not in text.replace("&nbsp;"," ") and "Environment Variables" not in text:
                                 yield url
-                                return

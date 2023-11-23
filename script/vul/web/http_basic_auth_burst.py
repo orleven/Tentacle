@@ -66,6 +66,6 @@ class Script(BaseScript):
                                                         if res1.status != 401 and  res1.status != 407:
                                                             detail = username + "/" + password
                                                             yield f"{url}   {detail}"
-                                                            return
+                                                            
                             except:
                                 pass

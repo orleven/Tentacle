@@ -32,4 +32,4 @@ class Script(BaseScript):
                                 text = await res.text()
                                 if 'root:' in text or '[extensions]' in text:
                                     yield url
-                                    return
+                                    

@@ -38,7 +38,7 @@ class Script(BaseScript):
                         async with aiosmtplib.SMTP(hostname=self.host, port=self.port, use_tls=use_tls, timeout=self.timeout) as smtp:
                             await smtp.login(username, password,  timeout=self.timeout)
                             yield username + "/" + password
-                            return
+                            
                     except aiosmtplib.SMTPAuthenticationError:
                           pass
             except:
