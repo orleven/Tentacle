@@ -68,6 +68,9 @@ python3 tentacle.py -tS 8d4b37597aaec25e
 # Export task's result by -tS to test.xlsx
 python3 tentacle.py -tS 8d4b37597aaec25e  -o test
 
+# Export task's result by -tS to test.json
+python3 tentacle.py -tS 8d4b37597aaec25e  -oJ test
+
 # Update by git
 python3 tentacle.py --update
 ```
