@@ -26,7 +26,7 @@ from lib.register import BaseRegister
 from lib.util.iputil import build
 from lib.util.iputil import check_ippool
 from lib.util.util import output_excal
-
+from lib.util.util import output_json
 
 class TargetRegister(BaseRegister):
     """
@@ -287,6 +287,12 @@ class TargetRegister(BaseRegister):
         if conf.basic.out:
             log.info(f'[{task_show}] Task export to {conf.basic.out}')
             output_excal(data_list, conf.basic.out)
+        if conf.basic.out_csv:
+            log.info(f'[{task_show}] Task export to {conf.basic.out_csv}')
+            output_excal(data_list, conf.basic.out_csv)
+        if conf.basic.out_json:
+            log.info(f'[{task_show}] Task export to {conf.basic.out_json}')
+            output_json(data_list, conf.basic.out_json)
 
     def start_print(self, task_show):
         try:

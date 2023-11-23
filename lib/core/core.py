@@ -120,9 +120,16 @@ def handle_options(args):
     conf.scan.scan_dict = load_dict()
 
     conf.basic.out = args.out
-    if conf.basic.out:
+    conf.basic.out_csv = args.out_csv
+    conf.basic.out_json = args.out_json
+    if conf.basic.out or conf.basic.out_csv:
         filename = conf.basic.out if '.xlsx' in conf.basic.out else conf.basic.out + '.xlsx'
         conf.basic.out = os.path.join(OUTPUT_PATH, filename)
+        filename = conf.basic.out_csv if '.xlsx' in conf.basic.out_csv else conf.basic.out_csv + '.xlsx'
+        conf.basic.out_csv = os.path.join(OUTPUT_PATH, filename)
+    if conf.basic.out_json:
+        filename = conf.basic.out_json if '.xlsx' in conf.basic.out_json else conf.basic.out_json + '.json'
+        conf.basic.out_json = os.path.join(OUTPUT_PATH, filename)
 
     conf.basic.debug = args.debug
     if conf.basic.debug:

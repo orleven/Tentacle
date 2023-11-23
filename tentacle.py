@@ -38,6 +38,8 @@ def arg_set(parser):
     other.add_argument('-tS', "--task_show",  metavar='TaskID', type=str, default=None, help='Show task (e.g. all,c81fc4f8f9ab1902)')
     other.add_argument("-d", "--debug", action='store_true', help="Show debug info", default=False)
     other.add_argument("-o", "--out", type=str, help="Output file e.g res.xlsx", default=None)
+    other.add_argument("-oC", "--out-csv", type=str, help="Output file e.g res.xlsx", default=None)
+    other.add_argument("-oJ", "--out-json", type=str, help="Output file e.g res.json", default=None)
     other.add_argument("--update", action='store_true', help="Update", default=False)
     other.add_argument("--help", help="Show help", default=False, action='store_true')
     print(BANNER)

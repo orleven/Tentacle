@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 # @author: orleven
-
+import json
 import time
 import random
 import string
@@ -246,3 +246,9 @@ def output_excal(datalines, filename):
             except:
                 ws.cell(row=i, column=titleList.index(key) + 1).value = "Some error"
     book.save(filename)
+
+def output_json(datalines, filename):
+    with open(filename, 'w') as f:
+        text = json.dumps(datalines, indent=4, sort_keys=True)
+        f.write(text)
+

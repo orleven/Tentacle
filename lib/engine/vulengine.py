@@ -13,6 +13,7 @@ from lib.core.g import task_name
 from lib.core.model import Vul
 from lib.util.util import get_time
 from lib.util.util import output_excal
+from lib.util.util import output_json
 from script import BaseScript
 from lib.core.g import log
 from lib.core.g import conf
@@ -245,3 +246,9 @@ class VulEngine(BaseEngine):
             if conf.basic.out:
                 log.info(f'[{task_name}] Task export to {conf.basic.out}')
                 output_excal(self.data_list, conf.basic.out)
+            if conf.basic.out_csv:
+                log.info(f'[{task_name}] Task export to {conf.basic.out_csv}')
+                output_excal(self.data_list, conf.basic.out_csv)
+            if conf.basic.out_json:
+                log.info(f'[{task_name}] Task export to {conf.basic.out_json}')
+                output_json(self.data_list, conf.basic.out_json)
