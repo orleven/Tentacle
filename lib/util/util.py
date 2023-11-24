@@ -5,6 +5,8 @@ import json
 import time
 import random
 import string
+import traceback
+
 from openpyxl import Workbook
 from datetime import datetime
 from urllib.parse import urlparse
@@ -248,7 +250,25 @@ def output_excal(datalines, filename):
     book.save(filename)
 
 def output_json(datalines, filename):
-    with open(filename, 'w') as f:
-        text = json.dumps(datalines, indent=4, sort_keys=True)
-        f.write(text)
+    output_data_list = []
+    for data in datalines:
+        output_data = {}
+        for key, value in data.items():
+            try:
+                if value == None or value == '':
+                    output_data[key] = ""
+                elif isinstance(value, int) or isinstance(value, str):
+                    output_data[key] = value
+                elif isinstance(value, bytes):
+                    output_data[key] = str(value, 'utf-8')
+                elif isinstance(value, list) or isinstance(value, dict):
+                    output_data[key] = str(value)
+                else:
+                    output_data[key] = "Types of printing are not supported."
+            except:
+                output_data[key] = "Some error"
+        output_data_list.append(output_data)
 
+    with open(filename, 'w') as f:
+        text = json.dumps(output_data_list, indent=4, sort_keys=True)
+        f.write(text)
