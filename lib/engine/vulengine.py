@@ -141,10 +141,14 @@ class VulEngine(BaseEngine):
                     if not conf.scan.skip_port_scan:
                         await self.data_queue.put((target, data))
                         tr = TargetRegister()
-                        async for target in tr.load_target_by_target(target):
-                            if target["port"]:
-                                target["status"] = TargetStatus.PORTSCAN
-                                await manager.submit(self.do_scan, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
+                        if target["port"]:
+                            target["status"] = TargetStatus.PORTSCAN
+                            await manager.submit(self.do_scan, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
+                        else:
+                            async for target in tr.load_target_by_target(target):
+                                if target["port"]:
+                                    target["status"] = TargetStatus.PORTSCAN
+                                    await manager.submit(self.do_scan, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
                     else:
                         await self.vul_queue.put((target, None))
 
@@ -225,7 +229,6 @@ class VulEngine(BaseEngine):
 
     async def print_data(self, result):
         self.found_count += 1
-
         address = result["url"] if result.get("url", None) else f'{result["host"]}:{result["port"]}' if result.get("port", None) else f'{result["host"]}'
         msg = f'[{result["script_path"]}] [{address}]: {result["detail"]}'
         log.success(msg)
