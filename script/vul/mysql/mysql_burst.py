@@ -32,10 +32,8 @@ class Script(BaseScript):
         if self.base_url is None:
             async for (username, password) in self.generate_auth_dict(self.username_list, self.password_list):
                 try:
-                    async with aiomysql.create_pool(host=self.host, port=self.port, user=username,
-                                                    password=password, timeout=self.timeout) as res:
+                    async with aiomysql.create_pool(host=self.host, port=self.port, user=username, password=password) as res:
                         yield username + "/" + password
-  
                 except Exception:
                     pass
 
