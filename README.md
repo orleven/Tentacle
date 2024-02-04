@@ -75,9 +75,9 @@ python3 tentacle.py -tS 8d4b37597aaec25e  -oJ test
 python3 tentacle.py --update
 ```
 
-
 ### Thanks
 
 1. [Sqlmap](https://github.com/sqlmapproject/sqlmap)
 2. [POC-T](https://github.com/Xyntax/POC-T)
+
 

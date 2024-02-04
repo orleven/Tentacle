@@ -26,6 +26,9 @@ class Script(BaseScript):
             'console.html',
             'sql.html',
             'index.html',
+            "basic.json",
+            "webapp.json",
+            "weburi.json",
         ]
 
     async def prove(self):
@@ -41,7 +44,7 @@ class Script(BaseScript):
                                         if res and res.status == 200:
                                             text_source = await res.text()
                                             text = text_source.lower()
-                                            if 'druid stat index' in text or "druid version" in text or 'druid indexer' in text or 'druid sql stat' in text or 'druid monitor' in text:
+                                            if 'druid stat index' in text or "druid version" in text or 'druid indexer' in text or 'druid sql stat' in text or 'druid monitor' in text or 'javaclasspath' in text or 'jdbcupdatecount' in text:
                                                 yield url
                                 except:
                                     pass

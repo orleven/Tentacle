@@ -27,7 +27,10 @@ class Script(BaseScript):
             "web/",
             "swagger/",
             "gateway/actuator/",
-            "..;/"
+            "..;/",
+            "..;/v1/",
+            "..;/v2/",
+            "..;/v2/actuator",
             "%61%63%74uator/",
             "api/%61%63%74uator/",
         ]
@@ -57,6 +60,7 @@ class Script(BaseScript):
             "trace": "\"headers\":{",
             "dump": "threadname",
             "gateway/routes": "\"predicate\":",
+            "nacos-discovery": "NacosDiscoveryProperties",
             # "gateway/globalfilters": "cloud.gateway.filter",
             # "gateway/routefilters": "gatewayfilter",
         }

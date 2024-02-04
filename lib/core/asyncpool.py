@@ -103,6 +103,15 @@ class PoolCollector:
     def scanning_task_count(self):
         return len([w for w in self.pool.workers if w.is_running])
 
+    @property
+    def scanning_task_list(self):
+        task_list = []
+        for worker in self.pool.workers:
+            if worker.args and worker.is_running:
+                task_list.append(worker.args)
+        return task_list
+
+
     async def submit(self, func, *args, **kwargs):
         future = await self.pool.submit(func, *args, **kwargs)
         future.add_done_callback(self.queue.put_nowait)
