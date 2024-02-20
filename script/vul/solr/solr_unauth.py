@@ -16,9 +16,12 @@ class Script(BaseScript):
         if self.base_url:
             async with ClientSession() as session:
                 for url in [self.base_url , self.base_url+"solr/"]:
-                    async with session.get(url=url) as res:
-                        if res and res.status == 200:
-                            text = await res.text()
-                            if 'Solr Admin' in text and 'Dashboard' in text:
-                                yield url
-                                break
+                    try:
+                        async with session.get(url=url) as res:
+                            if res and res.status == 200:
+                                text = await res.text()
+                                if 'Solr Admin' in text and 'Dashboard' in text:
+                                    yield url
+                                    break
+                    except:
+                        pass

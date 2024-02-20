@@ -38,8 +38,10 @@ class Script(BaseScript):
                                 if 'zabbix' in text:
                                     async for username, password in self.generate_auth_dict(self.username_list, self.password_list):
                                         data = "name=" + username + "&password=" + password + "&autologin=1&enter=Sign+in"
-                                        async with session.post(url=url, data=data, allow_redirects=False) as res:
-                                            if res and res.status == 301 and 'Set-Cookie' in res.headers.keys() and 'zbx_sessionid' in res.headers['Set-Cookie']:
-                                                detail = username + "/" + password
-                                                yield f"{url}   {detail}"
-                                                
+                                        try:
+                                            async with session.post(url=url, data=data, allow_redirects=False) as res:
+                                                if res and res.status == 301 and 'Set-Cookie' in res.headers.keys() and 'zbx_sessionid' in res.headers['Set-Cookie']:
+                                                    detail = username + "/" + password
+                                                    yield f"{url}   {detail}"
+                                        except:
+                                            pass

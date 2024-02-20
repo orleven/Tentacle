@@ -61,11 +61,14 @@ class Script(BaseScript):
                                             async for username, password in self.generate_auth_dict(self.username_list, self.password_list):
                                                 key = base64encode(bytes(":".join([username, password]), 'utf-8'))
                                                 headers = {"Authorization": 'Basic %s' % key}
-                                                async with session.get(url=url, headers=headers) as res1:
-                                                    if res1:
-                                                        if res1.status != 401 and  res1.status != 407:
-                                                            detail = username + "/" + password
-                                                            yield f"{url}   {detail}"
+                                                try:
+                                                    async with session.get(url=url, headers=headers) as res1:
+                                                        if res1:
+                                                            if res1.status != 401 and  res1.status != 407:
+                                                                detail = username + "/" + password
+                                                                yield f"{url}   {detail}"
+                                                except:
+                                                    pass
                                                             
                             except:
                                 pass

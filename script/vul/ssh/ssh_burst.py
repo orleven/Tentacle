@@ -40,5 +40,7 @@ class Script(BaseScript):
                             
                     except asyncssh.misc.PermissionDenied:
                         pass
+                    except:
+                        pass
             except:
                 pass

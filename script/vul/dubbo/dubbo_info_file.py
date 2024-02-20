@@ -21,10 +21,12 @@ class Script(BaseScript):
                 ]
                 for poc in poc_list:
                     url = self.base_url + poc
-                    async with session.get(url=url) as response:
-                        if response!=None:
-                            text = await response.text()
-                            if '<beans xmlns' in text:
-                                yield url
-
+                    try:
+                        async with session.get(url=url) as response:
+                            if response!=None:
+                                text = await response.text()
+                                if '<beans xmlns' in text:
+                                    yield url
+                    except:
+                        pass
 

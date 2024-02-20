@@ -17,10 +17,12 @@ class Script(BaseScript):
             async with ClientSession() as session:
                 for path in self.get_url_normpath_list(self.url, ["./nacos", "./"]):
                     if path[-1] == '/':
-                        url = path + 'v1/cs/configs?search=accurate&dataId=&group=&appName=&config_tags=&pageNo=1&pageSize=10&tenant=&namespaceId='
-                        async with session.get(url=url, allow_redirects=False) as res:
-                            if res:
-                                text = await res.text()
-                                if 'password:' in text and 'port:' in text:
-                                    yield url
-                         
+                        try:
+                            url = path + 'v1/cs/configs?search=accurate&dataId=&group=&appName=&config_tags=&pageNo=1&pageSize=10&tenant=&namespaceId='
+                            async with session.get(url=url, allow_redirects=False) as res:
+                                if res:
+                                    text = await res.text()
+                                    if 'password:' in text and 'port:' in text:
+                                        yield url
+                        except:
+                            pass

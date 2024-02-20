@@ -54,7 +54,10 @@ class Script(BaseScript):
                                 temp_headers = deepcopy(headers)
                                 temp_headers["Username"] = username
                                 temp_headers["Password"] = password
-                                async with session.post(url=url, data=data, headers=temp_headers,  allow_redirects=False) as res:
-                                    if res and res.status in [200, 201, 202, 403]:
-                                        yield username + "/" + password
+                                try:
+                                    async with session.post(url=url, data=data, headers=temp_headers,  allow_redirects=False) as res:
+                                        if res and res.status in [200, 201, 202, 403]:
+                                            yield username + "/" + password
+                                except:
+                                    pass
 

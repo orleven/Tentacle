@@ -91,6 +91,5 @@ class Script(BaseScript):
                                 async with session.get(url=url, allow_redirects=False) as res:
                                     if res and res.status == 200 and res.headers.get("Content-Type", "text/html") == "application/octet-stream" and res.content_length > 1024 * 1024 * 4:
                                         yield url
-
                             except:
                                 pass

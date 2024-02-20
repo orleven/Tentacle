@@ -33,10 +33,13 @@ class Script(BaseScript):
                         for dir_path in self.dir_list:
                             for file_path in self.file_list:
                                 url = path + dir_path + file_path
-                                async with session.get(url=url, headers=headers, allow_redirects=False) as res:
-                                    if res and res.status == 200:
-                                        if "application/json" in res.headers.get("Content-Type", "text/html"):
-                                            text = await res.text()
-                                            # if text and '"node"' in text and '"plugins"' in text and '"uri"' in text:
-                                            if text and '"node"' in text:
-                                                yield url
+                                try:
+                                    async with session.get(url=url, headers=headers, allow_redirects=False) as res:
+                                        if res and res.status == 200:
+                                            if "application/json" in res.headers.get("Content-Type", "text/html"):
+                                                text = await res.text()
+                                                # if text and '"node"' in text and '"plugins"' in text and '"uri"' in text:
+                                                if text and '"node"' in text:
+                                                    yield url
+                                except:
+                                    pass

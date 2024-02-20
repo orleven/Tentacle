@@ -24,8 +24,11 @@ class Script(BaseScript):
                     if path[-1] == "/":
                         for file_path, file_keyword in self.file_dic.items():
                             url = path + file_path
-                            async with session.get(url=url, allow_redirects=False) as res:
-                                if res and res.status == 200:
-                                    text = await res.text()
-                                    if text and file_keyword in text.lower():
-                                        yield url
+                            try:
+                                async with session.get(url=url, allow_redirects=False) as res:
+                                    if res and res.status == 200:
+                                        text = await res.text()
+                                        if text and file_keyword in text.lower():
+                                            yield url
+                            except:
+                                pass

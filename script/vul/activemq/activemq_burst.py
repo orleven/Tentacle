@@ -36,10 +36,12 @@ class Script(BaseScript):
                         async for (username, password) in self.generate_auth_dict(self.username_list, self.password_list):
                             key = str(b64encode(bytes(":".join([username, password]), 'utf-8')), 'utf-8')
                             headers = {"Authorization": 'Basic %s' % key}
-                            async with session.get(url=url, headers=headers) as res:
-                                if res:
-                                    text = await res.text()
-                                    if 'Console' in text:
-                                        yield username + "/" + password
-
+                            try:
+                                async with session.get(url=url, headers=headers) as res:
+                                    if res:
+                                        text = await res.text()
+                                        if 'Console' in text:
+                                            yield username + "/" + password
+                            except:
+                                pass
 

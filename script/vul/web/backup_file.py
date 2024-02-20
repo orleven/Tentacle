@@ -26,7 +26,6 @@ class Script(BaseScript):
                     if path[-1] == '/' and path.count('/') > 3:
                         try:
                             length1 = 0
-
                             key = '.isnotexist'
                             url = path[:-1] + key
                             async with session.get(url=url, allow_redirects=False) as res:
@@ -37,13 +36,16 @@ class Script(BaseScript):
 
                             for extension in self.extension_list:
                                 url = path[:-1] + extension
-                                async with session.get(url=url, allow_redirects=False) as res:
-                                    if res and res.status == 200:
-                                        text = await res.text()
-                                        if text:
-                                            length = len(text.replace('\\/', '/').replace(extension, ''))
-                                            if abs(length - length1) > self.fix_length:
-                                                vul_list.append(url)
+                                try:
+                                    async with session.get(url=url, allow_redirects=False) as res:
+                                        if res and res.status == 200:
+                                            text = await res.text()
+                                            if text:
+                                                length = len(text.replace('\\/', '/').replace(extension, ''))
+                                                if abs(length - length1) > self.fix_length:
+                                                    vul_list.append(url)
+                                except:
+                                    pass
 
                                 if len(vul_list) >= 3:
                                     return

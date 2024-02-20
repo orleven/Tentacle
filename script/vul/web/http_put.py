@@ -27,12 +27,15 @@ class Script(BaseScript):
                     for suffix in self.suffix_list:
                         keyword = file = random_lowercase_digits(16)
                         url = path + file + '.txt' + suffix
-                        async with session.put(url=url, data=keyword) as res1:
-                            if res1:
-                                if res1.status == 200 or res1.status == 201 or res1.status == 204:
-                                    url2 = path + file + '.txt'
-                                    async with session.get(url=url2) as res2:
-                                        if res2:
-                                            text2 = await res2.text()
-                                            if keyword in text2:
-                                                yield url
+                        try:
+                            async with session.put(url=url, data=keyword) as res1:
+                                if res1:
+                                    if res1.status == 200 or res1.status == 201 or res1.status == 204:
+                                        url2 = path + file + '.txt'
+                                        async with session.get(url=url2) as res2:
+                                            if res2:
+                                                text2 = await res2.text()
+                                                if keyword in text2:
+                                                    yield url
+                        except:
+                            pass
