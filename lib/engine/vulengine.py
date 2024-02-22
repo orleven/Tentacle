@@ -23,6 +23,7 @@ from lib.core.enums import ServicePortMap
 from lib.core.enums import TargetStatus
 from asyncio.exceptions import TimeoutError
 from aiohttp.client_exceptions import ClientPayloadError
+from aiohttp.client_exceptions import ClientOSError
 from lib.register.targetregister import TargetRegister
 from lib.register.scriptregister import ScriptRegister
 from lib.core.asyncpool import PoolCollector
@@ -88,7 +89,7 @@ class VulEngine(BaseEngine):
                 else:
                     log.error(f"Error, module: {name}:{func_name} address: {host}:{port}, error: function is exist")
         except (ConnectionRefusedError, ConnectionResetError, ConnectionAbortedError, BrokenPipeError,
-                TimeoutError, ClientPayloadError, RuntimeError, BrokenPipeError, OSError,
+                TimeoutError, ClientPayloadError, RuntimeError, BrokenPipeError, OSError, ClientOSError,
                 asyncssh.Error):
             self.error_count += 1
         except Exception as e:
