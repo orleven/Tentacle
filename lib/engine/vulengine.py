@@ -117,12 +117,14 @@ class VulEngine(BaseEngine):
                             if service and service != ServicePortMap.UNKNOWN[0]:
                                 if service != script.Script().service_type[0] and service != ServicePortMap.WEB[0]:
                                     continue
-                            await manager.submit(self.do_scan, self.data_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
+                            # await manager.submit(self.do_scan, self.data_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
+                            await self.submit_task(manager, self.data_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
                         else:
                             for port in script.Script().service_type[1]:
                                 temp_target = deepcopy(target)
                                 temp_target["port"] = port
-                                await manager.submit(self.do_scan, self.data_queue, temp_target, script, func_name=sr.func_name, parameter=sr.parameter)
+                                # await manager.submit(self.do_scan, self.data_queue, temp_target, script, func_name=sr.func_name, parameter=sr.parameter)
+                                await self.submit_task(manager, self.data_queue, temp_target, script, func_name=sr.func_name, parameter=sr.parameter)
         except Exception as e:
             log.error(str(e))
         finally:
@@ -143,12 +145,14 @@ class VulEngine(BaseEngine):
                         tr = TargetRegister()
                         if target["port"]:
                             target["status"] = TargetStatus.PORTSCAN
-                            await manager.submit(self.do_scan, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
+                            # await manager.submit(self.do_scan, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
+                            await self.submit_task(manager, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
                         else:
                             async for target in tr.load_target_by_target(target):
                                 if target["port"]:
                                     target["status"] = TargetStatus.PORTSCAN
-                                    await manager.submit(self.do_scan, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
+                                    # await manager.submit(self.do_scan, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
+                                    await self.submit_task(manager, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
                     else:
                         await self.vul_queue.put((target, None))
 
@@ -168,7 +172,8 @@ class VulEngine(BaseEngine):
                     target, data = await self.ping_queue.get()
                     target["status"] = TargetStatus.PINGSCAN
                     if not conf.scan.skip_port_scan:
-                        await manager.submit(self.do_scan, self.port_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
+                        # await manager.submit(self.do_scan, self.port_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
+                        await self.submit_task(manager, self.port_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
                     else:
                         await self.vul_queue.put((target, None))
         except Exception as e:
@@ -204,6 +209,13 @@ class VulEngine(BaseEngine):
         except Exception as e:
             log.error(str(e))
 
+    async def submit_task(self, manager: PoolCollector, queue: asyncio.Queue, target, module: BaseScript, func_name, parameter):
+        while True:
+            if manager.remain_task_count > self.max_task_num * 2:
+                await asyncio.sleep(0.1)
+            else:
+                await manager.submit(self.do_scan, queue, target, module, func_name=func_name, parameter=parameter)
+                break
 
     async def data_deal(self, manager: PoolCollector):
         try:
