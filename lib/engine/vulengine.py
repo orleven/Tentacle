@@ -211,7 +211,7 @@ class VulEngine(BaseEngine):
 
     async def submit_task(self, manager: PoolCollector, queue: asyncio.Queue, target, module: BaseScript, func_name, parameter):
         while True:
-            if manager.remain_task_count > self.max_task_num * 2:
+            if manager.remain_task_count >= 10000:
                 await asyncio.sleep(0.1)
             else:
                 await manager.submit(self.do_scan, queue, target, module, func_name=func_name, parameter=parameter)
