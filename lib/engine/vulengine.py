@@ -50,7 +50,7 @@ class VulEngine(BaseEngine):
 
     async def dnslog_center(self, manager: PoolCollector):
         async for dnslog_recode in dnslog_hander(self.interactsh_client):
-            (target, data) = self.vul_dnslog_recode_map.get(dnslog_recode, None)
+            (target, data) = self.vul_dnslog_recode_map.get(dnslog_recode, (None, None))
             if data:
                 if dnslog_recode not in self.dnslog_recode_list:
                     self.dnslog_recode_list.append(dnslog_recode)
@@ -118,13 +118,11 @@ class VulEngine(BaseEngine):
                             if service and service != ServicePortMap.UNKNOWN[0]:
                                 if service != script.Script().service_type[0] and service != ServicePortMap.WEB[0]:
                                     continue
-                            # await manager.submit(self.do_scan, self.data_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
                             await self.submit_task(manager, self.data_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
                         else:
                             for port in script.Script().service_type[1]:
                                 temp_target = deepcopy(target)
                                 temp_target["port"] = port
-                                # await manager.submit(self.do_scan, self.data_queue, temp_target, script, func_name=sr.func_name, parameter=sr.parameter)
                                 await self.submit_task(manager, self.data_queue, temp_target, script, func_name=sr.func_name, parameter=sr.parameter)
         except Exception as e:
             log.error(str(e))
@@ -146,13 +144,11 @@ class VulEngine(BaseEngine):
                         tr = TargetRegister()
                         if target["port"]:
                             target["status"] = TargetStatus.PORTSCAN
-                            # await manager.submit(self.do_scan, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
                             await self.submit_task(manager, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
                         else:
                             async for target in tr.load_target_by_target(target):
                                 if target["port"]:
                                     target["status"] = TargetStatus.PORTSCAN
-                                    # await manager.submit(self.do_scan, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
                                     await self.submit_task(manager, self.vul_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
                     else:
                         await self.vul_queue.put((target, None))
@@ -173,7 +169,6 @@ class VulEngine(BaseEngine):
                     target, data = await self.ping_queue.get()
                     target["status"] = TargetStatus.PINGSCAN
                     if not conf.scan.skip_port_scan:
-                        # await manager.submit(self.do_scan, self.port_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
                         await self.submit_task(manager, self.port_queue, target, script, func_name=sr.func_name, parameter=sr.parameter)
                     else:
                         await self.vul_queue.put((target, None))

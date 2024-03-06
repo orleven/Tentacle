@@ -25,7 +25,8 @@ class Script(BaseScript):
             async with ClientSession() as session:
                 for path in self.get_url_normpath_list(self.url):
                     for suffix in self.suffix_list:
-                        keyword = file = random_lowercase_digits(16)
+                        keyword = random_lowercase_digits(16)
+                        file = random_lowercase_digits(16)
                         url = path + file + '.txt' + suffix
                         try:
                             async with session.put(url=url, data=keyword) as res1:

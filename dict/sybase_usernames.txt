@@ -1,4 +1,3 @@
-itsm
 root
 mysql
 oracle

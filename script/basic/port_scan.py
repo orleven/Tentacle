@@ -63,14 +63,15 @@ class Script(BaseScript):
 
         await self.get_url()
 
-        message = message.lower()    
+        message = message.lower()
+
         if self.url:
             return ServicePortMap.WEB[0]
 
         elif message is not None:
             if b"amqp" in message:
                 return ServicePortMap.RABBITMQ[0]
-            elif b'smtp' in message or b'spam' in message or b'esmtp' in message:
+            elif b'smtp' in message or b'spam' in message or b'esmtp' in message or b'220 ******' in message:
                 return ServicePortMap.SMTP[0]
             elif b'ssh' in message:
                 return ServicePortMap.SSH[0]
@@ -80,9 +81,11 @@ class Script(BaseScript):
                 return ServicePortMap.REDIS[0]
             elif b'FTP' in message or b'ftp' in message:
                 return ServicePortMap.FTP[0]
+            elif b'telnet' in message:
+                return ServicePortMap.TELNET[0]
             elif b'rsync' in message or b'rsync' in message:
                 return ServicePortMap.RSYNC[0]
-            elif b'HTTP' in message or b'http' in message:
+            elif b'HTTP' in message or b'http' in message or b'\x15\x03\x03\x00\x02' in message or b'\x15\x03\x01\x00\x02' in message:
                 return ServicePortMap.WEB[0]
             elif b'\xff\x00\x00\x00\x00\x00\x00\x00\x01\x7f' in message:
                 return ServicePortMap.ZMTP[0]

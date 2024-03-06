@@ -1,5 +1,4 @@
 root
-itsm
 it
 sec
 oracle

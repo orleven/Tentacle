@@ -201,15 +201,15 @@ class BaseScript(object):
                     _pro = 'https://' if _port in [443, 8443] else pro
                     url = _pro + self.host + ":" + str(_port) + '/'
                     try:
-                        async with session.head(url, allow_redirects=False) as res:
+                        async with session.get(url, allow_redirects=False) as res:
                             if res:
+                                if res.status == 400:
+                                    text = await res.text()
+                                    if text and 'https port' in text.lower():
+                                        continue
                                 self.port_connect = True
                                 self.base_url = self.url = url
-                                text = await res.text()
-                                if res.status == 400 and 'https port' in text:
-                                    pass
-                                else:
-                                    return True
+                                return True
                     except:
                         pass
             else:

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @author: orleven
-import traceback
 
+import asyncio
 import asyncssh
 from lib.core.env import *
 from lib.core.enums import ServicePortMap
@@ -35,9 +35,8 @@ class Script(BaseScript):
                     if os.path.exists(known_hosts_path):
                         os.remove(known_hosts_path)
                     try:
-                        async with asyncssh.connect(host=self.host, port=self.port, username=username, password=password, known_hosts=None) as conn:
+                        async with await asyncio.wait_for(asyncssh.connect(host=self.host, port=self.port, username=username, password=password, known_hosts=None), timeout=self.timeout) as conn:
                             yield username + "/" + password
-                            
                     except asyncssh.misc.PermissionDenied:
                         pass
                     except:
