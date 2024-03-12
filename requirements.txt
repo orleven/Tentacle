@@ -8,7 +8,7 @@ aiosignal==1.2.0
 aiosmtplib==1.1.6
 aiosqlite==0.17.0
 async-timeout==4.0.2
-asyncssh==2.11.0
+asyncssh==2.14.1
 attribdict==0.0.5
 attrs==21.4.0
 beautifulsoup4==4.11.1
